@@ -1,0 +1,442 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="dark">
+<meta name="generator" content="rule-execution-analyzer">
+<title>{{ (report.get('meta') or {}).get('report_title') or '操作模式分析' }}</title>
+<!-- 绝对路径：main.py 把 app/static 挂在 /static，报告页在 /api/matches/{id}/report，
+     相对路径会多退一层解析到 /api/matches/static。file:// 直接打开原始渲染产物时
+     样式会失效，因此可分享的单文件产物由构建时内联 CSS/JS（见 _preview_report.html）。 -->
+<link rel="stylesheet" href="{{ asset('report.css') }}">
+</head>
+<body>
+{%- set meta = report.meta or {} %}
+{%- set outcome = report.outcome or {} %}
+{%- set curve = report.curve or {} %}
+{%- set pts = curve.points or [] %}
+{%- set summary = curve.summary or {} %}
+{%- set axis = curve.axis or {} %}
+{%- set weakest = (curve.get('weakest_rules') or report.get('weakest_rules') or []) %}
+{%- set regressing = (curve.get('regressing_rules') or report.get('regressing_rules') or []) %}
+{# 版本适配区块的数据。仅版本报告存在，单局/成长报告为空 —— 模板据此整段跳过 #}
+{%- set backtest = report.backtest or [] %}
+{%- set bsum = report.backtest_summary or {} %}
+{%- set vdiff = report.version_diff or {} -%}
+{# 单局专属区块只在 match 报告里渲染。成长/版本报告没有「本局」这个概念，
+   显示「本局没有触发任何偏离」既无意义又误导。 #}
+{%- set kind = (meta or {}).get('report_kind') or 'match' -%}
+{# 事实中文名。拿不到适配器时退回原始事实名，至少不空白 #}
+{%- set adapter_labels = report.get('fact_labels') or {} -%}
+{%- set is_match = kind == 'match' -%}
+{%- set is_growth = kind == 'growth' -%}
+{# 操作模式分析：报告正文。分路结论与逐回合差距已合成这一份。 #}
+{%- set entries = report.get('mode_analysis') or [] -%}
+{# 曲线与「最需改进」只属于**跨对局**的成长报告。
+   单局报告已经只剩「操作模式分析」一节 —— 执行度、执行度曲线、
+   「最需要改进的规则」这些统计口径对「照着改」这件事没有帮助，
+   摆上去只是让人分心。 #}
+{%- set show_curve = is_growth -%}
+{# 回测结论是中文，CSS 类名必须转成 ASCII slug —— 中文类名虽合法但
+   在不同工具链上表现不一致，且一旦后端改措辞样式就静默失效。 #}
+{%- set vkey = {
+  "需要更严格": "stricter",
+  "新增约束": "newly_binding",
+  "可以放松": "relaxable",
+  "基本一致": "unchanged",
+  "数据不足": "insufficient"
+} -%}
+{%- set sev_names = {"high": "严重", "medium": "中等", "low": "轻微"} -%}
+
+{# 百分比统一入口：None 一律显示破折号，绝不编造 0% #}
+{%- macro pct(v) -%}{%- if v is none -%}—{%- else -%}{{ '%.1f'|format(v * 100) }}%{%- endif -%}{%- endmacro -%}
+
+<div class="wrap">
+
+  <!-- ============ 01 顶部概览 ============ -->
+  <section class="section" id="overview" style="margin-top:28px;">
+    <div class="panel hero">
+      {# 这里**不摆**「结论是从画面里读出来的 / 读取模型 X / 读不出来的记读不出来」那类说明。
+         用户看过之后说了一句：「这些描述性文字都去掉，我完全不需要。」
+
+         理由也是这么来的：标注页下线之后，动作**只有**一个来源 —— 模型从画面里读。
+         没有第二个来源可对比，这句话每局都一样，说的都是废话；
+         而这一页要回答的是「哪一段做错了、该怎么做」，
+         摆一段「我是怎么得出这个结论的」只会让人分心。
+
+         真要核对，页面下面有「看到了什么」（第几秒、看到了什么）与原视频片段，
+         玩家自己点开原片就能看。 #}
+      <div class="hero-top">
+        <div class="hero-id">
+          <h1>{{ meta.get('report_title', '操作模式分析') }}</h1>
+          {# 只留游戏与结果。玩家、段位、名次、执行度、较首次对局 —— 一律去掉：
+             这一页要回答的是「哪一段做错了、该怎么做」，
+             那些数字跟这个答案没关系，摆出来只是让人分心。 #}
+          <div class="hero-meta">
+            <span>游戏 <b>{{ meta.get('game_display') or meta.get('game') or '—' }}</b></span>
+            {% if outcome.get('result') %}
+              {# 「吃鸡」是自走棋/大逃杀的词。王者荣耀是推塔，赢了就是胜利，
+                 输了就是失败 —— 拿别的游戏的行话写出来，玩家读着别扭，
+                 也不像是在讲他打的那一局。 #}
+              {%- if meta.get('game') == 'hok' -%}
+              <span>结果 <b>{{ '失败' if outcome.get('result') == 'lose' else '胜利' }}</b></span>
+              {%- else -%}
+              <span>结果 <b>{{ '未吃鸡' if outcome.get('result') == 'lose' else '吃鸡' }}</b></span>
+              {%- endif -%}
+            {% endif %}
+          </div>
+        </div>
+        {% include "_duo.html" %}
+      </div>
+
+      {% if report.get('version_note') %}
+      <div class="version-note">{{ report.get('version_note') }}</div>
+      {% endif %}
+    </div>
+  </section>
+
+  <!-- ============ 操作模式分析（报告主体） ============ -->
+  {# 分路结论与逐回合差距合成一份：分路说「哪一段做错了」，
+     逐回合说「哪一回合错在哪」。分开摆着玩家要自己对两次，
+     而这页只要能照着改。 #}
+  {%- if is_match -%}
+  <section class="section" id="analysis">
+    <div class="section-head">
+      <span class="idx">01</span>
+      <h2>操作模式分析</h2>
+    </div>
+
+    {% if not entries %}
+    <div class="empty">这一局没有发现偏离操作模式的地方。</div>
+    {% else %}
+    {% for e in entries %}
+    <article class="mode-item">
+      <div class="mode-item-head">
+        {% if e.category %}<span class="mode-chip">{{ e.category }}</span>{% endif %}
+        <span class="cell-v cell-v-{{ e.verdict_label }}">{{ e.verdict_label }}</span>
+        {# 这条结论建立在低置信度的识别之上 —— 必须标出来。
+           报告正文只有这一节，所以标记挂在条目上，不另起一节。 #}
+        {% if e.low_confidence %}
+        <span class="conf-tag" title="这条结论用到的部分事实来自低置信度的视频识别">识别置信度 {{ '%.0f'|format(e.confidence * 100) }}%</span>
+        {% endif %}
+      </div>
+      <h3 class="mode-item-title">{{ e.title }}</h3>
+
+      {# 1. 对局时间区间 #}
+      <div class="mo-row">
+        <span class="k">对局时间区间</span>
+        <span class="v">{{ e.time_range or '—' }}</span>
+      </div>
+
+      {# 2. 原视频被建议部分片段 #}
+      <div class="mo-row">
+        <span class="k">原视频被建议部分片段</span>
+        <div class="v">
+          {% if e.clip.moments and e.clip.video_url %}
+          <div class="clips">
+            {% for m in e.clip.moments %}
+            <div class="clip" data-t="{{ m.time }}" data-len="{{ e.clip.seconds }}">
+              <video class="clip-vid" preload="none" playsinline
+                     {% if m.image_url %}poster="{{ m.image_url }}"{% endif %}
+                     src="{{ e.clip.video_url }}"></video>
+              <div class="clip-bar">
+                <button class="clip-play" type="button">播放这一段</button>
+                <span class="clip-time">{{ m.label }} · 视频 {{ m.time_label }}</span>
+              </div>
+            </div>
+            {% endfor %}
+          </div>
+          {% else %}
+          <span class="v-na">这一局没有原视频片段。</span>
+          {% endif %}
+        </div>
+      </div>
+
+      {# 3. 原视频操作的文字描述 #}
+      <div class="mo-row">
+        <span class="k">原视频操作的文字描述</span>
+        <span class="v">{{ e.actual_text }}</span>
+      </div>
+
+      {# 3b. 看到了什么：第几秒、看到了什么。
+           这四件凑齐才是一条能用的建议：
+           看到了什么（这里）／该做什么（模式库原文）／为什么有用（收益）／证据片段。
+           缺任何一件的建议都不该给用户 —— 那是拿模型的猜测冒充结论。 #}
+      {%- if e.evidence %}
+      <div class="mo-row">
+        <span class="k">看到了什么</span>
+        <div class="v">
+          {# 证据来自**画面识别**（不是玩家自述）—— 来源要写清楚，
+             否则用户会以为那是玩家自己说的。 #}
+          <span class="v-note">视频画面识别所得，可回看原片确认：</span>
+          <ul class="ev-list">
+            {% for ev in e.evidence %}
+            <li>
+              <span class="ev-t">视频 {{ ev.time_label }}</span>
+              <span class="ev-w">{{ ev.why }}</span>
+            </li>
+            {% endfor %}
+          </ul>
+        </div>
+      </div>
+      {%- endif %}
+
+      {# 4. 根据模式库建议操作的描述 + 建议理由 #}
+      <div class="mo-row">
+        <span class="k">根据模式库建议操作的描述</span>
+        <span class="v">
+          {# 建议按句分行：英雄层的建议是条件式的（「什么情况下：做什么」），
+             挤成一段的话，几种情形会糊在一起，玩家读不出哪条适用。 #}
+          {%- if e.advice_lines %}
+          {%- for line in e.advice_lines %}
+          <span class="advice-line">{{ line }}</span>
+          {%- endfor %}
+          {%- else %}
+          <span class="advice-line">{{ e.advice_text }}</span>
+          {%- endif %}
+          <span class="mo-reason"><b>建议理由</b>{{ e.reason_text }}</span>
+        </span>
+      </div>
+    </article>
+    {% endfor %}
+    {% endif %}
+
+    {# 判不了的原因汇总：哪一类操作读不出来，挡掉了多少条规则。
+       不写这一段，玩家只看到「无法判定」，不知道整体上缺什么。 #}
+    {%- set unreadable_kinds = report.get('unreadable_kinds') or [] -%}
+    {%- if unreadable_kinds %}
+    <div class="mode-gap-note">
+      <b>这些操作暂时读不出来，所以相关模式判不了：</b>
+      {%- for u in unreadable_kinds %}
+      <span class="gap-kind">{{ u.label }}（{{ u.blocked }} 条）</span>
+      {%- endfor %}
+    </div>
+    {%- endif %}
+  </section>
+
+  {# 片段播放：点「播放这一段」把画面拉到出错那几秒，播到片段末尾自动停。
+     不预先剪片 —— 原视频已经在硬盘上，再存一份是净增占用，
+     而且重编码会丢声音。 #}
+  <script>
+  (function () {
+    document.querySelectorAll('.clip').forEach(function (box) {
+      var vid = box.querySelector('.clip-vid');
+      var btn = box.querySelector('.clip-play');
+      if (!vid || !btn) return;
+      var start = parseFloat(box.dataset.t || '0');
+      var len = parseFloat(box.dataset.len || '10');
+      var stop = start + len;
+
+      btn.addEventListener('click', function () {
+        // 先取到时长才能 seek，否则浏览器会忽略这次赋值 ——
+        // 于是表现是「点了没反应」，看起来像功能坏了。
+        if (!vid.duration) {
+          vid.addEventListener('loadedmetadata', function () {
+            vid.currentTime = start;
+            vid.play();
+          }, { once: true });
+          vid.load();
+        } else {
+          vid.currentTime = start;
+          vid.play();
+        }
+      });
+
+      vid.addEventListener('timeupdate', function () {
+        if (vid.currentTime >= stop) { vid.pause(); }
+      });
+    });
+  })();
+  </script>
+  {%- endif -%}
+
+  {%- if show_curve -%}
+  <!-- ============ 03 执行度曲线 ============ -->
+  <section class="section" id="curve">
+    <div class="section-head">
+      <span class="idx">03</span>
+      <h2>执行度曲线</h2>
+      <span class="hint">{{ summary.get('match_count', 0) }} 局 · {{ summary.get('measured_count', 0) }} 局有执行度</span>
+    </div>
+
+    {% if not pts %}
+    <div class="empty">还没有可用于绘制曲线的历史对局。</div>
+    {% else %}
+    <div class="panel chart-box">
+      <div id="curve-chart"></div>
+      <noscript>
+        <div class="empty">曲线需要启用 JavaScript 才能绘制。逐局数据：
+          {% for p in pts %}
+          <span class="num">{{ p.get('played_at') }}：{{ pct(p.get('compliance_rate')) }}</span>{% if not loop.last %} · {% endif %}
+          {% endfor %}
+        </div>
+      </noscript>
+    </div>
+    <div class="legend">
+      <span><i></i>执行度</span>
+      <span><i class="hole"></i>无模式触发（留空，不插值）</span>
+      <span><i class="dash"></i>操作模式库版本切换</span>
+    </div>
+    <div class="curve-summary">
+      <div class="cs-item"><div class="n {% if summary.get('latest_rate') is none %}na{% endif %}">{{ pct(summary.get('latest_rate')) }}</div><div class="k">最新执行度</div></div>
+      <div class="cs-item"><div class="n {% if summary.get('first_rate') is none %}na{% endif %}">{{ pct(summary.get('first_rate')) }}</div><div class="k">首次执行度</div></div>
+      <div class="cs-item"><div class="n {% if summary.get('delta') is none %}na{% endif %}">{% if summary.get('delta') is none %}样本不足{% else %}{{ '+' if summary.get('delta') > 0 }}{{ pct(summary.get('delta')) }}{% endif %}</div><div class="k">变化幅度</div></div>
+      <div class="cs-item"><div class="n num">{{ summary.get('match_count', 0) }}</div><div class="k">累计对局</div></div>
+    </div>
+    {% endif %}
+  </section>
+  {%- endif -%}
+
+  {%- if show_curve -%}
+  <!-- ============ 05 最需要改进的规则 ============ -->
+  <section class="section" id="weakest">
+    <div class="section-head">
+      <span class="idx">05</span>
+      <h2>最需要改进的规则</h2>
+      <span class="hint">跨对局执行率最低</span>
+    </div>
+
+    {% if not weakest %}
+    <div class="empty">还没有被检验过两次以上的规则，暂时排不出优先级。</div>
+    {% else %}
+    <div class="panel rule-list">
+      {% for r in weakest %}
+      <div class="rule-item">
+        <div class="rule-rank num">{{ '%02d'|format(loop.index) }}</div>
+        <div class="rule-main">
+          <div class="rule-t">{{ r.get('rule_title') or '（规则标题缺失）' }}</div>
+          <div class="rule-sub">
+            <span class="mono">{{ r.get('rule_id') }}</span>
+            {% if r.get('category') %} · {{ r.get('category') }}{% endif %}
+            · 检验 {{ r.get('checks', 0) }} 次
+          </div>
+          {# 迷你点阵：None 画空心圈，和曲线上的空洞语义保持一致 #}
+          <div class="spark">
+            {% for v in (r.get('points') or []) %}
+              {% if v is none %}<i class="none" title="该局未触发此规则"></i>
+              {% elif v >= 1 %}<i class="on" title="符合"></i>
+              {% else %}<i class="off" title="偏离"></i>{% endif %}
+            {% endfor %}
+          </div>
+        </div>
+        <div class="rule-rate {% if r.get('latest_rate') is none %}na{% endif %}">
+          {% if r.get('latest_rate') is none %}—{% else %}{{ pct(r.get('latest_rate')) }}{% endif %}
+          <span class="trend {% if r.get('trend') == '退步了' %}trend-bad{% elif r.get('trend') == '改进了' %}trend-good{% else %}trend-flat{% endif %}">{{ r.get('trend') or '—' }}</span>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+    {% endif %}
+
+    {% if regressing %}
+    <div class="panel" style="margin-top:14px;">
+      <div class="section-head" style="margin:0;padding:14px 22px;border-bottom:1px solid var(--line);">
+        <h2 style="font-size:15px;">正在退步的规则</h2>
+        <span class="hint">这是最容易自我欺骗的地方</span>
+      </div>
+      <div class="rule-list">
+        {% for r in regressing %}
+        <div class="rule-item">
+          <div class="rule-rank num">↓</div>
+          <div class="rule-main">
+            <div class="rule-t">{{ r.get('rule_title') }}</div>
+            <div class="rule-sub"><span class="mono">{{ r.get('rule_id') }}</span> · 检验 {{ r.get('checks', 0) }} 次</div>
+          </div>
+          <div class="rule-rate">{{ pct(r.get('latest_rate')) }}</div>
+        </div>
+        {% endfor %}
+      </div>
+    </div>
+    {% endif %}
+  </section>
+  {%- endif -%}
+
+  {% if backtest %}
+  <!-- ============ 07 版本适配与回测 ============ -->
+  <section class="section" id="version">
+    <div class="section-head">
+      <span class="idx">08</span>
+      <h2>版本适配：这个版本哪些习惯该改</h2>
+      <span class="hint">用你的历史对局回测新旧两套规则</span>
+    </div>
+
+    {% if bsum.get('action_count') %}
+    <div class="panel vtodo">
+      <div class="vtodo-title">升级后最该先看</div>
+      {% for row in bsum.get('action_first', []) %}
+      <div class="vtodo-item">
+        <span class="verdict v-{{ vkey.get(row.get('verdict'), 'unknown') }}">{{ row.get('verdict') }}</span>
+        <span class="vtodo-msg">{{ row.get('message') }}</span>
+      </div>
+      {% endfor %}
+    </div>
+    {% endif %}
+
+    {% if vdiff %}
+    <div class="vdiff">
+      <div class="vdiff-nums">
+        <div class="vd"><div class="n num">{{ vdiff.get('added') | length }}</div><div class="k">新增规则</div></div>
+        <div class="vd"><div class="n num">{{ vdiff.get('deprecated') | length }}</div><div class="k">已失效</div></div>
+        <div class="vd"><div class="n num">{{ vdiff.get('changed') | length }}</div><div class="k">阈值变更</div></div>
+      </div>
+      <div class="vdiff-versions mono">{{ vdiff.get('old_version') }} → {{ vdiff.get('new_version') }}</div>
+    </div>
+    {% endif %}
+
+    <div class="panel backtest-list">
+      {% for row in backtest %}
+      <div class="bt-row">
+        <div class="bt-head">
+          <span class="verdict v-{{ vkey.get(row.get('verdict'), 'unknown') }}">{{ row.get('verdict') }}</span>
+          <span class="rule-id">{{ row.get('rule_id') }}</span>
+          <span class="bt-title">{{ row.get('rule_title') }}</span>
+        </div>
+        <div class="bt-msg">{{ row.get('message') }}</div>
+        <div class="bt-nums">
+          <div class="btn">
+            <div class="k">旧版 {{ row.get('old_version') }}</div>
+            <div class="n num">{{ pct(row.get('old_rate')) }}</div>
+            <div class="sub">{{ row.get('old_deviated') }}/{{ row.get('old_checked') }} {{ unit }}</div>
+          </div>
+          <div class="bt-arrow">→</div>
+          <div class="btn">
+            <div class="k">新版 {{ row.get('new_version') }}</div>
+            <div class="n num {% if row.get('rate_delta') is not none and row.get('rate_delta') > 0 %}worse{% endif %}">{{ pct(row.get('new_rate')) }}</div>
+            <div class="sub">{{ row.get('new_deviated') }}/{{ row.get('new_checked') }} {{ unit }}</div>
+          </div>
+        </div>
+        {# 证据：给出具体是哪一局哪一回合，回测结论才可复查 #}
+        {% if row.get('new_examples') %}
+        <details class="bt-evi">
+          <summary>偏离实例（{{ row.get('new_examples') | length }}）</summary>
+          {% for ex in row.get('new_examples') %}
+          <div class="bt-exi-item">
+            <span class="round-tag">{{ ex.get('round_label') }}</span>
+            <span class="mono">{{ ex.get('match_id') }}</span>
+            <span class="bt-exi-txt">该做 {{ ex.get('expected') }}，实际 {{ ex.get('actual') }}</span>
+          </div>
+          {% endfor %}
+        </details>
+        {% endif %}
+      </div>
+      {% endfor %}
+    </div>
+  </section>
+  {% endif %}
+
+  <div class="footer">
+    生成于 {{ meta.get('generated_at') or '—' }}
+  </div>
+
+</div>
+
+<!-- 图表数据交给原生 SVG 绘制；用 data-* 内嵌而非 fetch，
+     保证 file:// 直接双击打开也能出图。 -->
+<script type="application/json" id="curve-data">
+{{ {"points": pts, "axis": axis} | tojson }}
+</script>
+<script src="{{ asset('report.js') }}"></script>
+{% include "_session_end.html" %}
+</body>
+</html>

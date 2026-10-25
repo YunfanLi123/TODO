@@ -1,0 +1,1282 @@
+[
+  {
+    "id": "HOK-BP-BAN1-03-A",
+    "game": "hok",
+    "version": "BP-S45",
+    "title": "己方缺前排时，别把坦边禁了",
+    "category": "BP·禁用（阶段一）",
+    "trigger": {
+      "all": [
+        {
+          "fact": "bp_phase",
+          "op": "==",
+          "value": "ban_1"
+        },
+        {
+          "fact": "my_missing_frontline",
+          "op": "==",
+          "value": true
+        }
+      ],
+      "any": [],
+      "none": []
+    },
+    "expect": {
+      "fact": "bp_action",
+      "op": "in",
+      "value": [
+        "ban_engage",
+        "ban_break_comp",
+        "ban_press_strong",
+        "ban_opp_core",
+        "ban_cover_gap",
+        "ban_idol",
+        "ban_break_heal"
+      ]
+    },
+    "subject": {
+      "fact": "bp_action",
+      "values": [
+        "ban_break_comp",
+        "ban_break_heal",
+        "ban_cover_gap",
+        "ban_engage",
+        "ban_idol",
+        "ban_opp_core",
+        "ban_press_strong",
+        "ban_tank",
+        "check_comp",
+        "pick_ally_main",
+        "pick_anti_control",
+        "pick_core_output",
+        "pick_counter",
+        "pick_damage",
+        "pick_defensive",
+        "pick_engage",
+        "pick_flex",
+        "pick_frontline",
+        "pick_heal_cut",
+        "pick_protect",
+        "pick_tempo",
+        "plan_comp",
+        "plan_lane"
+      ]
+    },
+    "expect_scope": "per_frame",
+    "severity": "high",
+    "status": "active",
+    "premise": "己方阵容缺前排",
+    "action": "留一个禁人位给对面能开团的强开辅助（东皇太一、张良、鬼谷子）；不要在自己缺前排时禁掉所有坦边",
+    "outcome": "对方开团手段少一层，开团位已封",
+    "rationale": "原文前提：己方阵容缺前排；原文结果：对方开团手段少一层，开团位已封。",
+    "deviation_hint": "留一个禁人位给对面能开团的强开辅助（东皇太一、张良、鬼谷子）。不要在自己缺前排时禁掉所有坦边。",
+    "tags": [
+      "BP",
+      "禁用（阶段一）"
+    ],
+    "source": {
+      "guide": "王者荣耀 S45「月照长安」BP 阶段决策树",
+      "locator": "BP / 禁用（阶段一） / 己方阵容缺前排",
+      "url": "",
+      "quoted": "动作：留一个 ban 位给对面能开团的强开辅助（东皇太一、张良、鬼谷子）\n动作：不要在自己缺前排时 ban 掉所有坦边",
+      "collected_at": "2026-10-22"
+    },
+    "note": ""
+  },
+  {
+    "id": "HOK-BP-BAN1-03-B",
+    "game": "hok",
+    "version": "BP-S45",
+    "title": "己方缺前排时，留一个禁人位给对面的开团位",
+    "category": "BP·禁用（阶段一）",
+    "trigger": {
+      "all": [
+        {
+          "fact": "bp_phase",
+          "op": "==",
+          "value": "ban_1"
+        },
+        {
+          "fact": "my_missing_frontline",
+          "op": "==",
+          "value": true
+        }
+      ],
+      "any": [],
+      "none": []
+    },
+    "expect": {
+      "fact": "bp_action",
+      "op": "in",
+      "value": [
+        "ban_engage"
+      ]
+    },
+    "subject": {
+      "fact": "bp_action",
+      "values": [
+        "ban_break_comp",
+        "ban_break_heal",
+        "ban_cover_gap",
+        "ban_engage",
+        "ban_idol",
+        "ban_opp_core",
+        "ban_press_strong",
+        "ban_tank",
+        "check_comp",
+        "pick_ally_main",
+        "pick_anti_control",
+        "pick_core_output",
+        "pick_counter",
+        "pick_damage",
+        "pick_defensive",
+        "pick_engage",
+        "pick_flex",
+        "pick_frontline",
+        "pick_heal_cut",
+        "pick_protect",
+        "pick_tempo",
+        "plan_comp",
+        "plan_lane"
+      ]
+    },
+    "expect_scope": "at_least_once",
+    "severity": "medium",
+    "status": "active",
+    "premise": "己方阵容缺前排",
+    "action": "留一个禁人位给对面能开团的强开辅助（东皇太一、张良、鬼谷子）；不要在自己缺前排时禁掉所有坦边",
+    "outcome": "对方开团手段少一层，开团位已封",
+    "rationale": "原文前提：己方阵容缺前排；原文结果：对方开团手段少一层，开团位已封。",
+    "deviation_hint": "留一个禁人位给对面能开团的强开辅助（东皇太一、张良、鬼谷子）。不要在自己缺前排时禁掉所有坦边。",
+    "tags": [
+      "BP",
+      "禁用（阶段一）",
+      "说明"
+    ],
+    "source": {
+      "guide": "王者荣耀 S45「月照长安」BP 阶段决策树",
+      "locator": "BP / 禁用（阶段一） / 己方阵容缺前排",
+      "url": "",
+      "quoted": "动作：留一个 ban 位给对面能开团的强开辅助（东皇太一、张良、鬼谷子）\n动作：不要在自己缺前排时 ban 掉所有坦边",
+      "collected_at": "2026-10-22"
+    },
+    "note": "攻略说「留一个 ban 位」——是分配，不是每一手都这么禁，所以按「做到过就算」的口径判。"
+  },
+  {
+    "id": "HOK-BP-PICK1-01",
+    "game": "hok",
+    "version": "BP-S45",
+    "title": "一抢不锁核心输出，先拿摇摆位",
+    "category": "BP·一抢",
+    "trigger": {
+      "all": [
+        {
+          "fact": "bp_phase",
+          "op": "==",
+          "value": "pick_1"
+        },
+        {
+          "fact": "my_output_count",
+          "op": "==",
+          "value": 0
+        }
+      ],
+      "any": [],
+      "none": []
+    },
+    "expect": {
+      "fact": "bp_action",
+      "op": "in",
+      "value": [
+        "pick_flex",
+        "pick_engage",
+        "pick_anti_control",
+        "pick_ally_main",
+        "pick_frontline",
+        "pick_tempo",
+        "pick_defensive"
+      ]
+    },
+    "subject": {
+      "fact": "bp_action",
+      "values": [
+        "ban_break_comp",
+        "ban_break_heal",
+        "ban_cover_gap",
+        "ban_engage",
+        "ban_idol",
+        "ban_opp_core",
+        "ban_press_strong",
+        "ban_tank",
+        "check_comp",
+        "pick_ally_main",
+        "pick_anti_control",
+        "pick_core_output",
+        "pick_counter",
+        "pick_damage",
+        "pick_defensive",
+        "pick_engage",
+        "pick_flex",
+        "pick_frontline",
+        "pick_heal_cut",
+        "pick_protect",
+        "pick_tempo",
+        "plan_comp",
+        "plan_lane"
+      ]
+    },
+    "expect_scope": "per_frame",
+    "severity": "medium",
+    "status": "active",
+    "premise": "己方五人都没锁定核心输出",
+    "action": "一抢拿版本强势且多位置摇摆的英雄；不锁射手、法师、野核",
+    "outcome": "对方无法预判真实分路与核心，底牌未露",
+    "rationale": "原文前提：己方五人都没锁定核心输出；原文结果：对方无法预判真实分路与核心，底牌未露。",
+    "deviation_hint": "一抢拿版本强势且多位置摇摆的英雄。不锁射手、法师、野核。",
+    "tags": [
+      "BP",
+      "一抢"
+    ],
+    "source": {
+      "guide": "王者荣耀 S45「月照长安」BP 阶段决策树",
+      "locator": "BP / 一抢 / 己方五人都没锁定核心输出",
+      "url": "",
+      "quoted": "动作：一抢拿版本强势且多位置摇摆的英雄\n动作：不锁射手、法师、野核",
+      "collected_at": "2026-10-22"
+    },
+    "note": ""
+  },
+  {
+    "id": "HOK-BP-PICK1-02",
+    "game": "hok",
+    "version": "BP-S45",
+    "title": "已有控制型坦克或辅助，一抢直接锁开团位",
+    "category": "BP·一抢",
+    "trigger": {
+      "all": [
+        {
+          "fact": "bp_phase",
+          "op": "==",
+          "value": "pick_1"
+        },
+        {
+          "fact": "my_other_has_tank_or_support",
+          "op": "==",
+          "value": true
+        }
+      ],
+      "any": [],
+      "none": []
+    },
+    "expect": {
+      "fact": "bp_action",
+      "op": "in",
+      "value": [
+        "pick_engage",
+        "pick_anti_control"
+      ]
+    },
+    "subject": {
+      "fact": "bp_action",
+      "values": [
+        "ban_break_comp",
+        "ban_break_heal",
+        "ban_cover_gap",
+        "ban_engage",
+        "ban_idol",
+        "ban_opp_core",
+        "ban_press_strong",
+        "ban_tank",
+        "check_comp",
+        "pick_ally_main",
+        "pick_anti_control",
+        "pick_core_output",
+        "pick_counter",
+        "pick_damage",
+        "pick_defensive",
+        "pick_engage",
+        "pick_flex",
+        "pick_frontline",
+        "pick_heal_cut",
+        "pick_protect",
+        "pick_tempo",
+        "plan_comp",
+        "plan_lane"
+      ]
+    },
+    "expect_scope": "per_frame",
+    "severity": "medium",
+    "status": "active",
+    "premise": "己方已有控制型坦克或辅助",
+    "action": "一抢可以直接锁开团型辅助，把开团点提前定死",
+    "outcome": "体系基调成型，开团已定",
+    "rationale": "原文前提：己方已有控制型坦克或辅助；原文结果：体系基调成型，开团已定。",
+    "deviation_hint": "一抢可以直接锁开团型辅助，把开团点提前定死。",
+    "tags": [
+      "BP",
+      "一抢",
+      "说明"
+    ],
+    "source": {
+      "guide": "王者荣耀 S45「月照长安」BP 阶段决策树",
+      "locator": "BP / 一抢 / 己方已有控制型坦克或辅助",
+      "url": "",
+      "quoted": "动作：一抢可以直接锁开团型辅助，把开团点提前定死",
+      "collected_at": "2026-10-22"
+    },
+    "note": "「己方已有」按**除这一手之外的阵容**判定：标准 BP 顺序下一抢时己方还没选人，按当前已选数判这条前提永远不成立。"
+  },
+  {
+    "id": "HOK-BP-PICK2-01",
+    "game": "hok",
+    "version": "BP-S45",
+    "title": "对方露出两个选择，二抢就该针对",
+    "category": "BP·二抢",
+    "trigger": {
+      "all": [
+        {
+          "fact": "bp_phase",
+          "op": "==",
+          "value": "pick_2"
+        },
+        {
+          "fact": "opp_picks_before",
+          "op": "==",
+          "value": 2
+        }
+      ],
+      "any": [],
+      "none": []
+    },
+    "expect": {
+      "fact": "bp_action",
+      "op": "in",
+      "value": [
+        "pick_counter",
+        "pick_heal_cut",
+        "pick_anti_control",
+        "pick_damage",
+        "pick_engage"
+      ]
+    },
+    "subject": {
+      "fact": "bp_action",
+      "values": [
+        "ban_break_comp",
+        "ban_break_heal",
+        "ban_cover_gap",
+        "ban_engage",
+        "ban_idol",
+        "ban_opp_core",
+        "ban_press_strong",
+        "ban_tank",
+        "check_comp",
+        "pick_ally_main",
+        "pick_anti_control",
+        "pick_core_output",
+        "pick_counter",
+        "pick_damage",
+        "pick_defensive",
+        "pick_engage",
+        "pick_flex",
+        "pick_frontline",
+        "pick_heal_cut",
+        "pick_protect",
+        "pick_tempo",
+        "plan_comp",
+        "plan_lane"
+      ]
+    },
+    "expect_scope": "per_frame",
+    "severity": "high",
+    "status": "active",
+    "premise": "对方已暴露两个选择",
+    "action": "二抢针对对方暴露的核心（对位克制或位置克制）；优先位置克制，它比对位克制持续更久",
+    "outcome": "对方有一路或整个体系被解，针对已落",
+    "rationale": "原文前提：对方已暴露两个选择；原文结果：对方有一路或整个体系被解，针对已落。",
+    "deviation_hint": "二抢针对对方暴露的核心（对位克制或位置克制）。优先位置克制，它比对位克制持续更久。",
+    "tags": [
+      "BP",
+      "二抢"
+    ],
+    "source": {
+      "guide": "王者荣耀 S45「月照长安」BP 阶段决策树",
+      "locator": "BP / 二抢 / 对方已暴露两个选择",
+      "url": "",
+      "quoted": "动作：二抢针对对方暴露的核心（对位克制或位置克制）\n动作：优先位置克制，它比对位克制持续更久",
+      "collected_at": "2026-10-22"
+    },
+    "note": ""
+  },
+  {
+    "id": "HOK-BP-PICK3-01",
+    "game": "hok",
+    "version": "BP-S45",
+    "title": "还缺开团点，三抢补上",
+    "category": "BP·三抢",
+    "trigger": {
+      "all": [
+        {
+          "fact": "bp_phase",
+          "op": "==",
+          "value": "pick_3"
+        },
+        {
+          "fact": "my_missing_engage",
+          "op": "==",
+          "value": true
+        }
+      ],
+      "any": [],
+      "none": []
+    },
+    "expect": {
+      "fact": "bp_action",
+      "op": "in",
+      "value": [
+        "pick_engage"
+      ]
+    },
+    "subject": {
+      "fact": "bp_action",
+      "values": [
+        "ban_break_comp",
+        "ban_break_heal",
+        "ban_cover_gap",
+        "ban_engage",
+        "ban_idol",
+        "ban_opp_core",
+        "ban_press_strong",
+        "ban_tank",
+        "check_comp",
+        "pick_ally_main",
+        "pick_anti_control",
+        "pick_core_output",
+        "pick_counter",
+        "pick_damage",
+        "pick_defensive",
+        "pick_engage",
+        "pick_flex",
+        "pick_frontline",
+        "pick_heal_cut",
+        "pick_protect",
+        "pick_tempo",
+        "plan_comp",
+        "plan_lane"
+      ]
+    },
+    "expect_scope": "per_frame",
+    "severity": "high",
+    "status": "active",
+    "premise": "己方还缺开团点",
+    "action": "三抢补开团（牛魔、夏侯惇、苏烈、鲁班大师）；S45 里牛魔与夏侯惇都被重做，优先考虑这两手",
+    "outcome": "四要素齐了，开团已补",
+    "rationale": "原文前提：己方还缺开团点；原文结果：四要素齐了，开团已补。",
+    "deviation_hint": "三抢补开团（牛魔、夏侯惇、苏烈、鲁班大师）。S45 里牛魔与夏侯惇都被重做，优先考虑这两手。",
+    "tags": [
+      "BP",
+      "三抢"
+    ],
+    "source": {
+      "guide": "王者荣耀 S45「月照长安」BP 阶段决策树",
+      "locator": "BP / 三抢 / 己方还缺开团点",
+      "url": "",
+      "quoted": "动作：三抢补开团（牛魔、夏侯惇、苏烈、鲁班大师）\n动作：S45 里牛魔与夏侯惇都被重做，优先考虑这两手",
+      "collected_at": "2026-10-22"
+    },
+    "note": ""
+  },
+  {
+    "id": "HOK-BP-PICK3-02",
+    "game": "hok",
+    "version": "BP-S45",
+    "title": "还缺前排承伤，三抢补坦",
+    "category": "BP·三抢",
+    "trigger": {
+      "all": [
+        {
+          "fact": "bp_phase",
+          "op": "==",
+          "value": "pick_3"
+        },
+        {
+          "fact": "my_missing_frontline",
+          "op": "==",
+          "value": true
+        }
+      ],
+      "any": [],
+      "none": []
+    },
+    "expect": {
+      "fact": "bp_action",
+      "op": "in",
+      "value": [
+        "pick_frontline"
+      ]
+    },
+    "subject": {
+      "fact": "bp_action",
+      "values": [
+        "ban_break_comp",
+        "ban_break_heal",
+        "ban_cover_gap",
+        "ban_engage",
+        "ban_idol",
+        "ban_opp_core",
+        "ban_press_strong",
+        "ban_tank",
+        "check_comp",
+        "pick_ally_main",
+        "pick_anti_control",
+        "pick_core_output",
+        "pick_counter",
+        "pick_damage",
+        "pick_defensive",
+        "pick_engage",
+        "pick_flex",
+        "pick_frontline",
+        "pick_heal_cut",
+        "pick_protect",
+        "pick_tempo",
+        "plan_comp",
+        "plan_lane"
+      ]
+    },
+    "expect_scope": "per_frame",
+    "severity": "high",
+    "status": "active",
+    "premise": "己方还缺前排承伤",
+    "action": "三抢补坦（夏侯惇、白起、廉颇、廉颇、庄周）",
+    "outcome": "阵容有了盾，前排已补",
+    "rationale": "原文前提：己方还缺前排承伤；原文结果：阵容有了盾，前排已补。",
+    "deviation_hint": "三抢补坦（夏侯惇、白起、廉颇、廉颇、庄周）。",
+    "tags": [
+      "BP",
+      "三抢"
+    ],
+    "source": {
+      "guide": "王者荣耀 S45「月照长安」BP 阶段决策树",
+      "locator": "BP / 三抢 / 己方还缺前排承伤",
+      "url": "",
+      "quoted": "动作：三抢补坦（夏侯惇、白起、廉颇、廉颇、庄周）",
+      "collected_at": "2026-10-22"
+    },
+    "note": ""
+  },
+  {
+    "id": "HOK-BP-PICK3-03",
+    "game": "hok",
+    "version": "BP-S45",
+    "title": "还缺远程消耗，三抢补法核",
+    "category": "BP·三抢",
+    "trigger": {
+      "all": [
+        {
+          "fact": "bp_phase",
+          "op": "==",
+          "value": "pick_3"
+        },
+        {
+          "fact": "my_missing_damage",
+          "op": "==",
+          "value": true
+        }
+      ],
+      "any": [],
+      "none": []
+    },
+    "expect": {
+      "fact": "bp_action",
+      "op": "in",
+      "value": [
+        "pick_damage"
+      ]
+    },
+    "subject": {
+      "fact": "bp_action",
+      "values": [
+        "ban_break_comp",
+        "ban_break_heal",
+        "ban_cover_gap",
+        "ban_engage",
+        "ban_idol",
+        "ban_opp_core",
+        "ban_press_strong",
+        "ban_tank",
+        "check_comp",
+        "pick_ally_main",
+        "pick_anti_control",
+        "pick_core_output",
+        "pick_counter",
+        "pick_damage",
+        "pick_defensive",
+        "pick_engage",
+        "pick_flex",
+        "pick_frontline",
+        "pick_heal_cut",
+        "pick_protect",
+        "pick_tempo",
+        "plan_comp",
+        "plan_lane"
+      ]
+    },
+    "expect_scope": "per_frame",
+    "severity": "medium",
+    "status": "active",
+    "premise": "己方还缺远程消耗",
+    "action": "三抢补法核（沈梦溪、甄姬、小乔）",
+    "outcome": "中期有血线压制手段，消耗已补",
+    "rationale": "原文前提：己方还缺远程消耗；原文结果：中期有血线压制手段，消耗已补。",
+    "deviation_hint": "三抢补法核（沈梦溪、甄姬、小乔）。",
+    "tags": [
+      "BP",
+      "三抢"
+    ],
+    "source": {
+      "guide": "王者荣耀 S45「月照长安」BP 阶段决策树",
+      "locator": "BP / 三抢 / 己方还缺远程消耗",
+      "url": "",
+      "quoted": "动作：三抢补法核（沈梦溪、甄姬、小乔）",
+      "collected_at": "2026-10-22"
+    },
+    "note": ""
+  },
+  {
+    "id": "HOK-BP-PICKL1-01",
+    "game": "hok",
+    "version": "BP-S45",
+    "title": "对方露出三个选择，这是最有效的针对窗口",
+    "category": "BP·阶段二一抢",
+    "trigger": {
+      "all": [
+        {
+          "fact": "bp_phase",
+          "op": "==",
+          "value": "pick_late_1"
+        },
+        {
+          "fact": "opp_picks_before",
+          "op": "==",
+          "value": 3
+        }
+      ],
+      "any": [],
+      "none": []
+    },
+    "expect": {
+      "fact": "bp_action",
+      "op": "in",
+      "value": [
+        "pick_counter",
+        "pick_heal_cut",
+        "pick_anti_control",
+        "pick_damage",
+        "pick_engage"
+      ]
+    },
+    "subject": {
+      "fact": "bp_action",
+      "values": [
+        "ban_break_comp",
+        "ban_break_heal",
+        "ban_cover_gap",
+        "ban_engage",
+        "ban_idol",
+        "ban_opp_core",
+        "ban_press_strong",
+        "ban_tank",
+        "check_comp",
+        "pick_ally_main",
+        "pick_anti_control",
+        "pick_core_output",
+        "pick_counter",
+        "pick_damage",
+        "pick_defensive",
+        "pick_engage",
+        "pick_flex",
+        "pick_frontline",
+        "pick_heal_cut",
+        "pick_protect",
+        "pick_tempo",
+        "plan_comp",
+        "plan_lane"
+      ]
+    },
+    "expect_scope": "per_frame",
+    "severity": "high",
+    "status": "active",
+    "premise": "对方已暴露三个选择",
+    "action": "这是最有效的针对窗口，拿能直接解掉对方核心输出的英雄；对方拿的是后排输出，就拿切后排的；对方拿的是体系核心，就拿破坏体系的",
+    "outcome": "对方核心被解，晚针对已落",
+    "rationale": "原文前提：对方已暴露三个选择；原文结果：对方核心被解，晚针对已落。",
+    "deviation_hint": "这是最有效的针对窗口，拿能直接解掉对方核心输出的英雄。对方拿的是后排输出，就拿切后排的；对方拿的是体系核心，就拿破坏体系的。",
+    "tags": [
+      "BP",
+      "阶段二一抢"
+    ],
+    "source": {
+      "guide": "王者荣耀 S45「月照长安」BP 阶段决策树",
+      "locator": "BP / 阶段二一抢 / 对方已暴露三个选择",
+      "url": "",
+      "quoted": "动作：这是最有效的针对窗口，拿能直接解掉对方核心输出的英雄\n动作：对方拿的是后排输出，就拿切后排的；对方拿的是体系核心，就拿破坏体系的",
+      "collected_at": "2026-10-22"
+    },
+    "note": ""
+  },
+  {
+    "id": "HOK-BP-PICKL1-02",
+    "game": "hok",
+    "version": "BP-S45",
+    "title": "对方缺前排，拿个能扛的",
+    "category": "BP·阶段二一抢",
+    "trigger": {
+      "all": [
+        {
+          "fact": "bp_phase",
+          "op": "==",
+          "value": "pick_late_1"
+        },
+        {
+          "fact": "opp_missing_frontline",
+          "op": "==",
+          "value": true
+        }
+      ],
+      "any": [],
+      "none": []
+    },
+    "expect": {
+      "fact": "bp_action",
+      "op": "in",
+      "value": [
+        "pick_frontline",
+        "pick_defensive"
+      ]
+    },
+    "subject": {
+      "fact": "bp_action",
+      "values": [
+        "ban_break_comp",
+        "ban_break_heal",
+        "ban_cover_gap",
+        "ban_engage",
+        "ban_idol",
+        "ban_opp_core",
+        "ban_press_strong",
+        "ban_tank",
+        "check_comp",
+        "pick_ally_main",
+        "pick_anti_control",
+        "pick_core_output",
+        "pick_counter",
+        "pick_damage",
+        "pick_defensive",
+        "pick_engage",
+        "pick_flex",
+        "pick_frontline",
+        "pick_heal_cut",
+        "pick_protect",
+        "pick_tempo",
+        "plan_comp",
+        "plan_lane"
+      ]
+    },
+    "expect_scope": "per_frame",
+    "severity": "medium",
+    "status": "active",
+    "premise": "对方阵容缺少前排",
+    "action": "拿一个能扛的战士或坦克，让对方打不动你",
+    "outcome": "对方开不了团也切不动，对方缺盾",
+    "rationale": "原文前提：对方阵容缺少前排；原文结果：对方开不了团也切不动，对方缺盾。",
+    "deviation_hint": "拿一个能扛的战士或坦克，让对方打不动你。",
+    "tags": [
+      "BP",
+      "阶段二一抢"
+    ],
+    "source": {
+      "guide": "王者荣耀 S45「月照长安」BP 阶段决策树",
+      "locator": "BP / 阶段二一抢 / 对方阵容缺少前排",
+      "url": "",
+      "quoted": "动作：拿一个能扛的战士或坦克，让对方打不动你",
+      "collected_at": "2026-10-22"
+    },
+    "note": ""
+  },
+  {
+    "id": "HOK-BP-PICKLAST-01",
+    "game": "hok",
+    "version": "BP-S45",
+    "title": "还缺一个位置，末选先补缺口不看对方",
+    "category": "BP·阶段二末选",
+    "trigger": {
+      "all": [
+        {
+          "fact": "bp_phase",
+          "op": "==",
+          "value": "pick_last"
+        },
+        {
+          "fact": "my_picks_before",
+          "op": "==",
+          "value": 4
+        }
+      ],
+      "any": [],
+      "none": []
+    },
+    "expect": {
+      "fact": "bp_action",
+      "op": "in",
+      "value": [
+        "pick_frontline",
+        "pick_engage",
+        "pick_protect",
+        "pick_damage"
+      ]
+    },
+    "subject": {
+      "fact": "bp_action",
+      "values": [
+        "ban_break_comp",
+        "ban_break_heal",
+        "ban_cover_gap",
+        "ban_engage",
+        "ban_idol",
+        "ban_opp_core",
+        "ban_press_strong",
+        "ban_tank",
+        "check_comp",
+        "pick_ally_main",
+        "pick_anti_control",
+        "pick_core_output",
+        "pick_counter",
+        "pick_damage",
+        "pick_defensive",
+        "pick_engage",
+        "pick_flex",
+        "pick_frontline",
+        "pick_heal_cut",
+        "pick_protect",
+        "pick_tempo",
+        "plan_comp",
+        "plan_lane"
+      ]
+    },
+    "expect_scope": "per_frame",
+    "severity": "high",
+    "status": "active",
+    "premise": "己方阵容还缺一个位置",
+    "action": "先补缺口，不看对方；缺开团补开团，缺反手补反手，缺伤害补伤害",
+    "outcome": "五件套凑齐，阵容已齐",
+    "rationale": "原文前提：己方阵容还缺一个位置；原文结果：五件套凑齐，阵容已齐。",
+    "deviation_hint": "先补缺口，不看对方。缺开团补开团，缺反手补反手，缺伤害补伤害。",
+    "tags": [
+      "BP",
+      "阶段二末选"
+    ],
+    "source": {
+      "guide": "王者荣耀 S45「月照长安」BP 阶段决策树",
+      "locator": "BP / 阶段二末选 / 己方阵容还缺一个位置",
+      "url": "",
+      "quoted": "动作：先补缺口，不看对方\n动作：缺开团补开团，缺反手补反手，缺伤害补伤害",
+      "collected_at": "2026-10-22"
+    },
+    "note": ""
+  },
+  {
+    "id": "HOK-BP-PICKLAST-02",
+    "game": "hok",
+    "version": "BP-S45",
+    "title": "阵容已齐，末选拿终极反手",
+    "category": "BP·阶段二末选",
+    "trigger": {
+      "all": [
+        {
+          "fact": "bp_phase",
+          "op": "==",
+          "value": "pick_last"
+        },
+        {
+          "fact": "my_picks_before",
+          "op": ">=",
+          "value": 5
+        }
+      ],
+      "any": [],
+      "none": []
+    },
+    "expect": {
+      "fact": "bp_action",
+      "op": "in",
+      "value": [
+        "pick_counter",
+        "pick_anti_control",
+        "pick_heal_cut"
+      ]
+    },
+    "subject": {
+      "fact": "bp_action",
+      "values": [
+        "ban_break_comp",
+        "ban_break_heal",
+        "ban_cover_gap",
+        "ban_engage",
+        "ban_idol",
+        "ban_opp_core",
+        "ban_press_strong",
+        "ban_tank",
+        "check_comp",
+        "pick_ally_main",
+        "pick_anti_control",
+        "pick_core_output",
+        "pick_counter",
+        "pick_damage",
+        "pick_defensive",
+        "pick_engage",
+        "pick_flex",
+        "pick_frontline",
+        "pick_heal_cut",
+        "pick_protect",
+        "pick_tempo",
+        "plan_comp",
+        "plan_lane"
+      ]
+    },
+    "expect_scope": "per_frame",
+    "severity": "medium",
+    "status": "active",
+    "premise": "己方阵容完整",
+    "action": "拿针对对方核心输出的英雄（终极针对）；对方中单是高爆发刺客，就拿带控制且护盾厚的辅助对位保护；对方上路是长手消耗，就拿强突进的战士压制",
+    "outcome": "对方核心被按住，终极反手已落",
+    "rationale": "原文前提：己方阵容完整；原文结果：对方核心被按住，终极反手已落。",
+    "deviation_hint": "拿针对对方核心输出的英雄（终极针对）。对方中单是高爆发刺客，就拿带控制且护盾厚的辅助对位保护；对方上路是长手消耗，就拿强突进的战士压制。",
+    "tags": [
+      "BP",
+      "阶段二末选"
+    ],
+    "source": {
+      "guide": "王者荣耀 S45「月照长安」BP 阶段决策树",
+      "locator": "BP / 阶段二末选 / 己方阵容完整",
+      "url": "",
+      "quoted": "动作：拿针对对方核心输出的英雄（终极 counter）\n动作：对方中单是高爆发刺客，就拿带控制且护盾厚的辅助对位保护；对方上路是长手消耗，就拿强突进的战士压制",
+      "collected_at": "2026-10-22"
+    },
+    "note": ""
+  },
+  {
+    "id": "HOK-BP-PICKLAST-04",
+    "game": "hok",
+    "version": "BP-S45",
+    "title": "有摇摆位就留到最后一手亮",
+    "category": "BP·阶段二末选",
+    "trigger": {
+      "all": [
+        {
+          "fact": "bp_phase",
+          "op": "==",
+          "value": "pick_last"
+        },
+        {
+          "fact": "my_has_flex",
+          "op": "==",
+          "value": true
+        }
+      ],
+      "any": [],
+      "none": []
+    },
+    "expect": {
+      "fact": "bp_action",
+      "op": "in",
+      "value": [
+        "pick_flex"
+      ]
+    },
+    "subject": {
+      "fact": "bp_action",
+      "values": [
+        "ban_break_comp",
+        "ban_break_heal",
+        "ban_cover_gap",
+        "ban_engage",
+        "ban_idol",
+        "ban_opp_core",
+        "ban_press_strong",
+        "ban_tank",
+        "check_comp",
+        "pick_ally_main",
+        "pick_anti_control",
+        "pick_core_output",
+        "pick_counter",
+        "pick_damage",
+        "pick_defensive",
+        "pick_engage",
+        "pick_flex",
+        "pick_frontline",
+        "pick_heal_cut",
+        "pick_protect",
+        "pick_tempo",
+        "plan_comp",
+        "plan_lane"
+      ]
+    },
+    "expect_scope": "per_frame",
+    "severity": "low",
+    "status": "active",
+    "premise": "己方有摇摆位英雄但对面还没识别",
+    "action": "把摇摆位留到最后一手亮出来",
+    "outcome": "对面来不及调整针对，分路未暴露",
+    "rationale": "原文前提：己方有摇摆位英雄但对面还没识别；原文结果：对面来不及调整针对，分路未暴露。",
+    "deviation_hint": "把摇摆位留到最后一手亮出来。",
+    "tags": [
+      "BP",
+      "阶段二末选",
+      "说明"
+    ],
+    "source": {
+      "guide": "王者荣耀 S45「月照长安」BP 阶段决策树",
+      "locator": "BP / 阶段二末选 / 己方有摇摆位英雄但对面还没识别",
+      "url": "",
+      "quoted": "动作：把摇摆位留到最后一手亮出来",
+      "collected_at": "2026-10-22"
+    },
+    "note": "「对面还没识别」指的是对方没摸清你的分路；系统能判的是「己方确实有摇摆位」，另一半按语境取末选环节。"
+  },
+  {
+    "id": "HOK-BP-FINAL-01",
+    "game": "hok",
+    "version": "BP-S45",
+    "title": "收尾逐条核对阵容四要素",
+    "category": "BP·阵容完整性检查",
+    "trigger": {
+      "all": [
+        {
+          "fact": "bp_phase",
+          "op": "==",
+          "value": "final_check"
+        },
+        {
+          "fact": "my_picks_before",
+          "op": ">=",
+          "value": 5
+        }
+      ],
+      "any": [],
+      "none": []
+    },
+    "expect": {
+      "fact": "bp_action",
+      "op": "in",
+      "value": [
+        "check_comp"
+      ]
+    },
+    "subject": {
+      "fact": "bp_action",
+      "values": [
+        "ban_break_comp",
+        "ban_break_heal",
+        "ban_cover_gap",
+        "ban_engage",
+        "ban_idol",
+        "ban_opp_core",
+        "ban_press_strong",
+        "ban_tank",
+        "check_comp",
+        "pick_ally_main",
+        "pick_anti_control",
+        "pick_core_output",
+        "pick_counter",
+        "pick_damage",
+        "pick_defensive",
+        "pick_engage",
+        "pick_flex",
+        "pick_frontline",
+        "pick_heal_cut",
+        "pick_protect",
+        "pick_tempo",
+        "plan_comp",
+        "plan_lane"
+      ]
+    },
+    "expect_scope": "per_frame",
+    "severity": "medium",
+    "status": "active",
+    "premise": "五个位置各有一名英雄",
+    "action": "逐条核对四要素——有没有能吃伤害的、有没有开团、对方开团时有没有人能打断、伤害类型是不是全物理或全法术；物理与法术伤害要均衡，最好有一手真伤，否则对面的反伤刺甲与魔女斗篷会同时生效",
+    "outcome": "阵容成立，四要素齐",
+    "rationale": "原文前提：五个位置各有一名英雄；原文结果：阵容成立，四要素齐。",
+    "deviation_hint": "逐条核对四要素——有没有能吃伤害的、有没有开团、对方开团时有没有人能打断、伤害类型是不是全物理或全法术。物理与法术伤害要均衡，最好有一手真伤，否则对面的反伤刺甲与魔女斗篷会同时生效。",
+    "tags": [
+      "BP",
+      "阵容完整性检查"
+    ],
+    "source": {
+      "guide": "王者荣耀 S45「月照长安」BP 阶段决策树",
+      "locator": "BP / 阵容完整性检查 / 五个位置各有一名英雄",
+      "url": "",
+      "quoted": "动作：逐条核对四要素——有没有能吃伤害的、有没有开团、对方开团时有没有人能打断、伤害类型是不是全物理或全法术\n动作：物理与法术伤害要均衡，最好有一手真伤，否则对面的反伤刺甲与魔女斗篷会同时生效",
+      "collected_at": "2026-10-22"
+    },
+    "note": ""
+  },
+  {
+    "id": "HOK-BP-FINAL-02",
+    "game": "hok",
+    "version": "BP-S45",
+    "title": "全队五个输出位，得换掉一个",
+    "category": "BP·阵容完整性检查",
+    "trigger": {
+      "all": [
+        {
+          "fact": "bp_phase",
+          "op": "==",
+          "value": "final_check"
+        },
+        {
+          "fact": "my_all_output",
+          "op": "==",
+          "value": true
+        }
+      ],
+      "any": [],
+      "none": []
+    },
+    "expect": {
+      "fact": "bp_action",
+      "op": "in",
+      "value": [
+        "check_comp"
+      ]
+    },
+    "subject": {
+      "fact": "bp_action",
+      "values": [
+        "ban_break_comp",
+        "ban_break_heal",
+        "ban_cover_gap",
+        "ban_engage",
+        "ban_idol",
+        "ban_opp_core",
+        "ban_press_strong",
+        "ban_tank",
+        "check_comp",
+        "pick_ally_main",
+        "pick_anti_control",
+        "pick_core_output",
+        "pick_counter",
+        "pick_damage",
+        "pick_defensive",
+        "pick_engage",
+        "pick_flex",
+        "pick_frontline",
+        "pick_heal_cut",
+        "pick_protect",
+        "pick_tempo",
+        "plan_comp",
+        "plan_lane"
+      ]
+    },
+    "expect_scope": "at_least_once",
+    "severity": "high",
+    "status": "active",
+    "premise": "全队五个输出位",
+    "action": "改选一个坦克或战士，牺牲输出换存活",
+    "outcome": "团战有站得住的人，前排已补",
+    "rationale": "原文前提：全队五个输出位；原文结果：团战有站得住的人，前排已补。",
+    "deviation_hint": "改选一个坦克或战士，牺牲输出换存活。",
+    "tags": [
+      "BP",
+      "阵容完整性检查",
+      "说明"
+    ],
+    "source": {
+      "guide": "王者荣耀 S45「月照长安」BP 阶段决策树",
+      "locator": "BP / 阵容完整性检查 / 全队五个输出位",
+      "url": "",
+      "quoted": "动作：改选一个坦克或战士，牺牲输出换存活",
+      "collected_at": "2026-10-22"
+    },
+    "note": "「全队五个输出位」是收尾检查的**发现**，改法是改选一个坦克或战士；系统判的是「有没有做收尾检查」，具体换谁由玩家定。"
+  },
+  {
+    "id": "HOK-BP-FINAL-05",
+    "game": "hok",
+    "version": "BP-S45",
+    "title": "双刺客阵容，前期要反野、中期执行 131",
+    "category": "BP·阵容完整性检查",
+    "trigger": {
+      "all": [
+        {
+          "fact": "bp_phase",
+          "op": "==",
+          "value": "final_check"
+        },
+        {
+          "fact": "my_assassin_count",
+          "op": "==",
+          "value": 2
+        }
+      ],
+      "any": [],
+      "none": []
+    },
+    "expect": {
+      "fact": "bp_action",
+      "op": "in",
+      "value": [
+        "check_comp"
+      ]
+    },
+    "subject": {
+      "fact": "bp_action",
+      "values": [
+        "ban_break_comp",
+        "ban_break_heal",
+        "ban_cover_gap",
+        "ban_engage",
+        "ban_idol",
+        "ban_opp_core",
+        "ban_press_strong",
+        "ban_tank",
+        "check_comp",
+        "pick_ally_main",
+        "pick_anti_control",
+        "pick_core_output",
+        "pick_counter",
+        "pick_damage",
+        "pick_defensive",
+        "pick_engage",
+        "pick_flex",
+        "pick_frontline",
+        "pick_heal_cut",
+        "pick_protect",
+        "pick_tempo",
+        "plan_comp",
+        "plan_lane"
+      ]
+    },
+    "expect_scope": "at_least_once",
+    "severity": "medium",
+    "status": "active",
+    "premise": "己方是双刺客阵容",
+    "action": "开局 2 分钟内完成首波入侵反野，用双惩击效率抢敌方红蓝 BUFF；中期执行 131 战术——双刺分带边线，三人抱团中路施压",
+    "outcome": "前期节奏与中期资源同时拿到，双刺已成型",
+    "rationale": "原文前提：己方是双刺客阵容；原文结果：前期节奏与中期资源同时拿到，双刺已成型。",
+    "deviation_hint": "开局 2 分钟内完成首波入侵反野，用双惩击效率抢敌方红蓝 BUFF。中期执行 131 战术——双刺分带边线，三人抱团中路施压。",
+    "tags": [
+      "BP",
+      "阵容完整性检查",
+      "说明"
+    ],
+    "source": {
+      "guide": "王者荣耀 S45「月照长安」BP 阶段决策树",
+      "locator": "BP / 阵容完整性检查 / 己方是双刺客阵容",
+      "url": "",
+      "quoted": "动作：开局 2 分钟内完成首波入侵反野，用双惩击效率抢敌方红蓝 BUFF\n动作：中期执行 131 战术——双刺分带边线，三人抱团中路施压",
+      "collected_at": "2026-10-22"
+    },
+    "note": "攻略给的是局内打法（2 分钟反野、131 战术），BP 阶段能判的只有「你选了双刺客这件事有没有被检查过」，所以期望动作是收尾检查。"
+  }
+]

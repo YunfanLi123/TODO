@@ -1,0 +1,22 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+venv/
+
+# Local env / secrets
+.env
+.env.local
+
+# Runtime artifacts
+*.log
+*.db
+*.sqlite
+*.sqlite3
+*.bak
+*.tmp
+
+# OS
+.DS_Store
+Thumbs.db
