@@ -1,0 +1,648 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>对局复盘系统</title>
+{% include "_theme_head.html" %}
+<link rel="stylesheet" href="{{ asset('report.css') }}">
+<link rel="stylesheet" href="{{ asset('app.css') }}">
+<link rel="stylesheet" href="{{ asset('nav.css') }}">
+<link rel="stylesheet" href="{{ asset('mascot.css') }}">
+<link rel="stylesheet" href="{{ asset('dialog.css') }}">
+</head>
+<body class="app-body">
+{% set nav_active = "index" %}
+{% include "_header.html" %}
+
+{# workbench：让上传模块把整块空白占满。 #}
+<main class="app-main workbench">
+
+  <div class="page-head">
+    <div>
+      <h1>对局复盘系统</h1>
+    </div>
+  </div>
+
+  <form class="upload-card" id="up">
+    <div class="up-head">
+      <h2>上传对局视频</h2>
+    </div>
+
+    {# 舞台：角色的地盘，右边一整列。
+       框里不放任何文字 —— 框是它的地盘，不是说明区。
+       形象是本项目重画的（照着「圆身 + 羽耳 + 泡泡」自己画），
+       不是任何现成美术资源的复制品。理由写在 app/static/mascot.css 开头。 #}
+    <div class="up-body">
+    <div class="mascot-stage" id="stage">
+      <div class="mascot-drift">
+        <div class="mascot" id="mascot">
+          <input type="file" id="mascotFile" accept="video/*" class="ms-file"
+                 aria-label="选择对局视频">
+<svg viewBox="0 0 240 300" role="img" aria-label="梦奇" data-ms-bounds="16 294">
+          <defs>
+            <radialGradient id="msGlow" cx="50%" cy="50%" r="50%">
+              <stop offset="0%" stop-color="rgba(140,150,235,.50)"/>
+              <stop offset="100%" stop-color="rgba(140,150,235,0)"/>
+            </radialGradient>
+            {# 泡泡：3D 的关键在「高光 + 边缘暗 + 底部反光」 #}
+            <radialGradient id="msBubble" cx="34%" cy="26%" r="78%">
+              <stop offset="0%" stop-color="#FFFFFF" stop-opacity=".96"/>
+              <stop offset="38%" stop-color="#E9E4FF" stop-opacity=".62"/>
+              <stop offset="82%" stop-color="#C3B4EE" stop-opacity=".48"/>
+              <stop offset="100%" stop-color="#A899E0" stop-opacity=".62"/>
+            </radialGradient>
+            {# 头和身各自一个球体。3D 画法里**就该各算各的** ——
+               画成同一条渐变反而会糊成一张平面。
+               光源统一在左上，所以两个高光区都偏左上。 #}
+            <radialGradient id="msHeadG" gradientUnits="userSpaceOnUse"
+                            cx="96" cy="82" r="86">
+              <stop offset="0%" stop-color="#F0F2FF"/>
+              <stop offset="34%" stop-color="#C8D0F9"/>
+              <stop offset="68%" stop-color="#A6B2EE"/>
+              <stop offset="100%" stop-color="#8492DD"/>
+            </radialGradient>
+            <radialGradient id="msBodyG" gradientUnits="userSpaceOnUse"
+                            cx="98" cy="142" r="92">
+              <stop offset="0%" stop-color="#DCE2FC"/>
+              <stop offset="40%" stop-color="#B3BEF2"/>
+              <stop offset="76%" stop-color="#949FDF"/>
+              <stop offset="100%" stop-color="#7A87D4"/>
+            </radialGradient>
+            {# 肚子：中间亮、四周化开，才像鼓起来的一团 #}
+            <radialGradient id="msBellyG" gradientUnits="userSpaceOnUse"
+                            cx="120" cy="164" r="42">
+              <stop offset="0%" stop-color="#E4E9FF" stop-opacity=".62"/>
+              <stop offset="70%" stop-color="#D5DCFB" stop-opacity=".24"/>
+              <stop offset="100%" stop-color="#C6CFF8" stop-opacity="0"/>
+            </radialGradient>
+            {# 头与身之间的接触阴影 —— 有了它，两个球才真的叠在一起 #}
+            <radialGradient id="msContactG" gradientUnits="userSpaceOnUse"
+                            cx="120" cy="150" r="58">
+              <stop offset="0%" stop-color="#4A4A86" stop-opacity=".42"/>
+              <stop offset="65%" stop-color="#4A4A86" stop-opacity=".16"/>
+              <stop offset="100%" stop-color="#4A4A86" stop-opacity="0"/>
+            </radialGradient>
+            {# 耳朵内侧偏暗，才有厚度 #}
+            <linearGradient id="msEarG" gradientUnits="userSpaceOnUse"
+                            x1="90" y1="30" x2="110" y2="86">
+              <stop offset="0%" stop-color="#8B87D6"/>
+              <stop offset="100%" stop-color="#5E5AB4"/>
+            </linearGradient>
+            <filter id="msBlur" x="-40%" y="-40%" width="180%" height="180%">
+              <feGaussianBlur stdDeviation="6"/>
+            </filter>
+            <filter id="msDrop" x="-30%" y="-30%" width="160%" height="160%">
+              <feDropShadow dx="0" dy="7" stdDeviation="8"
+                            flood-color="#3E3E78" flood-opacity=".26"/>
+            </filter>
+
+            {# 脸裁到头的轮廓里。视线平移的时候五官跟着走，
+               但走不出脑袋 —— 这道裁剪就是那道保险。
+               （裁剪挂在**没被平移**的那一层上：挂在脸自己身上会跟着脸走，
+                 等于没裁。） #}
+            <clipPath id="msHeadClip">
+              <ellipse cx="120" cy="106" rx="57" ry="51"/>
+            </clipPath>
+
+            {# ---------- 眼皮：靠裁剪，不靠补丁 ----------
+               早先的画法是拿一块「和头同色」的东西盖在眼睛上。
+               那块东西跟着眼睛一起动，而头的渐变是固定在头坐标系里的
+               —— 一动就对不上，于是眼睛上方浮出一块补丁形状的浅色。
+
+               现在改成裁剪：这块矩形的上沿就是眼皮线，
+               线以上的眼睛不画，露出的是**画在下面的头本身**，
+               于是根本没有补丁，也就没有错位。
+
+               两块矩形，两件事：
+                 ms-lid-rest  静止眼皮（睁多大）—— 状态决定，可以平滑过渡
+                 ms-blink-cut  眨眼       —— 时间决定，自己按周期走
+               两个都在「线以下可见」，套起来就是取更靠下的那条线。 #}
+            <clipPath id="msLidRest" clipPathUnits="userSpaceOnUse">
+              <rect class="ms-lid-rest" x="78" y="95" width="80" height="120"/>
+            </clipPath>
+            <clipPath id="msLidBlink" clipPathUnits="userSpaceOnUse">
+              <rect class="ms-blink-cut" x="78" y="60" width="80" height="140"/>
+            </clipPath>
+          </defs>
+
+          <circle class="ms-halo" cx="120" cy="112" r="108" fill="url(#msGlow)"/>
+
+          {# 漩涡：老版大招「梦境漩涡」的形 —— 平时不存在，放大招时成型 #}
+          <g class="ms-vortex">
+            <g class="ms-vortex-inner">
+              <circle cx="120" cy="112" r="30" stroke-dasharray="54 34"/>
+              <circle cx="120" cy="112" r="52" stroke-dasharray="68 46"/>
+              <circle cx="120" cy="112" r="76" stroke-dasharray="88 60"/>
+              <circle cx="120" cy="112" r="100" stroke-dasharray="106 74"/>
+            </g>
+          </g>
+
+          {# 梦屑：待机时往上飘，放大招时绕着转 #}
+          <g class="ms-wisps">
+            <circle class="ms-wisp" cx="34" cy="156" r="5" fill="#9FC6F5"
+                    style="--dx: 20px; --dy: -70px; --wd: 0s"/>
+            <circle class="ms-wisp" cx="208" cy="138" r="4" fill="#7FE0DC"
+                    style="--dx: -24px; --dy: -60px; --wd: 1.4s"/>
+            <circle class="ms-wisp" cx="154" cy="24" r="3.4" fill="#C9BDF7"
+                    style="--dx: 12px; --dy: -52px; --wd: 2.6s"/>
+          </g>
+
+          {# 解析完成时才冒出来的星星 #}
+          <g class="ms-stars">
+            <path class="ms-star" fill="#FFD76A" transform="translate(48,78)"
+                  style="--sd: 0s"
+                  d="M0 -8 L2.4 -2.4 L8 0 L2.4 2.4 L0 8 L-2.4 2.4 L-8 0 L-2.4 -2.4 Z"/>
+            <path class="ms-star" fill="#FFC85C" transform="translate(194,72)"
+                  style="--sd: .08s"
+                  d="M0 -7 L2 -2 L7 0 L2 2 L0 7 L-2 2 L-7 0 L-2 -2 Z"/>
+            <path class="ms-star" fill="#FFE08C" transform="translate(28,146)"
+                  style="--sd: .16s"
+                  d="M0 -6 L1.8 -1.8 L6 0 L1.8 1.8 L0 6 L-1.8 1.8 L-6 0 L-1.8 -1.8 Z"/>
+            <path class="ms-star" fill="#FFD76A" transform="translate(212,142)"
+                  style="--sd: .24s"
+                  d="M0 -6 L1.8 -1.8 L6 0 L1.8 1.8 L0 6 L-1.8 1.8 L-6 0 L-1.8 -1.8 Z"/>
+            <path class="ms-star" fill="#FFE9A8" transform="translate(88,20)"
+                  style="--sd: .32s"
+                  d="M0 -7 L2 -2 L7 0 L2 2 L0 7 L-2 2 L-7 0 L-2 -2 Z"/>
+            <path class="ms-star" fill="#FFC85C" transform="translate(156,12)"
+                  style="--sd: .4s"
+                  d="M0 -5 L1.5 -1.5 L5 0 L1.5 1.5 L0 5 L-1.5 1.5 L-5 0 L-1.5 -1.5 Z"/>
+          </g>
+
+          {# 整体前倾：跟着视线方向歪一点点。
+             支点在泡泡底部 —— 它悬着，重心在下面才自然。 #}
+          <g class="ms-lean">
+          <g class="ms-cloud" filter="url(#msDrop)">
+            {# 泡泡：它坐的那颗 #}
+            <g class="ms-bubble">
+              <circle cx="120" cy="244" r="50" fill="url(#msBubble)"/>
+              <ellipse cx="102" cy="220" rx="15" ry="9" fill="#FFFFFF" opacity=".62"
+                       transform="rotate(-30 102 220)"/>
+              <ellipse cx="142" cy="266" rx="11" ry="6" fill="#FFFFFF" opacity=".22"
+                       transform="rotate(-16 142 266)"/>
+              <path d="M88 262 q32 26 64 0" fill="none" stroke="#FFFFFF"
+                    stroke-width="3" opacity=".38" stroke-linecap="round"/>
+            </g>
+
+            {# 尾巴：卷在右边，胖猫的那一点 #}
+            <path class="ms-tail" d="M180 188 C 206 190 216 164 204 152
+                                     C 196 144 188 151 194 158"
+                  fill="none" stroke="#96A4EA" stroke-width="12" stroke-linecap="round"/>
+
+            {# 身：大身板，比头还宽 —— 胖猫就是这么长的。 #}
+            <ellipse class="ms-body-fill" cx="120" cy="170" rx="64" ry="52"
+                     fill="url(#msBodyG)"/>
+            <ellipse class="ms-belly" cx="120" cy="170" rx="48" ry="38"
+                     fill="url(#msBellyG)"/>
+
+            {# 前爪：猫蹲坐着时搭在前面的一对小爪。游泳时要划，所以能转。 #}
+            <g class="ms-paw ms-paw-l" fill="#A7B3EC">
+              <ellipse cx="100" cy="210" rx="16" ry="11"/>
+            </g>
+            <g class="ms-paw ms-paw-r" fill="#A7B3EC">
+              <ellipse cx="140" cy="210" rx="16" ry="11"/>
+            </g>
+
+            {# 手臂：游泳时划水、下坠时张开。放在身子**外面**才看得见。 #}
+            <g class="ms-arm ms-arm-l" fill="url(#msBodyG)">
+              <ellipse cx="56" cy="154" rx="10" ry="14" transform="rotate(22 56 154)"/>
+            </g>
+            <g class="ms-arm ms-arm-r" fill="url(#msBodyG)">
+              <ellipse cx="184" cy="154" rx="10" ry="14" transform="rotate(-22 184 154)"/>
+            </g>
+
+            {# 头身接触阴影 #}
+            <ellipse class="ms-contact" cx="120" cy="150" rx="58" ry="22"
+                     fill="url(#msContactG)" filter="url(#msBlur)"/>
+
+            {# 头：连着耳朵和五官一起呼吸，所以五官不会从头上滑下来 #}
+            <g class="ms-head-wrap">
+            <ellipse class="ms-head" cx="120" cy="106" rx="57" ry="51"
+                     fill="url(#msHeadG)"/>
+
+            {# 羽耳：梦奇最认得出的特征，还是留着 #}
+            <g class="ms-ear ms-ear-l" transform="translate(84,74) rotate(-26)">
+              <path d="M0 0 C -9 -17 -10 -42 0 -58 C 10 -42 9 -17 0 0 Z" fill="#5FC9C4"/>
+              <path d="M0 0 C -10 -15 -11 -35 0 -50 C 11 -35 10 -15 0 0 Z"
+                    fill="url(#msEarG)" transform="rotate(16)"/>
+              <path d="M0 0 C -7 -12 -8 -28 0 -40 C 8 -28 7 -12 0 0 Z"
+                    fill="#8E8AD8" transform="rotate(32)"/>
+            </g>
+            <g class="ms-ear ms-ear-r" transform="translate(156,74) rotate(26)">
+              <path d="M0 0 C -9 -17 -10 -42 0 -58 C 10 -42 9 -17 0 0 Z" fill="#5FC9C4"/>
+              <path d="M0 0 C -10 -15 -11 -35 0 -50 C 11 -35 10 -15 0 0 Z"
+                    fill="url(#msEarG)" transform="rotate(-16)"/>
+              <path d="M0 0 C -7 -12 -8 -28 0 -40 C 8 -28 7 -12 0 0 Z"
+                    fill="#8E8AD8" transform="rotate(-32)"/>
+            </g>
+
+            {# ---------- 脸 ----------
+               眼白 + 瞳孔 + 眼皮，三层。
+               早先画的是两个纯黑椭圆 —— 那不叫眼睛，那叫两个洞。
+               眼白给眼睛「是个球」的体积感，瞳孔给焦点，
+               眼皮给慵懒。三样缺一不可。 #}
+            <g clip-path="url(#msHeadClip)">
+              <g class="ms-face">
+                <g class="ms-drift">
+
+                  {# 左眼 #}
+                  <g class="ms-eye ms-eye-l">
+                    <g clip-path="url(#msLidRest)">
+                      <g clip-path="url(#msLidBlink)">
+                        <ellipse class="ms-sclera" cx="98" cy="110" rx="14" ry="15"
+                                 fill="#FBFAFF"/>
+                        <g class="ms-pupil">
+                          <circle cx="98" cy="110" r="7.6" fill="#2B2450"/>
+                          <circle class="ms-shine" cx="94.5" cy="105.5" r="3.1"
+                                  fill="#FFFFFF"/>
+                        </g>
+                      </g>
+                    </g>
+                  </g>
+
+                  {# 右眼 #}
+                  <g class="ms-eye ms-eye-r">
+                    <g clip-path="url(#msLidRest)">
+                      <g clip-path="url(#msLidBlink)">
+                        <ellipse class="ms-sclera" cx="142" cy="110" rx="14" ry="15"
+                                 fill="#FBFAFF"/>
+                        <g class="ms-pupil">
+                          <circle cx="142" cy="110" r="7.6" fill="#2B2450"/>
+                          <circle class="ms-shine" cx="138.5" cy="105.5" r="3.1"
+                                  fill="#FFFFFF"/>
+                        </g>
+                      </g>
+                    </g>
+                  </g>
+
+                  {# 鼻子：小三角，粉色 #}
+                  <path class="ms-nose" d="M115.5 124 q4.5 -5 9 0 q-4.5 6 -9 0 Z"
+                        fill="#E88FAE"/>
+
+                  {# 嘴：一条软软的弧。解析完成时换成张开的嘴。 #}
+                  <path class="ms-mouth" d="M106 132 Q120 145 134 132"
+                        fill="none" stroke="#4A4478" stroke-width="3.6"
+                        stroke-linecap="round"/>
+                  {# 完成时的大笑。
+                     原来是「两道向上弯的弧 + 一块深色嘴腔」——
+                     那两道弧长在眼睛的位置上，读起来是**怒眉**，
+                     深色嘴腔又像在吼，整张脸就凶了。
+                     现在：眼睛照旧睁着（有神采），嘴换成玫瑰色的笑口
+                     加一条舌头 —— 看得出来是高兴，不是发火。 #}
+                  <g class="ms-mouth-open">
+                    <path d="M102 130 Q120 137 138 130 Q120 165 102 130 Z"
+                          fill="#C0668B"/>
+                    <ellipse cx="120" cy="142" rx="11" ry="5.4" fill="#F7B9CB"/>
+                  </g>
+
+                  {# 腮红 #}
+                  <g class="ms-blush" fill="#F2A0BE" opacity=".45">
+                    <ellipse cx="80" cy="126" rx="10" ry="5.5"/>
+                    <ellipse cx="160" cy="126" rx="10" ry="5.5"/>
+                  </g>
+                </g>
+              </g>
+            </g>
+
+            {# 闭着的眼睛：一条垂下来的弧。
+               解析的时候眼睛要**彻底闭住** —— 不是眯着，是闭紧。
+               只剩一条线，说明它闭着眼在使劲。 #}
+            <g class="ms-eye-closed" fill="none" stroke="#2B2450"
+               stroke-width="4.4" stroke-linecap="round">
+              <path d="M90 112 Q98 120 106 112"/>
+              <path d="M134 112 Q142 120 150 112"/>
+            </g>
+
+            {# 胡子：在裁剪层**外面**，不然会被头的轮廓切掉一截。
+               也躲着腮红走 —— 两样东西压在一起就成脏了。 #}
+            <g class="ms-whisker" stroke="#8E8AD8" stroke-width="1.8"
+               stroke-linecap="round" opacity=".42">
+              <path d="M88 118 L70 112"/>
+              <path d="M88 133 L70 137"/>
+              <path d="M152 118 L170 112"/>
+              <path d="M152 133 L170 137"/>
+            </g>
+            </g>
+            </g>
+          </g>
+        </svg>
+        </div>
+      </div>
+    </div>
+
+    {# 左列：控件。文字与进度条只在这一列里 ——
+       以前它们是整行宽度的，而角色是绝对定位铺满整张卡，
+       两者一交叉，「上传并扫描」四个字就压在了角色脸上。
+       现在两列各占各的，结构上就压不上了。 #}
+    <div class="up-content">
+    <div class="picked-line" id="pickedLine" style="display:none">
+      <span class="picked-name" id="pickedName"></span>
+      <span class="picked-size" id="pickedSize"></span>
+    </div>
+
+    <button class="btn-primary" id="go" disabled style="display:none">上传并扫描</button>
+    <div class="progress" id="prog" style="display:none">
+      <div class="stage" id="stageText">上传中…</div>
+      <div class="bar"><i id="barIn"></i></div>
+      <div class="progress-text" id="progText"></div>
+      <button class="btn-ghost" id="cancel" style="display:none;margin-top:10px">
+        留在本页（后台继续扫）</button>
+    </div>
+    <div class="err" id="err" style="display:none"></div>
+    </div>
+    </div>
+
+    {# 模型状态：**一行**，不是一块设置表单。
+       模型配置有自己的页面（/model），这里是入口，不是第二份配置界面。
+       没配也要说 —— 否则用户只会看到「分析是空的」，不知道缺了什么。 #}
+    <div class="model-status-line" id="modelLine">
+      <span id="modelState">检查中…</span>
+    </div>
+  </form>
+
+</main>
+
+{# 拖到梦奇身上时的确认。上传是不可逆的外部动作，必须先问一句。
+   弹层本身是全站共用的那套（app/templates/_dialog.html + app/static/dialog.js）。 #}
+{% include "_dialog.html" %}
+
+
+{% include "_theme_script.html" %}
+<script src="{{ asset('dialog.js') }}"></script>
+
+<script>
+const stage = document.getElementById('stage');
+const up = document.getElementById('up');
+const mascot = document.getElementById('mascot');
+const mascotFile = document.getElementById('mascotFile');
+const go = document.getElementById('go');
+const pickedLine = document.getElementById('pickedLine');
+let MAX = 0;
+//: 选好了、等着上传的那个文件。确认之前一个字节都不传。
+let pending = null;
+//: 用户点了「留在本页」。扫完照样建对局，只是不自动跳报告页。
+let stayHere = false;
+
+function sizeText(n) {
+  return n >= 1073741824
+    ? (n / 1073741824).toFixed(2) + ' GB'
+    : (n / 1048576).toFixed(1) + ' MB';
+}
+
+// 上限只用来拦文件。框里不放说明文字，所以这个值不在页面上显摆 ——
+// 真超了，报错里会说清楚。
+fetch('/api/config').then(r => r.json()).then(c => {
+  MAX = c.max_upload_bytes;
+}).catch(() => { MAX = 0; });
+
+// ---------- 选文件 ----------
+// 两条路：拖到框里，或者点它一下（文件框铺在角色底下，点击就是
+// 原生「打开文件」）。两条路都只**选中**，都要先问一句「传不传」
+// 才真的开始传。
+
+function pick(f) {
+  if (!f) return;
+  if (MAX && f.size > MAX) {
+    const box = document.getElementById('err');
+    box.textContent = '这个文件 ' + sizeText(f.size) + '，超过了 '
+      + (MAX / 1073741824).toFixed(0) + ' GB 上限。'
+      + '可以只录对局片段，或用剪辑工具压一下再传。';
+    box.style.display = '';
+    return;
+  }
+  pending = f;
+  document.getElementById('pickedName').textContent = f.name;
+  document.getElementById('pickedSize').textContent = sizeText(f.size);
+  pickedLine.style.display = '';
+  go.style.display = '';
+  go.disabled = false;
+  // 确认弹层：全站共用那套（app/static/dialog.js）。
+  // 正文是文件名与大小，交给调用方建节点 —— 正文默认走 textContent，
+  // 文件名是用户自己起的，不能当 HTML 塞。
+  const askFile = document.createElement('div');
+  askFile.className = 'dlg-sub';
+  askFile.textContent = f.name + ' · ' + sizeText(f.size);
+  const body = document.createElement('div');
+  body.appendChild(askFile);
+  askConfirm({
+    title: '把这个视频传上去？',
+    node: body,
+    yes: '确认上传',
+    no: '再想想',
+    focus: 'yes',
+  }).then((ok) => { if (ok) startUpload(f); });
+}
+
+// 它在飘，瞄准的框也在动 —— 所以每次都重新量一次它的位置，
+// 光标压在它身上它才亮起来。
+function overMascot(e) {
+  const r = mascot.getBoundingClientRect();
+  return e.clientX >= r.left && e.clientX <= r.right
+      && e.clientY >= r.top && e.clientY <= r.bottom;
+}
+
+// ---------- 眼神 ----------
+// 视线向量写进 --ms-lx / --ms-ly，整张脸跟着平移，瞳孔再叠一层视差。
+// 这套做法借自开源项目 janobarnard/form-friends（MIT）——
+// 关键帧与缓动在 app/static/mascot.css 里，出处也写在那里。
+// 写法照搬原实现：变量写在 DOM 上而不是 JS 状态里，
+// 否则每动一次鼠标就得重渲染一遍页面。
+function gaze(e) {
+  const r = mascot.getBoundingClientRect();
+  if (!r.width || !r.height) return;
+  const dx = (e.clientX - (r.left + r.width / 2)) / (r.width / 2);
+  const dy = (e.clientY - (r.top + r.height / 2)) / (r.height / 2);
+  const cl = v => Math.max(-1, Math.min(1, v)).toFixed(3);
+  stage.style.setProperty('--ms-lx', cl(dx));
+  stage.style.setProperty('--ms-ly', cl(dy));
+}
+document.addEventListener('pointermove', gaze);
+document.addEventListener('pointerleave', () => {
+  stage.style.setProperty('--ms-lx', 0);
+  stage.style.setProperty('--ms-ly', 0);
+});
+
+// 拖放：**整张卡**都接。
+// 角色只占右边一列了，但人在哪儿松手不好预测 ——
+// 落在左边的空白处却没反应，最气人。
+['dragenter', 'dragover'].forEach(ev =>
+  up.addEventListener(ev, e => {
+    e.preventDefault();
+    mascot.classList.toggle('is-hover', overMascot(e));
+  }));
+['dragleave', 'dragend'].forEach(ev =>
+  up.addEventListener(ev, e => {
+    mascot.classList.remove('is-hover');
+  }));
+up.addEventListener('drop', e => {
+  e.preventDefault();
+  mascot.classList.remove('is-hover');
+  pick(e.dataTransfer.files[0]);
+});
+// 点角色那一列就是选文件 —— 它在飘，让用户去瞄一个移动的目标
+// 本身就是为难人。
+stage.addEventListener('click', () => mascotFile.click());
+mascotFile.addEventListener('change', () => {
+  pick(mascotFile.files[0]);
+  mascotFile.value = '';            // 允许连续选同一个文件
+});
+
+// 操作模式库版本不在这里选，由后端取该游戏最新的那一个。
+// 曾经是个自由输入框，而版本填错不报错 —— 上传成功、扫描成功、
+// 报告页面也打开，就是一条规则都没有。少一个能填错的地方。
+//
+// 扫描灵敏度同理：边界阈值与最短回合间隔以前是两个滑块，后端用调好的
+// 默认值（见 video_upload.GATE_DIFF_THRESHOLD / MIN_ROUND_GAP_SEC）。
+// 让人自己拖这两个值只会得到更差的切片 —— 调高漏回合，调低把一次转场
+// 切成好几段，而这种错误在报告里看不出来。
+
+
+function fail(m) {
+  document.getElementById('prog').style.display = 'none';
+  const box = document.getElementById('err');
+  box.textContent = m;
+  box.style.display = '';
+  go.disabled = false;
+  // 传失败了就别再摆「大招已就位」的样子 —— 它在说谎
+  mascot.classList.remove('is-casting');
+  mascot.classList.remove('is-scanning');
+  mascot.classList.remove('is-done');
+}
+
+async function poll(url, matchId) {
+  const t0 = Date.now();
+  while (true) {
+    await new Promise(r => setTimeout(r, 700));
+    let j;
+    try {
+      const r = await fetch(url);
+      if (!r.ok) throw new Error('任务已过期，请重新上传');
+      j = await r.json();
+    } catch (e) { fail(e.message); return; }
+    const pct = Math.round(3 + j.progress * 97);
+    document.getElementById('barIn').style.width = pct + '%';
+    document.getElementById('stageText').textContent = j.stage_text + '…';
+    document.getElementById('progText').textContent = pct + '%　已用 '
+      + Math.round((Date.now() - t0) / 1000) + ' 秒'
+      + (j.summary && j.summary.video
+         ? '　视频 ' + j.summary.video.duration_min + ' 分钟' : '');
+    if (j.status === 'done') {
+      // 扫完了 → 直接出报告。
+      //
+      // 中间**没有标注那一步**：分路、胜负、BP、每段操作都是模型从画面读的。
+      // 读不出来的记「读不出来」，报告照出 —— 不回头让人填。
+      document.getElementById('barIn').style.width = '100%';
+      document.getElementById('stageText').textContent = '解析完成';
+      document.getElementById('progText').textContent = '正在生成报告…';
+      mascot.classList.remove('is-casting');
+      mascot.classList.remove('is-scanning');
+      mascot.classList.add('is-done');
+      try {
+        const rr = await fetch('/api/videos/finalize', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ match_id: matchId }),
+        });
+        const dd = await rr.json();
+        if (!rr.ok) throw new Error(dd.detail || '生成报告失败');
+        // 让「解析完成」演完再跳走 —— 扫了五分钟，页面直接换掉，
+        // 等于那一段功夫白等。
+        await new Promise(r => setTimeout(r, 1200));
+        location.href = stayHere ? '/matches' : dd.report_url;
+      } catch (e) { fail(e.message); }
+      return;
+    }
+    if (j.status === 'failed') { fail('扫描失败：' + j.error); return; }
+  }
+}
+
+async function startUpload(f) {
+  if (!f) return;
+  go.disabled = true;
+  document.getElementById('err').style.display = 'none';
+  document.getElementById('prog').style.display = '';
+  document.getElementById('stageText').textContent = '上传中…';
+  document.getElementById('barIn').style.width = '3%';
+  document.getElementById('progText').textContent =
+    (f.size / 1073741824).toFixed(2) + ' GB · 正在传到服务器';
+  // 梦奇放大招，一路放到上传并解析完成
+  mascot.classList.add('is-casting');
+  mascot.classList.remove('is-scanning');
+  mascot.classList.remove('is-done');
+  const castAt = Date.now();
+
+  const fd = new FormData();
+  fd.append('file', f);
+  // 游戏写死王者荣耀：这个产品现在只做这一款。页面上原来那三个选项
+  // 里只有最后一个用得上，而选错并不会得到别的东西 —— 只会得到空报告。
+  fd.append('game', 'hok');
+
+  const xhr = new XMLHttpRequest();
+  xhr.open('POST', '/api/videos/upload');
+  xhr.upload.onprogress = e => {
+    if (!e.lengthComputable) return;
+    document.getElementById('barIn').style.width =
+      Math.min(95, e.loaded / e.total * 95) + '%';
+    document.getElementById('progText').textContent =
+      '已上传 ' + (e.loaded / 1048576).toFixed(0) + ' / '
+      + (e.total / 1048576).toFixed(0) + ' MB';
+  };
+  try {
+    const res = await new Promise((ok, bad) => {
+      xhr.onload = () => ok({ status: xhr.status, body: xhr.responseText });
+      xhr.onerror = () => bad(new Error('网络中断，上传失败'));
+      xhr.send(fd);
+    });
+    const data = JSON.parse(res.body);
+    if (res.status !== 200) throw new Error(data.detail || '上传失败');
+    document.getElementById('barIn').style.width = '100%';
+    document.getElementById('progText').textContent = '';
+    document.getElementById('stageText').textContent = '服务器正在扫描…';
+    document.getElementById('cancel').style.display = '';
+    // 放大招的起手动作得演完再切到「解析中」——
+    // 小文件传得太快，一秒不到就切，漩涡会来不及成型。
+    const rest = 1300 - (Date.now() - castAt);
+    if (rest > 0) await new Promise(r => setTimeout(r, rest));
+    mascot.classList.remove('is-casting');
+    mascot.classList.add('is-scanning');
+    poll(data.status_url, data.match_id);
+  } catch (err) { fail(err.message); }
+}
+
+go.onclick = () => startUpload(pending);
+
+// 「留在本页」不等于「这一局不要了」—— 扫完照样建对局、出报告，
+// 只是不自动把页面跳走。用户想看的时候去「对局」里找。
+document.getElementById('cancel').onclick = () => {
+  stayHere = true;
+  document.getElementById('cancel').style.display = 'none';
+  document.getElementById('progText').textContent =
+    '后台继续扫，扫完在对局列表里见。';
+};
+
+// --------------------------------------------------------------------------
+// 模型状态：一行。
+// --------------------------------------------------------------------------
+// 没有模型就没有自动结论（只有时间轴）。得让人一眼看见缺了什么 ——
+// 不然只看到「分析是空的」，不知道为什么。
+(function modelLine() {
+  const box = document.getElementById('modelState');
+  if (!box) return;
+  fetch('/api/model/config').then(r => r.json()).then(cfg => {
+    const s = (cfg.slots || {}).vlm || {};
+    box.textContent = '';
+    if (s.has_key) {
+      box.appendChild(document.createTextNode('模型 ' + (s.model || '') + ' · '));
+    } else {
+      box.appendChild(document.createTextNode('模型未配置 · '));
+    }
+    const a = document.createElement('a');
+    a.href = '/model';
+    a.textContent = s.has_key ? '改设置' : '去设置';
+    box.appendChild(a);
+  }).catch(() => { box.textContent = ''; });
+})();
+</script>
+</body>
+</html>

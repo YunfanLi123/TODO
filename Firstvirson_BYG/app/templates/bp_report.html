@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="dark">
+<meta name="generator" content="rule-execution-analyzer">
+<title>{{ (report.get('meta') or {}).get('report_title') or 'BP 复盘' }}</title>
+{% include "_theme_head.html" %}
+<link rel="stylesheet" href="{{ asset('report.css') }}">
+<link rel="stylesheet" href="{{ asset('app.css') }}">
+<link rel="stylesheet" href="{{ asset('nav.css') }}">
+<style>
+/* BP 复盘页 = 局内报告页的版式 + 内层页面的左栏。
+   两边各取一半：卡片、分节、四部分条目照抄报告页（同一件事的同一个产品），
+   导航照抄内层页面（能回对局记录，而不是靠浏览器的后退键）。 */
+
+/* 主区不铺白底。列表页默认是一整张白卡，而报告页的卡片要浮在页面上才立得住 ——
+   白卡里再放白卡，白底上就只剩一条描边，层级塌了。
+   底色由 _atmosphere.html 放在 html 上，这里透出来，正是报告页的样子。 */
+.app-main.bp-page {
+  background: transparent;
+  -webkit-backdrop-filter: none;
+  backdrop-filter: none;
+  box-shadow: none;
+  padding: 20px 24px 36px;
+}
+
+/* 狄仁杰与诸葛亮站在概览卡的右上角，跟对局记录页同一对人物。 */
+.bp-hero .duo { margin-left: auto; margin-top: -18px; }
+
+/* 第一节顶到最上面（主区已经有内边距了）。
+   离线导出的单文件没有左栏，主区也没了 —— 得自己留出上边距。 */
+.section.first { margin-top: 0; }
+.wrap > .section.first { margin-top: 28px; }
+
+/* 底部操作条。三个按钮各去一处：回列表、回录入、看局内那一页。 */
+.bp-acts {
+  display: flex; flex-wrap: wrap; align-items: center; gap: 10px;
+  margin-top: 26px;
+}
+.bp-acts .btn-ghost {
+  display: inline-block; padding: 9px 16px; font-size: 13.5px;
+  text-decoration: none;
+}
+.bp-acts .btn-primary {
+  width: auto; margin-top: 0; padding: 9px 20px; font-size: 13.5px;
+  font-weight: 600;
+}
+.bp-acts .sep {
+  flex: 1 1 auto; min-inline-size: 0;
+}
+</style>
+</head>
+<body{% if not standalone %} class="app-body"{% endif %}>
+{%- set meta = report.meta or {} -%}
+{%- set summary = report.get('summary') or {} -%}
+{%- set entries = report.get('entries') or [] -%}
+
+{% if standalone %}
+{# 导出的离线单文件：不带左栏，也不带任何指向服务器的按钮 ——
+   离线打开时那些链接点不动，摆着就是骗人。 #}
+<div class="wrap">
+{% else %}
+{% set nav_active = "matches" %}
+{% include "_header.html" %}
+
+<main class="app-main bp-page">
+{% endif %}
+
+  <!-- ============ 顶部概览 ============ -->
+  <section class="section first" id="overview">
+    <div class="panel hero bp-hero">
+      <div class="hero-top">
+        <div class="hero-id">
+          <h1>{{ meta.get('report_title', 'BP 复盘') }}</h1>
+          <div class="hero-meta">
+            {# 只留「这是哪一局、哪个游戏」。BP 操作了几次、段位档是几档，
+               都是内部账 —— 结论要说的话会在「为什么」里说，
+               摆在这儿只是让人多读两行。 #}
+            <span>对局 <b>{{ meta.get('match_name') or match_id or '—' }}</b></span>
+            <span>游戏 <b>{{ meta.get('game_display') or meta.get('game') or '—' }}</b></span>
+          </div>
+        </div>
+        {% include "_duo.html" %}
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ BP 操作分析 ============ -->
+  <section class="section" id="analysis">
+    <div class="section-head">
+      <span class="idx">01</span>
+      <h2>BP 操作分析</h2>
+    </div>
+
+    {% if not entries %}
+    <div class="panel">
+      <p class="empty-note">
+        这一局没有发现 BP 阶段需要改的地方 ——
+        每个环节的操作都符合操作模式库里的做法。
+      </p>
+    </div>
+    {% else %}
+
+    {% for e in entries %}
+    <article class="panel mode-item">
+      <div class="mode-item-head">
+        <span class="mode-chip">{{ e.category }}</span>
+        <span class="mode-chip mode-chip-{{ e.severity }}">{{ {'high': '要紧', 'medium': '一般', 'low': '顺手'}.get(e.severity, e.severity) }}</span>
+      </div>
+      <h3 class="mode-item-title">{{ e.title }}</h3>
+
+      {# 1. BP 环节 #}
+      <div class="mo-row">
+        <span class="k">BP 环节</span>
+        <span class="v">{{ e.step_label }}</span>
+      </div>
+
+      {# 2. 我做了什么 #}
+      <div class="mo-row">
+        <span class="k">我做了什么</span>
+        <span class="v">{{ e.my_move or '这一步没有记录' }}</span>
+      </div>
+
+      {# 3. 应该怎么做 #}
+      <div class="mo-row">
+        <span class="k">应该怎么做</span>
+        <span class="v">
+          {%- for line in e.advice_lines %}
+          <span class="advice-line">{{ line }}</span>
+          {%- endfor %}
+        </span>
+      </div>
+
+      {# 4. 为什么 #}
+      <div class="mo-row">
+        <span class="k">为什么</span>
+        <span class="v">
+          {{ e.reason_text }}
+        </span>
+      </div>
+    </article>
+    {% endfor %}
+    {% endif %}
+  </section>
+
+  <!-- ============ 去哪儿 ============ -->
+  {# 三个去处都指向真实存在的东西：回对局记录、回录入页改 BP、看同一局的局内报告。
+     离线导出的单文件里不摆 —— 那些链接在离线状态点不动。 #}
+  {% if not standalone %}
+  <div class="bp-acts">
+    <a class="btn-ghost" href="/matches">← 对局记录</a>
+    {% if match_id %}
+    <a class="btn-ghost" href="/api/matches/{{ match_id }}/bp">改 BP 记录</a>
+    <a class="btn-ghost" href="/api/matches/{{ match_id }}/report">看局内报告</a>
+    {% endif %}
+    <span class="sep"></span>
+  </div>
+  {% endif %}
+
+  <footer class="footer">
+    生成于 {{ generated_at }}
+  </footer>
+
+{% if standalone %}
+</div>
+{% else %}
+</main>
+
+{% include "_theme_script.html" %}
+{% endif %}
+</body>
+</html>

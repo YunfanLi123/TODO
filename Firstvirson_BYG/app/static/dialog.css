@@ -1,0 +1,99 @@
+/* ---------- 页内弹层：确认 / 提醒 / 危险操作 ----------
+ *
+ * 不用浏览器的 confirm() / alert()
+ * --------------------------------
+ * 那是**系统样式**：跟本产品的浅紫底、圆角卡片、深浅主题全都不搭；
+ * 而且它只能显示一行字 —— 「删掉的是哪一局、删了会怎样、还有没有别的按钮」
+ * 都说不清。截图里那个黑底白字的小框，就是它。
+ *
+ * 这套弹层是全站共用的（`app/templates/_dialog.html` + `app/static/dialog.js`）：
+ * 确认、提醒、危险操作都用它，样式只有一份。
+ *
+ * 危险动作（删一局）用红色实心按钮，并且**默认焦点落在「再想想」上** ——
+ * 手一按回车不应该把局删掉。
+ */
+.dlg {
+  position: fixed;
+  inset: 0;
+  z-index: 60;
+  display: grid;
+  place-items: center;
+  background: var(--scrim);
+  padding: 24px;
+}
+.dlg[hidden] { display: none; }
+
+.dlg-card {
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-l);
+  box-shadow: var(--shadow-lg);
+  padding: 26px 28px;
+  inline-size: min(30rem, 100%);
+  animation: dlgIn .28s ease-out;
+}
+@keyframes dlgIn {
+  from { opacity: 0; transform: translateY(12px) scale(.97); }
+}
+
+/* 标题：这件事是什么。 */
+.dlg-title {
+  font-size: 17px;
+  font-weight: 700;
+  margin-bottom: 8px;
+  color: var(--text);
+}
+
+/* 正文：会发生什么、不可逆的后果。 */
+.dlg-body {
+  font-size: 14px;
+  color: var(--muted);
+  line-height: 1.75;
+  word-break: break-word;
+}
+/* 正文里的次要行（文件名、路径这类） */
+.dlg-sub {
+  font-size: 13px;
+  color: var(--muted);
+  word-break: break-all;
+}
+/* 正文里要突出的那几行（对局名、后果） */
+.dlg-body .dlg-emph {
+  color: var(--text);
+  font-weight: 600;
+}
+/* 不可逆的后果单独一行，用危险色 */
+.dlg-body .dlg-warn {
+  color: var(--sev-high);
+}
+
+.dlg-actions {
+  display: flex;
+  gap: 10px;
+  justify-content: flex-end;
+  margin-top: 22px;
+}
+.dlg-actions .btn-ghost { margin: 0; }
+
+.dlg-yes {
+  margin: 0;
+  padding: 8px 16px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: 600;
+  font-family: inherit;
+  background: var(--accent);
+  color: var(--on-accent, #fff);
+  border: 1px solid transparent;
+  transition: opacity .15s;
+}
+.dlg-yes:hover { opacity: .88; }
+.dlg-yes:disabled { opacity: .4; cursor: default; }
+
+/* 危险动作：红色实心，跟列表里那个「删除」按钮同一个色 */
+.dlg-yes.dlg-danger {
+  background: var(--sev-high);
+  border-color: var(--sev-high);
+  color: #fff;
+}
