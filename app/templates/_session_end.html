@@ -1,0 +1,20 @@
+{# 即焚模式：页面关了就告诉服务器一声，让它把这次会话的数据删掉。
+
+   用 navigator.sendBeacon：页面卸载时普通请求会被浏览器直接掐掉，
+   beacon 才是专门干这件事的（不等待响应，浏览器会替它发完）。
+
+   服务器那边不是「收到就删」—— 多标签页只关了一个、
+   或者关了马上又回来，都该留着。真正的删除由清扫协程做，
+   判据是「标记之后还有没有任何请求」。
+
+   发不出去也没关系：服务端还有 TTL 兜底。 #}
+<script>
+(function () {
+  if (!navigator || !navigator.sendBeacon) return;
+  window.addEventListener('pagehide', function () {
+    try {
+      navigator.sendBeacon('/api/session/end', new Blob([], { type: 'text/plain' }));
+    } catch (e) { /* 关不掉就算了，服务端还有 TTL 兜底 */ }
+  });
+})();
+</script>

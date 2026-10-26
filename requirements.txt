@@ -1,0 +1,18 @@
+fastapi>=0.110.0
+uvicorn[standard]>=0.29.0
+sqlalchemy>=2.0.30
+pydantic>=2.6.0
+jinja2>=3.1.0
+python-multipart>=0.0.9
+pytest>=8.0.0
+httpx>=0.27.0
+
+# 视频识别用的依赖。
+# 原来这个文件里没有，靠的是本机 venv 里手装的 —— 换台机器
+# `pip install -r requirements.txt` 就装不出 cv2，视频那条链路直接废掉。
+numpy>=1.26
+opencv-python-headless>=4.9
+pillow>=10.0
+
+# 云端 PostgreSQL（CloudBase 云托管）的驱动；本地走 SQLite 用不到它。
+psycopg[binary]>=3.1

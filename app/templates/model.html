@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>模型 · 对局复盘系统</title>
+{% include "_theme_head.html" %}
+<link rel="stylesheet" href="{{ asset('report.css') }}">
+<link rel="stylesheet" href="{{ asset('app.css') }}">
+<link rel="stylesheet" href="{{ asset('nav.css') }}">
+</head>
+<body class="app-body">
+{% set nav_active = "model" %}
+{% include "_header.html" %}
+
+<main class="app-main">
+  <div class="page-head">
+    <div>
+      <h1>模型</h1>
+    </div>
+  </div>
+
+  {# 两个槽位。看画面的那个是**必须有**的 —— 没有它就没有自动结论；
+     对账措辞那个是可选的 —— 没有它就用规则库里那套条件匹配。 #}
+  <div class="model-page" id="modelPage"></div>
+
+  <div class="err" id="err" style="display:none"></div>
+</main>
+
+{% include "_theme_script.html" %}
+
+<script>
+// --------------------------------------------------------------------------
+// 这一页只做一件事：**填一个 API Key**，把模型配好。
+//
+// 供应方的那些事（基址、协议、「关思考」字段叫什么、默认模型名）都由
+// 预设带出来，用户不用碰 —— 填错了报错还看不出是哪儿错了
+// （少写一段路径就 404，字段名不对模型就开始长篇大论）。
+//
+// 密钥**只写不回**：读接口只给掩码。页面上的 key 框永远是空的，
+// 留空 = 不改动已存的那一个。
+// --------------------------------------------------------------------------
+
+const SLOTS = [
+  { id: 'vlm',  label: '看画面的模型',   required: true },
+  { id: 'text', label: '对账措辞的模型', required: false },
+];
+
+let PROVIDERS = [];
+
+function el(id) { return document.getElementById(id); }
+
+function providerOf(id) {
+  return PROVIDERS.find(p => p.id === id) || null;
+}
+
+function defaultModel(pid, slot) {
+  const p = providerOf(pid);
+  if (!p) return '';
+  return slot === 'text' ? (p.default_text_model || '') : (p.default_model || '');
+}
+
+function buildCard(slot) {
+  const card = document.createElement('section');
+  card.className = 'card model-card';
+  card.dataset.slot = slot.id;
+
+  card.innerHTML = `
+    <div class="model-card-head">
+      <h3>${slot.label}</h3>
+      <span class="model-v na" data-role="status">检查中…</span>
+    </div>
+    <div class="field-row">
+      <label>
+        <span>供应方</span>
+        <select data-role="provider"></select>
+      </label>
+      <label>
+        <span>模型名</span>
+        <input type="text" data-role="model" spellcheck="false" autocomplete="off">
+      </label>
+    </div>
+    <div class="field-row">
+      <label>
+        <span>API Key</span>
+        <input type="password" data-role="key" autocomplete="off" placeholder="填入 key">
+      </label>
+      <label data-role="endpoint-wrap" style="display:none">
+        <span>请求地址</span>
+        <input type="text" data-role="endpoint" spellcheck="false" autocomplete="off">
+      </label>
+    </div>
+    <div class="model-actions">
+      <button class="btn-primary sm" data-role="save">保存</button>
+      <button class="btn-ghost sm" data-role="test">测试连接</button>
+      <a class="model-keylink" data-role="keyurl" href="#" target="_blank"
+         rel="noopener" style="display:none">拿 API Key</a>
+      <span class="model-note" data-role="note"></span>
+    </div>`;
+
+  const q = (role) => card.querySelector(`[data-role="${role}"]`);
+
+  // 供应方下拉
+  const sel = q('provider');
+  for (const p of PROVIDERS) {
+    const o = document.createElement('option');
+    o.value = p.id;
+    o.textContent = p.label;
+    sel.appendChild(o);
+  }
+
+  const syncProvider = () => {
+    const p = providerOf(sel.value);
+    const custom = sel.value === 'custom';
+    q('endpoint-wrap').style.display = custom ? '' : 'none';
+    if (custom && !q('endpoint').value) q('endpoint').value = p ? p.endpoint : '';
+    const link = q('keyurl');
+    if (p && p.key_url) { link.href = p.key_url; link.style.display = ''; }
+    else link.style.display = 'none';
+  };
+
+  sel.addEventListener('change', () => {
+    // 换供应方 → 模型名跟着换成新供应方的默认值（用户改过的不动，
+    // 因为这一栏本来就是「自由输入 + 默认值」）。
+    q('model').value = defaultModel(sel.value, slot.id);
+    syncProvider();
+    q('note').textContent = '';
+  });
+
+  q('save').addEventListener('click', () => saveSlot(slot, card));
+  q('test').addEventListener('click', () => testSlot(slot, card));
+
+  syncProvider();
+  return card;
+}
+
+function fillSlot(slot, card, saved) {
+  const q = (role) => card.querySelector(`[data-role="${role}"]`);
+  q('provider').value = saved.provider || 'qwen';
+  // 模型名：存了就用存的，没存就用该供应方这个槽位的默认值。
+  q('model').value = saved.model || defaultModel(q('provider').value, slot.id);
+  q('endpoint').value = saved.endpoint || '';
+  const status = q('status');
+  if (saved.has_key) {
+    status.textContent = `已就绪（${saved.model || defaultModel(saved.provider, slot.id)}）`;
+    status.classList.remove('na');
+    status.classList.add('ok');
+    q('key').placeholder = saved.key_masked ? `已保存（${saved.key_masked}）· 留空不改` : '';
+  } else {
+    status.textContent = '未配置';
+    status.classList.remove('ok');
+    status.classList.add('na');
+  }
+  card.querySelector('[data-role="provider"]').dispatchEvent(
+    new Event('change'));
+  // dispatchEvent 会把模型名重置成默认值 —— 存过的话要放回去。
+  q('model').value = saved.model || defaultModel(q('provider').value, slot.id);
+}
+
+async function saveSlot(slot, card) {
+  const q = (role) => card.querySelector(`[data-role="${role}"]`);
+  const provider = q('provider').value;
+  const body = {
+    slot: slot.id,
+    provider: provider,
+    model: q('model').value.trim(),
+    endpoint: q('endpoint').value.trim(),
+  };
+  const key = q('key').value.trim();
+  if (key) body.api_key = key;
+  const tested = card.dataset.canSee;
+  if (tested !== undefined) body.can_see_images = tested === '1';
+
+  q('save').disabled = true;
+  q('note').textContent = '保存中…';
+  try {
+    const r = await fetch('/api/model/config', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(body),
+    });
+    const d = await r.json();
+    if (!r.ok) throw new Error(d.detail || '保存失败');
+    q('key').value = '';
+    const saved = (d.slots || {})[slot.id] || {};
+    fillSlot(slot, card, saved);
+    q('note').textContent = '已保存。';
+  } catch (e) {
+    q('note').textContent = '保存失败：' + e.message;
+  } finally {
+    q('save').disabled = false;
+  }
+}
+
+async function testSlot(slot, card) {
+  const q = (role) => card.querySelector(`[data-role="${role}"]`);
+  const provider = q('provider').value;
+  const body = {
+    slot: slot.id,
+    provider: provider,
+    model: q('model').value.trim(),
+    endpoint: q('endpoint').value.trim(),
+  };
+  const key = q('key').value.trim();
+  if (key) body.api_key = key;
+
+  q('test').disabled = true;
+  q('note').textContent = '测试中…';
+  try {
+    const r = await fetch('/api/model/test', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(body),
+    });
+    const d = await r.json();
+    if (!d.ok) {
+      // VlmError 返回 error；参数校验类 HTTPException 返回 detail。
+      // 只认 error 会把 422 一律显示成「未知错误」，真正原因（如先填 Key）被吞掉。
+      q('note').textContent = '不通：' + (d.error || d.detail || '未知错误');
+      delete card.dataset.canSee;
+      return;
+    }
+    // 能不能看图：答出颜色才算数。答不出来就说答不出来 ——
+    // 「模型能用但读不了画面」和「模型不通」是两回事。
+    card.dataset.canSee = d.can_see_images ? '1' : '0';
+    q('note').textContent = d.can_see_images
+      ? `通了，能看画面（${d.elapsed_ms} ms）`
+      : `通了，但没认出颜色 —— 这个模型多半读不了画面`;
+  } catch (e) {
+    q('note').textContent = '测试失败：' + e.message;
+  } finally {
+    q('test').disabled = false;
+  }
+}
+
+(async function init() {
+  const page = el('modelPage');
+  try {
+    const r = await fetch('/api/model/config');
+    const cfg = await r.json();
+    PROVIDERS = cfg.providers || [];
+    for (const slot of SLOTS) {
+      const card = buildCard(slot);
+      page.appendChild(card);
+      fillSlot(slot, card, (cfg.slots || {})[slot.id] || {});
+    }
+  } catch (e) {
+    const box = el('err');
+    box.textContent = '读配置失败：' + e.message;
+    box.style.display = '';
+  }
+})();
+</script>
+</body>
+</html>

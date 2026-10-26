@@ -1,0 +1,71 @@
+# ===== Python =====
+__pycache__/
+*.py[cod]
+*.egg-info/
+.pytest_cache/
+.mypy_cache/
+.ipynb_checkpoints/
+build/
+dist/
+
+# ===== 虚拟环境 =====
+.venv/
+venv/
+env/
+
+# ===== 运行期数据（含数据库与模型 API Key，切勿提交）=====
+data/
+.tmp/
+tmp/
+*.db
+*.sqlite
+*.sqlite3
+
+# ===== 上传的视频与抽帧（体积巨大，不入库）=====
+videos/
+*.mp4
+*.mov
+*.avi
+*.mkv
+*.webm
+*.flv
+*.wmv
+
+# ===== 图片产物（抽帧 / 拼图 / 截图），但保留代码与标定要用的参考图 =====
+*.jpg
+*.jpeg
+*.png
+*.gif
+*.bmp
+# 取消忽略：小地图 / 地图标定参考图（CV 识别运行时依赖，必须入库）
+!app/collection/map_blue.png
+!app/collection/map_red.png
+!app/collection/map_reference.png
+!app/collection/minimap_reference.png
+# 取消忽略：前端静态资源目录里的所有图片
+!app/static/**/*.png
+!app/static/**/*.jpg
+!app/static/**/*.jpeg
+!app/static/**/*.gif
+!app/static/**/*.webp
+
+# ===== 密钥与本地配置 =====
+.env
+.env.*
+*.local
+config.local.yaml
+
+# ===== 日志 / 临时 / 系统 =====
+*.log
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# ===== IDE / 编辑器 =====
+.vscode/
+.idea/
+*.swp
+*~
+
+# ===== Trae / 其它工具 =====
+.trae/

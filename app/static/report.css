@@ -1,0 +1,1247 @@
+/* ==========================================================================
+   对局执行度报告 · 样式
+
+   两套主题，默认浅色。
+
+   浅色主题的底色是很浅的薰衣草紫，卡片是纯白 —— 纯白底 + 白卡片
+   层级只剩一条描边，靠线不靠面，看着是平的。
+   强调色两套各取各的值，不是同一个色硬套：靛蓝 #4F6EF7 在白底上
+   对比度 4.6:1，深色底上要提亮到 #7C97FF 才够 —— 同一个「主色」的语义，
+   两套各自达标。
+   ========================================================================== */
+
+:root,
+html[data-theme="light"] {
+  /* 浅色主题。
+     底色不是纯白而是很浅的薰衣草紫（--bg），卡片才是白的 ——
+     纯白底 + 白卡片会让层级只剩一条描边，靠线不靠面，看起来是平的。
+     --side 是侧栏那一块的底色，比 --bg 再淡一档。 */
+  --bg: #F4F3F9;
+  --panel: #FFFFFF;
+  --panel-2: #F7F7FC;
+  --side: #F5F3FB;
+  --text: #1A1A2E;
+  --muted: #8A8A99;
+  --accent: #4F6EF7;
+  --accent-soft: color-mix(in srgb, var(--accent) 10%, transparent);
+  --accent-strong: #3D5CE0;
+  --on-accent: #FFFFFF;
+  --line: #EDEDF4;
+
+  /* 语义色：数字卡上那四个图标用的就是它们。
+     白底上要比深色版更深才够对比 —— 浅粉浅绿在白底上几乎看不见。 */
+  --sev-high: #E8536F;
+  --sev-medium: #D98324;
+  --sev-low: #2E9E6B;
+
+  --expect: #2E9E6B;
+  --actual: #E8536F;
+  --ok: #2E9E6B;
+  --purple: #8B5CF6;
+
+  --shadow: 0 1px 2px rgba(26, 26, 46, .04), 0 4px 16px rgba(26, 26, 46, .04);
+  --shadow-lg: 0 2px 6px rgba(26, 26, 46, .06), 0 12px 32px rgba(26, 26, 46, .08);
+  --overlay: rgba(26, 26, 46, .04);
+  --scrim: rgba(26, 26, 46, .45);
+}
+
+html[data-theme="dark"] {
+  /* 深色主题 */
+  --bg: #0E1621;
+  --panel: #16212F;
+  --panel-2: #101A26;
+  --side: #111B28;
+  --text: #F2F6FA;
+  --muted: #8FA1B3;
+  --accent: #7C97FF;
+  --accent-soft: color-mix(in srgb, var(--accent) 16%, transparent);
+  --accent-strong: #9DB0FF;
+  --on-accent: #0E1621;
+  --line: #243447;
+
+  --sev-high: #FF7A90;
+  --sev-medium: #F0B45E;
+  --sev-low: #5FD39A;
+
+  --expect: #5FD39A;
+  --actual: #FF7A90;
+  --ok: #5FD39A;
+  --purple: #A78BFA;
+
+  --shadow: 0 2px 14px rgba(0, 0, 0, .35);
+  --shadow-lg: 0 4px 20px rgba(0, 0, 0, .45);
+  --overlay: rgba(0, 0, 0, .22);
+  --scrim: rgba(0, 0, 0, .62);
+}
+
+/* ---------- 布局公理 ----------
+   这些是**全局默认值**，不是某一页的样式 —— 每一页因此自动一致，
+   而不是因为每页都记得写一遍。数值取自 Every Layout 的思路：
+   尺寸交给浏览器算，我们只描述规则。
+
+   --measure  一行文字的舒适宽度。用 ch 而不是 px：改字号或用户改系统
+              字号时，1ch 会跟着变，舒适宽度也就跟着对。45–75ch 是可读
+              区间，取中间偏保守的 60ch。
+   --space-*  模数化间距刻度（近似 √2 比例），间距只从这里取。
+   --side-*  左栏外壳的参数。 */
+:root {
+  --measure: 60ch;
+
+  /* 间距刻度：相邻两档的比值约 1.33–1.5，视觉上是「一个台阶」 */
+  --space-xs: 0.375rem;
+  --space-s: 0.75rem;
+  --space-m: 1.25rem;
+  --space-l: 2rem;
+  --space-xl: 3rem;
+
+  /* 外壳：左栏多宽、内容窄到多少就换行。
+     侧栏按「图标在上、文字在下」排版，文字一行放不下就得加宽 ——
+     15rem 是三个汉字 + 图标的舒适宽度。 */
+  --side-width: 6.5rem;
+  --content-min: 34rem;
+
+  /* 圆角。参考里几乎所有东西都是圆的，卡片比小控件更大。 */
+  --radius-s: 8px;
+  --radius: 12px;
+  --radius-l: 18px;
+}
+
+/* measure 公理：例外式施加 —— 只排除那些本来就该撑满的容器元素。
+   写成「给每个段落加 class」的话，漏掉一处正文就会失控。 */
+p, h1, h2, h3, h4, h5, h6, li, figcaption, .cell-row span,
+.hint, .sub, .guide-box p {
+  max-inline-size: var(--measure);
+}
+html, body, div, header, nav, main, footer, section, aside {
+  max-inline-size: none;
+}
+
+* { box-sizing: border-box; }
+
+html { -webkit-text-size-adjust: 100%; }
+
+body {
+  margin: 0;
+  padding: 0 0 64px;
+  background: var(--bg);
+  color: var(--text);
+  font-family: "Microsoft YaHei", "微软雅黑", Arial, sans-serif;
+  font-size: 15px;
+  line-height: 1.7;
+  /* 数字与英文走 Arial，中文回落到雅黑 */
+  font-variant-numeric: tabular-nums;
+}
+
+.num, .mono {
+  font-family: Arial, "Microsoft YaHei", sans-serif;
+}
+
+a { color: var(--accent); text-decoration: none; }
+a:hover { text-decoration: underline; }
+
+.wrap {
+  max-width: 1120px;
+  margin: 0 auto;
+  padding: 0 24px;
+}
+
+/* ---------- 区块骨架 ---------- */
+
+.section { margin-top: 40px; }
+
+.section-head {
+  display: flex;
+  align-items: baseline;
+  gap: 12px;
+  padding-bottom: 12px;
+  margin-bottom: 20px;
+  border-bottom: 1px solid var(--line);
+}
+
+.section-head h2 {
+  margin: 0;
+  font-size: 19px;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+}
+
+.section-head .idx {
+  font-family: Arial, sans-serif;
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--accent);
+}
+
+.section-head .hint {
+  margin-left: auto;
+  font-size: 12.5px;
+  color: var(--muted);
+}
+
+.panel {
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+}
+
+.empty {
+  padding: 28px;
+  text-align: center;
+  color: var(--muted);
+  font-size: 14px;
+  background: var(--panel);
+  border: 1px dashed var(--line);
+  border-radius: var(--radius);
+}
+
+/* ---------- 01 顶部概览 ---------- */
+
+.hero { padding: 28px 32px; }
+
+/* 报告顶部的返回条：在线报告才有，离线导出不渲染。 */
+.report-topbar {
+  display: flex;
+  align-items: center;
+  margin: 20px 0 4px;
+}
+
+.report-back {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 14px;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--text);
+  text-decoration: none;
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  box-shadow: var(--shadow);
+  transition: border-color .15s ease, color .15s ease, transform .05s ease;
+}
+
+.report-back:hover {
+  color: var(--accent);
+  border-color: var(--accent);
+}
+
+.report-back:active { transform: scale(.97); }
+
+.report-back-arrow { font-size: 15px; line-height: 1; }
+
+/* 「标注来源提示」那块样式（.derived-note）已经删掉了：
+   报告不再摆「结论是从画面里读出来的 / 读取模型 X」那类说明
+   —— 标注页下线之后动作只有一个来源，这句话每局都一样，是废话。 */
+
+.hero-top {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  gap: 32px;
+}
+
+.hero-id { flex: 1 1 260px; min-width: 0; }
+
+.hero-id h1 {
+  margin: 0 0 10px;
+  font-size: 24px;
+  font-weight: 600;
+}
+
+.hero-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 18px;
+  font-size: 13px;
+  color: var(--muted);
+}
+
+.hero-meta b {
+  color: var(--text);
+  font-weight: 600;
+}
+
+/* 名次徽章：用描边而非实心，避免和大数字抢焦点 */
+.place {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 4px;
+  padding: 2px 10px;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+}
+.place .v { font-family: Arial, sans-serif; font-weight: 700; color: var(--accent); }
+.place .u { font-size: 12px; color: var(--muted); }
+
+/* 执行度大数字 —— 全页第一视觉焦点 */
+.hero-rate {
+  flex: 0 0 auto;
+  text-align: right;
+  padding-left: 32px;
+  border-left: 1px solid var(--line);
+}
+
+.hero-rate .val {
+  font-family: Arial, sans-serif;
+  font-size: 72px;
+  font-weight: 700;
+  line-height: 1;
+  color: var(--accent);
+  letter-spacing: -2px;
+}
+
+/* 没有规则被触发时，0% 是误导，必须显式说明 */
+.hero-rate .val.is-null {
+  font-family: "Microsoft YaHei", sans-serif;
+  font-size: 22px;
+  font-weight: 600;
+  color: var(--muted);
+  letter-spacing: 0;
+}
+
+.hero-rate .lbl {
+  margin-top: 6px;
+  font-size: 12.5px;
+  color: var(--muted);
+  letter-spacing: 1px;
+}
+
+.hero-rate .delta {
+  margin-top: 8px;
+  font-size: 13px;
+}
+.delta.up { color: var(--expect); }
+.delta.down { color: var(--actual); }
+.delta.flat { color: var(--muted); }
+
+/* 触发计数条 */
+.hero-counts {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 24px;
+  padding-top: 20px;
+  border-top: 1px solid var(--line);
+}
+
+.count {
+  flex: 1 1 120px;
+  padding: 10px 14px;
+  background: var(--overlay);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+}
+.count .n {
+  font-family: Arial, sans-serif;
+  font-size: 22px;
+  font-weight: 700;
+  line-height: 1.2;
+}
+.count .k { font-size: 12px; color: var(--muted); }
+.count.c-dev .n { color: var(--actual); }
+.count.c-sat .n { color: var(--expect); }
+.count.c-und .n { color: var(--muted); }
+.count.c-cov .n { color: var(--accent); }
+
+.version-note {
+  margin-top: 14px;
+  font-size: 12.5px;
+  color: var(--muted);
+}
+
+/* ---------- 分路 × 阶段 结论 ---------- */
+
+.lane-block { margin-bottom: 22px; }
+
+.lane-head {
+  display: flex; align-items: center; gap: 10px;
+  padding-bottom: 8px; margin-bottom: 10px;
+  border-bottom: 2px solid var(--line);
+}
+.lane-name { font-size: 17px; font-weight: 700; }
+.lane-count { font-size: 12px; color: var(--muted); }
+.lane-prob {
+  margin-left: auto; font-size: 12px; font-weight: 600;
+  padding: 2px 9px; border-radius: 20px;
+  background: var(--dev); color: var(--bg);
+}
+.lane-ok {
+  margin-left: auto; font-size: 12px; font-weight: 600;
+  padding: 2px 9px; border-radius: 20px;
+  background: var(--ok); color: var(--bg);
+}
+
+.cell {
+  padding: 13px 15px; margin-bottom: 9px;
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-left: 4px solid var(--muted);
+  border-radius: var(--radius);
+}
+.cell[data-verdict="systemic"], .cell[data-verdict="never"] { border-left-color: var(--dev); }
+.cell[data-verdict="occasional"] { border-left-color: var(--sev-medium, #d99b3a); }
+.cell[data-verdict="ok"] { border-left-color: var(--ok); }
+.cell[data-verdict="undetermined"] { border-left-color: var(--muted); }
+
+.cell-h { display: flex; align-items: center; gap: 9px; margin-bottom: 5px; }
+.cell-ph {
+  font-size: 11.5px; font-weight: 700; letter-spacing: .04em;
+  padding: 2px 8px; border-radius: 4px;
+  background: var(--bg-soft, var(--panel)); color: var(--muted);
+}
+.cell-v { font-size: 11.5px; font-weight: 600; }
+.cell-v-systemic, .cell-v-never, .cell-v-problem { color: var(--dev); }
+.cell-v-occasional { color: var(--sev-medium, #d99b3a); }
+.cell-v-ok { color: var(--ok); }
+.cell-v-undetermined { color: var(--muted); }
+
+/* ---------- 分析覆盖小结 ---------- */
+.coverage-summary {
+  margin-left: auto; font-size: 12.5px; color: var(--muted);
+  font-weight: 400;
+}
+.coverage-panel { padding: 8px 20px 16px; }
+.coverage-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+.coverage-table th {
+  text-align: left; font-weight: 600; color: var(--muted);
+  font-size: 12px; padding: 10px 12px; border-bottom: 1px solid var(--line);
+}
+.coverage-table td {
+  padding: 11px 12px; border-bottom: 1px solid var(--line);
+  vertical-align: top; color: var(--text);
+}
+.coverage-table tbody tr:last-child td { border-bottom: none; }
+.coverage-table .num { text-align: center; width: 56px; font-variant-numeric: tabular-nums; }
+.coverage-table th.num { text-align: center; }
+.cov-time { white-space: nowrap; font-weight: 600; color: var(--text); }
+.cov-acts { color: var(--muted); }
+.cov-ok { color: var(--ok); font-weight: 600; }
+.cov-dev { color: var(--dev); font-weight: 600; }
+.cov-und { color: var(--muted); }
+tr.coverage-empty .cov-time,
+tr.coverage-empty .cov-acts { opacity: .55; }
+.coverage-note {
+  margin: 12px 0 0; font-size: 12px; line-height: 1.7; color: var(--muted);
+}
+@media (max-width: 640px) {
+  .coverage-summary { display: block; margin: 6px 0 0; }
+  .coverage-panel { padding: 8px 14px 14px; }
+  .coverage-table, .coverage-table thead, .coverage-table tbody,
+  .coverage-table th, .coverage-table td, .coverage-table tr { display: block; }
+  .coverage-table thead { display: none; }
+  .coverage-table td { border: none; padding: 2px 0; }
+  .coverage-table tr { padding: 8px 0; border-bottom: 1px solid var(--line); }
+  .coverage-table .num { text-align: left; width: auto; display: inline-block; margin-right: 14px; }
+}
+
+.cell-t { font-size: 14.5px; font-weight: 600; margin-bottom: 8px; line-height: 1.45; }
+
+.cell-row {
+  display: grid; grid-template-columns: 62px 1fr; gap: 10px;
+  font-size: 13px; line-height: 1.6; padding: 2px 0;
+}
+.cell-row .k { color: var(--muted); }
+.cell-row .bad { color: var(--dev); font-weight: 600; }
+.cell-row .good { color: var(--expect); font-weight: 600; }
+
+.cell-meta { margin-top: 7px; font-size: 11.5px; color: var(--muted); }
+
+/* 分路结论里的时间节点：这一条说的是哪一段 */
+.cell-time-tag {
+  font-family: Arial, sans-serif;
+  font-size: 12.5px;
+  font-weight: 700;
+  color: var(--accent);
+  padding: 1px 8px;
+  border: 1px solid color-mix(in srgb, var(--accent) 40%, transparent);
+  border-radius: 4px;
+}
+
+/* ---------- 出错片段：缩略图 + 就地定位播放 ---------- */
+
+.cell-shots { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px; }
+
+.shot {
+  position: relative; width: 132px; padding: 0; cursor: pointer;
+  border: 1px solid var(--line); border-radius: 6px; overflow: hidden;
+  background: var(--bg); display: block;
+}
+.shot:hover { border-color: var(--accent); }
+.shot img { display: block; width: 100%; height: 74px; object-fit: cover; }
+.shot-noimg {
+  display: block; height: 74px;
+  background: repeating-linear-gradient(45deg,
+    var(--bg-soft, var(--panel)) 0 6px, var(--panel) 6px 12px);
+}
+.shot-lb {
+  display: block; padding: 3px 6px; font-size: 11px;
+  color: var(--muted); text-align: left;
+}
+
+.clip-player {
+  margin-top: 16px; padding: 12px;
+  border: 1px solid var(--line); border-radius: var(--radius);
+  background: var(--panel);
+}
+.clip-player video {
+  display: block; width: 100%; max-height: 460px;
+  border-radius: 6px; background: #000;
+}
+.clip-cap {
+  display: flex; align-items: center; gap: 10px;
+  margin-top: 8px; font-size: 12.5px; color: var(--muted);
+}
+.clip-cap span { flex: 1; }
+
+/* ---------- 02 差距时间线 ---------- */
+
+.timeline { display: flex; flex-direction: column; gap: 18px; }
+
+.gap {
+  display: grid;
+  grid-template-columns: 5px 1fr;
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  overflow: hidden;
+  box-shadow: var(--shadow);
+}
+
+/* 严重度色条：整卡左侧竖条，扫一眼就知道轻重 */
+.gap-bar { background: var(--muted); }
+.gap[data-severity="high"] .gap-bar { background: var(--sev-high); }
+.gap[data-severity="medium"] .gap-bar { background: var(--sev-medium); }
+.gap[data-severity="low"] .gap-bar { background: var(--sev-low); }
+
+.gap-body { padding: 20px 24px; min-width: 0; }
+
+.gap-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+
+/* 回合标签用强调色 + 等宽数字，模拟对局时间轴 */
+.round-tag {
+  font-family: Arial, sans-serif;
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--accent);
+  padding: 2px 10px;
+  border: 1px solid var(--accent);
+  border-radius: 6px;
+}
+
+.sev-tag {
+  font-size: 11.5px;
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-weight: 600;
+}
+.gap[data-severity="high"] .sev-tag { color: var(--sev-high); background: color-mix(in srgb, var(--sev-high) 14%, transparent); }
+.gap[data-severity="medium"] .sev-tag { color: var(--sev-medium); background: color-mix(in srgb, var(--accent) 14%, transparent); }
+.gap[data-severity="low"] .sev-tag { color: var(--sev-low); background: color-mix(in srgb, var(--sev-low) 14%, transparent); }
+
+.cat-tag {
+  font-size: 11.5px;
+  color: var(--muted);
+  padding: 2px 8px;
+  border: 1px solid var(--line);
+  border-radius: 4px;
+}
+
+.rule-id {
+  font-family: Arial, sans-serif;
+  font-size: 12px;
+  color: var(--muted);
+  margin-left: auto;
+}
+
+.gap-title {
+  margin: 0 0 16px;
+  font-size: 16px;
+  font-weight: 600;
+  line-height: 1.6;
+}
+
+/* ---------- 核心：实际 / 该做 / 为什么 ---------- */
+
+/* 每条偏离只讲三件事，所以这三行就是全部正文。
+   视觉上按「事实 → 要求 → 理由」从上到下排列：
+   先说发生了什么，再说该怎么做，最后说为什么。 */
+.why-block {
+  margin: 0;
+  border-top: 1px solid var(--line);
+}
+.why-row {
+  display: grid;
+  grid-template-columns: 58px 1fr;
+  gap: 14px;
+  align-items: start;
+  padding: 11px 0;
+  border-bottom: 1px solid var(--line);
+}
+.why-row:last-child { border-bottom: none; }
+.why-row .k {
+  font-size: 12px;
+  color: var(--muted);
+  letter-spacing: 2px;
+  padding-top: 2px;
+}
+.why-row .v {
+  font-size: 14px;
+  line-height: 1.75;
+  color: var(--text);
+}
+/* 「实际」是事实，但它是偏离点，要看得见 */
+.why-row .v.actual { color: var(--actual); font-weight: 600; }
+/* 「该做」是模式的要求 */
+.why-row .v.expect { color: var(--expect); font-weight: 600; }
+/* 「为什么」是解释，字重回到正常 —— 它不该抢前两行的戏 */
+.why-row .v.reason { color: var(--text); font-weight: 400; }
+
+/* 低置信度：只留一个标记，不再铺一段说明。
+   识别本身有误差这件事必须看得见，但它是**标注**，不是结论。 */
+.conf-tag {
+  font-size: 11.5px;
+  color: var(--sev-medium);
+  border: 1px dashed var(--sev-medium);
+  border-radius: 4px;
+  padding: 1px 7px;
+}
+
+/* ---------- 03 执行度曲线 ---------- */
+
+.chart-box { padding: 20px 22px 12px; }
+.chart-svg { display: block; width: 100%; height: auto; }
+
+.legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 22px;
+  padding: 10px 22px 18px;
+  font-size: 12.5px;
+  color: var(--muted);
+}
+.legend i {
+  display: inline-block;
+  width: 18px;
+  height: 0;
+  margin-right: 7px;
+  vertical-align: middle;
+  border-top: 2px solid var(--accent);
+}
+.legend i.dash { border-top: 2px dashed var(--muted); }
+.legend i.hole {
+  width: 9px;
+  height: 9px;
+  border: 2px solid var(--muted);
+  border-radius: 50%;
+  background: var(--panel);
+}
+
+.curve-summary {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  padding: 0 22px 18px;
+}
+.cs-item {
+  flex: 1 1 130px;
+  padding: 10px 14px;
+  background: var(--overlay);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+}
+.cs-item .n { font-family: Arial, sans-serif; font-size: 19px; font-weight: 700; }
+.cs-item .k { font-size: 12px; color: var(--muted); }
+.cs-item .n.na { font-size: 14px; font-weight: 600; color: var(--muted); }
+
+/* ---------- 04 分类执行度 ---------- */
+
+.cat-list { display: flex; flex-direction: column; gap: 14px; padding: 20px 22px; }
+
+.cat-row { display: grid; grid-template-columns: 110px 1fr 108px; align-items: center; gap: 14px; }
+.cat-name { font-size: 14px; }
+.cat-track {
+  height: 22px;
+  background: var(--overlay);
+  border: 1px solid var(--line);
+  border-radius: 4px;
+  overflow: hidden;
+}
+.cat-fill { height: 100%; background: var(--accent); transition: width 0.4s ease; }
+.cat-fill.low { background: var(--sev-high); }
+.cat-fill.mid { background: var(--sev-medium); }
+.cat-fill.high { background: var(--expect); }
+.cat-nums {
+  font-family: Arial, sans-serif;
+  font-size: 12.5px;
+  color: var(--muted);
+  text-align: right;
+}
+.cat-nums b { color: var(--text); font-size: 14px; }
+
+/* ---------- 05 最需要改进的规则 ---------- */
+
+.rule-list { display: flex; flex-direction: column; }
+
+.rule-item {
+  display: grid;
+  grid-template-columns: 30px 1fr auto;
+  align-items: center;
+  gap: 14px;
+  padding: 14px 22px;
+  border-bottom: 1px solid var(--line);
+}
+.rule-item:last-child { border-bottom: none; }
+
+.rule-rank {
+  font-family: Arial, sans-serif;
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--accent);
+}
+.rule-main { min-width: 0; }
+.rule-t { font-size: 14px; margin-bottom: 3px; }
+.rule-sub { font-size: 12px; color: var(--muted); }
+.rule-sub .mono { font-size: 11.5px; }
+
+.rule-rate {
+  font-family: Arial, sans-serif;
+  font-size: 20px;
+  font-weight: 700;
+  text-align: right;
+}
+.rule-rate.na { font-size: 13px; color: var(--muted); font-weight: 600; }
+.rule-rate .trend {
+  display: block;
+  font-family: "Microsoft YaHei", sans-serif;
+  font-size: 11.5px;
+  font-weight: 400;
+}
+.trend-bad { color: var(--sev-high); }
+.trend-good { color: var(--expect); }
+.trend-flat { color: var(--muted); }
+
+/* 迷你点阵：一眼看出这条规则跨对局的表现，None 显示为空心圈 */
+.spark { display: flex; gap: 4px; margin-top: 5px; }
+.spark i {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--accent);
+}
+.spark i.on { background: var(--expect); }
+.spark i.off { background: var(--sev-high); }
+.spark i.none { background: transparent; border: 1px solid var(--muted); }
+
+/* ---------- 无法判定 ---------- */
+
+.und-list { padding: 6px 22px 16px; }
+.und-item {
+  padding: 14px 0;
+  border-bottom: 1px solid var(--line);
+}
+.und-item:last-child { border-bottom: none; }
+.und-head { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; margin-bottom: 4px; }
+.und-why { font-size: 13px; color: var(--muted); }
+
+.footer {
+  margin-top: 44px;
+  padding-top: 18px;
+  border-top: 1px solid var(--line);
+  font-size: 12px;
+  color: var(--muted);
+  text-align: center;
+}
+
+/* ---------- 响应式：1280px 以下布局保持正常 ---------- */
+
+@media (max-width: 1280px) {
+  .wrap { max-width: 100%; }
+}
+
+@media (max-width: 860px) {
+  .wrap { padding: 0 16px; }
+
+  .hero { padding: 22px 20px; }
+  .hero-top { gap: 20px; }
+  .hero-rate {
+    /* 窄屏下大数字换行独占，避免和玩家信息挤成一行 */
+    padding-left: 0;
+    padding-top: 18px;
+    border-left: none;
+    border-top: 1px solid var(--line);
+    text-align: left;
+    width: 100%;
+  }
+  .hero-rate .val { font-size: 56px; }
+
+  /* 窄屏下三行正文改成上下堆叠，标签落在上一行 */
+  .why-row { grid-template-columns: 1fr; gap: 2px; }
+  .why-row .k { padding-top: 0; }
+
+  .rule-id { margin-left: 0; width: 100%; }
+  .cat-row { grid-template-columns: 84px 1fr; row-gap: 6px; }
+  .cat-nums { grid-column: 1 / -1; text-align: left; }
+  .rule-item { grid-template-columns: 24px 1fr; }
+  .rule-rate { grid-column: 2; text-align: left; }
+}
+
+/* ---------- 06 版本适配与回测 ---------- */
+
+/* 结论徽章。四种结论各有明确语义，配色与严重度体系区分开：
+   「新增约束」用蓝色——它是新增的要求而非已有的问题。 */
+.verdict {
+  display: inline-block;
+  padding: 2px 9px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 700;
+  white-space: nowrap;
+  line-height: 1.6;
+}
+.v-需要更严格, .v-stricter { background: color-mix(in srgb, var(--sev-high) 18%, transparent); color: #E05C5C; border: 1px solid color-mix(in srgb, var(--sev-high) 40%, transparent); }
+.v-新增约束, .v-newly_binding { background: color-mix(in srgb, var(--sev-low) 16%, transparent); color: #5CB4E0; border: 1px solid color-mix(in srgb, var(--sev-low) 40%, transparent); }
+.v-可以放松, .v-relaxable { background: color-mix(in srgb, var(--ok) 14%, transparent); color: #78C88C; border: 1px solid color-mix(in srgb, var(--ok) 38%, transparent); }
+.v-基本一致, .v-unchanged { background: color-mix(in srgb, var(--muted) 14%, transparent); color: #8FA1B3; border: 1px solid color-mix(in srgb, var(--muted) 30%, transparent); }
+.v-数据不足, .v-insufficient { background: color-mix(in srgb, var(--muted) 10%, transparent); color: #6C7E90; border: 1px solid color-mix(in srgb, var(--muted) 22%, transparent); }
+
+/* 「最该先看」置顶块：把行动项从结论列表里拎出来 */
+.vtodo {
+  padding: 16px 20px;
+  margin-bottom: 18px;
+  border-left: 3px solid var(--accent);
+  background: linear-gradient(90deg, var(--accent-soft), transparent 65%);
+}
+.vtodo-title {
+  font-size: 12px;
+  letter-spacing: .12em;
+  color: var(--accent);
+  margin-bottom: 10px;
+  font-weight: 700;
+}
+.vtodo-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 5px 0;
+  line-height: 1.65;
+}
+.vtodo-item .verdict { flex: 0 0 auto; margin-top: 2px; }
+.vtodo-msg { color: var(--text); }
+
+/* 版本变更概览 */
+.vdiff {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 16px;
+  padding: 14px 20px;
+  margin-bottom: 18px;
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+}
+.vdiff-nums { display: flex; gap: 28px; }
+.vd { text-align: center; }
+.vd .n { font-size: 24px; font-weight: 700; line-height: 1.2; }
+.vd .k { font-size: 12px; color: var(--muted); margin-top: 2px; }
+.vdiff-versions { color: var(--accent); font-size: 15px; font-weight: 700; }
+
+/* 回测条目 */
+.backtest-list { display: flex; flex-direction: column; }
+.bt-row {
+  padding: 16px 20px;
+  border-bottom: 1px solid var(--line);
+}
+.bt-row:last-child { border-bottom: none; }
+.bt-head {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-bottom: 8px;
+}
+.bt-title { font-weight: 700; font-size: 15px; }
+.bt-msg {
+  color: var(--muted);
+  font-size: 13.5px;
+  line-height: 1.7;
+  margin-bottom: 12px;
+}
+
+/* 新旧偏离率对照 —— 回测最关键的一眼 */
+.bt-nums {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  padding: 10px 14px;
+  background: var(--overlay);
+  border-radius: 6px;
+}
+.btn .k { font-size: 11px; color: var(--muted); letter-spacing: .04em; }
+.btn .n { font-size: 22px; font-weight: 700; line-height: 1.25; font-family: Arial, sans-serif; }
+.btn .n.worse { color: var(--sev-high); }
+.btn .sub { font-size: 11.5px; color: var(--muted); font-family: Arial, sans-serif; }
+.bt-arrow { color: var(--muted); font-size: 18px; }
+
+.bt-evi { margin-top: 10px; }
+.bt-evi summary {
+  cursor: pointer;
+  font-size: 12.5px;
+  color: var(--muted);
+  padding: 4px 0;
+  user-select: none;
+}
+.bt-evi summary:hover { color: var(--accent); }
+.bt-exi-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+  padding: 6px 0 6px 12px;
+  border-left: 2px solid var(--line);
+  margin-top: 6px;
+  font-size: 13px;
+}
+.bt-exi-txt { color: var(--text); }
+
+@media (max-width: 760px) {
+  .bt-nums { flex-direction: column; align-items: flex-start; gap: 10px; }
+  .bt-arrow { transform: rotate(90deg); }
+  .vdiff-nums { gap: 18px; }
+}
+/* ---------- 07 识别质量 ---------- */
+
+/* 识别不可靠时整体给一层暖色底，扫一眼就知道这份报告要打折看 */
+.rec-warn {
+  padding: 12px 18px;
+  margin-bottom: 16px;
+  border-left: 3px solid var(--sev-medium);
+  background: color-mix(in srgb, var(--accent) 7%, transparent);
+}
+.rec-warn-item { color: var(--sev-medium); line-height: 1.7; font-size: 13.5px; }
+
+.rec-stats {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 30px;
+  padding: 16px 20px;
+  margin-bottom: 16px;
+}
+.rs { text-align: center; }
+.rs .n { font-size: 22px; font-weight: 700; line-height: 1.25; font-family: Arial, sans-serif; }
+.rs .k { font-size: 12px; color: var(--muted); margin-top: 2px; }
+.rs-id { margin-left: auto; text-align: right; }
+.rs-id .n { font-size: 13px; color: var(--muted); font-weight: 400; }
+
+/* 「这些结论不可靠」是这块最该被看见的信息，视觉权重高于统计数字 */
+.rec-alert {
+  padding: 14px 20px;
+  margin-bottom: 16px;
+  border: 1px solid color-mix(in srgb, var(--accent) 35%, transparent);
+  border-left: 3px solid var(--sev-medium);
+  background: color-mix(in srgb, var(--accent) 6%, transparent);
+}
+.rec-alert-title {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--sev-medium);
+  margin-bottom: 9px;
+}
+.rec-alert-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+  padding: 5px 0;
+  line-height: 1.6;
+}
+.rec-alert-facts { display: flex; gap: 8px; flex-wrap: wrap; }
+.rec-fact {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 4px;
+  padding: 2px 8px;
+  border-radius: 4px;
+  background: color-mix(in srgb, var(--muted) 14%, transparent);
+  font-size: 12px;
+  font-family: Arial, "Microsoft YaHei", sans-serif;
+}
+.rec-fact em { color: var(--sev-medium); font-style: normal; font-weight: 700; }
+
+.rec-detail { padding: 12px 20px; }
+.rec-detail summary {
+  cursor: pointer;
+  font-size: 13px;
+  color: var(--muted);
+  user-select: none;
+}
+.rec-detail summary:hover { color: var(--accent); }
+.rec-detail-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+  padding: 5px 0 5px 12px;
+  border-left: 2px solid var(--line);
+  margin-top: 6px;
+  font-size: 12.5px;
+}
+.rec-detail-why { color: var(--muted); }
+
+/* ============================================================
+   操作模式分析
+   报告正文只有这一节。每条四部分：
+   对局时间区间 / 原视频片段 / 原视频操作描述 / 建议操作描述+理由。
+   四部分用同一套「标签 + 内容」的两栏版式 —— 读者要能一眼
+   扫过标签就知道下面那段是什么。
+   ============================================================ */
+
+.mode-item {
+  padding: 15px 17px;
+  margin-bottom: 11px;
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-left: 4px solid var(--dev);
+  border-radius: var(--radius);
+}
+
+.mode-item-head {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  flex-wrap: wrap;
+  margin-bottom: 5px;
+}
+
+/* 模式所属的分路·英雄·时期。中文，来自规则库里的分类字段。 */
+.mode-chip {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--muted);
+  padding: 1px 9px;
+  border: 1px solid var(--line);
+  border-radius: 20px;
+}
+
+.mode-item-title {
+  font-size: 15px;
+  font-weight: 600;
+  line-height: 1.5;
+  margin: 0 0 11px;
+}
+
+/* 四部分共用的一行 */
+.mo-row {
+  display: grid;
+  grid-template-columns: 92px 1fr;
+  gap: 12px;
+  align-items: start;
+  padding: 7px 0;
+  border-top: 1px solid var(--line);
+  font-size: 13.5px;
+  line-height: 1.75;
+}
+.mo-row:first-of-type { border-top: none; }
+
+.mo-row .k {
+  font-size: 12px;
+  color: var(--muted);
+  letter-spacing: 1px;
+  padding-top: 3px;
+}
+.mo-row .v { color: var(--text); }
+.mo-row .v-na { color: var(--muted); }
+
+/* 建议：一句一行。
+   英雄层的建议是条件式的（「什么情况下：做什么」），
+   挤成一段的话，条件与做法的对应关系就糊了 —— 一行一句才对得上。 */
+.advice-line {
+  display: block;
+}
+
+/* 建议理由：第四部分里的第二句。
+   「该做什么」是模式库的要求，「为什么」是解释 —— 两者都要，
+   但理由不能抢戏，所以字重回到正常、字号小半号。 */
+.mo-reason {
+  display: block;
+  margin-top: 7px;
+  padding-top: 7px;
+  border-top: 1px dashed var(--line);
+  font-size: 12.5px;
+  color: var(--muted);
+  line-height: 1.7;
+}
+.mo-reason b {
+  color: var(--muted);
+  font-weight: 600;
+  margin-right: 6px;
+}
+
+/* ---------- 原视频片段 ---------- */
+/* 片段不是一个整页的播放器，是每条结论旁边的一小段 ——
+   玩家要对着画面看自己当时做了什么。 */
+.clips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.clip {
+  /* 片段要看得清：260px 宽的王者画面看不清小地图上发生了什么，
+     而「对照画面验证这条建议」正是这段视频存在的理由。 */
+  inline-size: min(100%, 420px);
+  background: var(--panel-2);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.clip-vid {
+  display: block;
+  inline-size: 100%;
+  aspect-ratio: 16 / 9;
+  background: #000;
+  object-fit: contain;
+}
+
+.clip-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 6px 9px;
+  font-size: 11.5px;
+  color: var(--muted);
+}
+
+.clip-play {
+  font: inherit;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--accent);
+  background: transparent;
+  border: 1px solid color-mix(in srgb, var(--accent) 40%, transparent);
+  border-radius: 20px;
+  padding: 2px 11px;
+  cursor: pointer;
+}
+.clip-play:hover { background: color-mix(in srgb, var(--accent) 12%, transparent); }
+
+/* ---------- BP 复盘 ---------- */
+/* BP 在比赛之前，没有原视频片段，坐标是「第几手 + 哪个环节」。
+   样式跟局内报告共用一套（本来就是同一个产品），只多了阵容概览。 */
+
+.bp-comp {
+  margin-top: 14px;
+  padding-top: 12px;
+  border-top: 1px solid var(--line);
+  font-size: 13.5px;
+}
+
+.bp-comp-row {
+  display: grid;
+  grid-template-columns: 92px 1fr;
+  gap: 12px;
+  padding: 3px 0;
+}
+
+.bp-comp-row .k { color: var(--muted); }
+
+/* 严重度：要紧 / 一般 / 顺手 */
+.mode-chip-high { color: #e0796b; border-color: color-mix(in srgb, #e0796b 45%, transparent); }
+.mode-chip-medium { color: #d8b45e; border-color: color-mix(in srgb, #d8b45e 40%, transparent); }
+.mode-chip-low { color: var(--muted); }
+
+.empty-note {
+  margin: 0;
+  color: var(--muted);
+  font-size: 13.5px;
+  line-height: 1.7;
+}
+
+/* ==========================================================================
+   右上角的狄仁杰与诸葛亮 —— 报告页与 BP 两页共用
+   ========================================================================== */
+
+/* ==========================================================================
+   右上角的狄仁杰与诸葛亮 —— 所有内层页面共用
+   ========================================================================== */
+
+/* ---------- 右上角的狄仁杰与诸葛亮 ----------
+   两个人站在对局记录的右上角，盯着屏幕里的人看。
+   形象是本项目手画的（照着「官袍束发的判官」与「纶巾羽扇的书生」
+   自己画），不是任何现成美术资源的复制品。 */
+.duo-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 20px;
+}
+
+.duo {
+  inline-size: 244px;
+  flex: 0 0 auto;
+  margin-top: -14px;
+  user-select: none;
+}
+.duo svg { inline-size: 100%; block-size: auto; display: block; overflow: visible; }
+
+/* 瞳孔跟着光标走。视线向量写在 --lx / --ly 上，
+   整幅画只靠两个变量驱动 —— 改一次就够，不必重画。 */
+.duo .pupil {
+  transform-box: fill-box;
+  transform-origin: center;
+  transform: translate(calc(var(--lx, 0) * 2.6px), calc(var(--ly, 0) * 2px));
+  transition: transform .13s ease-out;
+}
+
+/* 呼吸：几乎看不出来，但静止不动就死了。 */
+.duo .fg-drj { animation: duoBreath 4.6s ease-in-out infinite; }
+.duo .fg-zgl { animation: duoBreath 5.4s ease-in-out infinite; }
+@keyframes duoBreath {
+  0%, 100% { transform: translateY(0); }
+  50%      { transform: translateY(-1.6px); }
+}
+
+/* 放在概览卡里时贴着卡的右上角：卡片有 28px 内边距，
+   人物不缩进去就浮在卡片外面。 */
+.hero .duo { margin-left: auto; margin-top: -18px; }
+
+/* 画面里的证据：第几秒看到了什么（视频画面识别所得） */
+.ev-list { margin: 2px 0 0; padding-left: 18px; }
+.ev-list li { margin: 2px 0; }
+.ev-list .ev-t {
+  color: var(--muted);
+  margin-right: 8px;
+  font-variant-numeric: tabular-nums;
+}
+.ev-list .ev-w { color: var(--text); }
+.mo-row .v-note { color: var(--muted); margin-right: 4px; }
+
+/* 判不了的原因汇总 */
+.mode-gap-note {
+  margin-top: 14px;
+  padding: 10px 12px;
+  border: 1px dashed var(--line);
+  border-radius: 8px;
+  color: var(--muted);
+  font-size: 12.5px;
+  line-height: 1.9;
+}
+.mode-gap-note .gap-kind {
+  display: inline-block;
+  margin: 0 8px 0 4px;
+  padding: 1px 8px;
+  border-radius: 999px;
+  background: rgba(127, 127, 127, .12);
+  color: var(--text);
+}

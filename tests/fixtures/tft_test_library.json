@@ -1,0 +1,366 @@
+[
+  {
+    "id": "TFT-ECON-001",
+    "game": "tft",
+    "version": "13.1",
+    "title": "连胜 3 以上且血量不低于 50 时应停手存钱",
+    "category": "经济运营",
+    "trigger": {
+      "all": [
+        {"fact": "stage", "op": "==", "value": 4},
+        {"fact": "phase", "op": "==", "value": 1},
+        {"fact": "streak", "op": ">=", "value": 3},
+        {"fact": "health", "op": ">=", "value": 50}
+      ],
+      "any": [],
+      "none": []
+    },
+    "expect": {"fact": "econ_action", "op": "in", "value": ["save", "level_up"]},
+    "severity": "high",
+    "status": "active",
+    "rationale": "连胜期间继续追星会把血线打穿，而血线一旦低于 50，后续连胜的收益会被对手一波翻盘吃掉。",
+    "deviation_hint": "这一回合应当停手存钱，不要追三星。",
+    "tags": ["经济", "连胜", "止损"],
+    "source": {
+      "guide": "云顶之弈测试夹具库",
+      "locator": "夹具 / 经济运营",
+      "url": "",
+      "quoted": "连胜期要存钱，血量过 50 不追星。",
+      "collected_at": "2026-10-18"
+    }
+  },
+  {
+    "id": "TFT-ECON-002",
+    "game": "tft",
+    "version": "13.1",
+    "title": "2 阶段金币达到 50 时应保持满利息不做消费",
+    "category": "经济运营",
+    "trigger": {
+      "all": [
+        {"fact": "stage", "op": "==", "value": 2},
+        {"fact": "gold", "op": ">=", "value": 50}
+      ],
+      "any": [],
+      "none": []
+    },
+    "expect": {"fact": "econ_action", "op": "in", "value": ["save"]},
+    "severity": "medium",
+    "status": "active",
+    "rationale": "2 阶段满利息的门槛是 60，这段金币一旦花掉，后面每次刷新都要重新攒。",
+    "deviation_hint": "这一回合不要消费，攒到 60 吃满利息。",
+    "tags": ["经济", "利息"],
+    "source": {
+      "guide": "云顶之弈测试夹具库",
+      "locator": "夹具 / 经济运营",
+      "url": "",
+      "quoted": "前期不要乱花钱，存钱吃利息。",
+      "collected_at": "2026-10-18"
+    }
+  },
+  {
+    "id": "TFT-ECON-003",
+    "game": "tft",
+    "version": "13.1",
+    "title": "血量健康时应停手抢经济而不是追星",
+    "category": "经济运营",
+    "trigger": {
+      "all": [
+        {"fact": "health", "op": ">=", "value": 50}
+      ],
+      "any": [],
+      "none": []
+    },
+    "expect": {"fact": "econ_action", "op": "in", "value": ["save", "break_streak"]},
+    "severity": "low",
+    "status": "active",
+    "rationale": "血量健康时追星是纯亏血买卖。",
+    "deviation_hint": "血量健康时把金币存起来。",
+    "tags": ["经济"],
+    "source": {
+      "guide": "云顶之弈测试夹具库",
+      "locator": "夹具 / 经济运营",
+      "url": "",
+      "quoted": "血量健康的时候把金币存起来。",
+      "collected_at": "2026-10-18"
+    }
+  },
+  {
+    "id": "TFT-ITEM-001",
+    "game": "tft",
+    "version": "13.1",
+    "title": "主 C 已成型时应保护主 C 继续运营",
+    "category": "装备运营",
+    "trigger": {
+      "all": [
+        {"fact": "has_main_carry", "op": "==", "value": true}
+      ],
+      "any": [],
+      "none": []
+    },
+    "expect": {"fact": "positioning_action", "op": "in", "value": ["protect_carry"]},
+    "severity": "medium",
+    "status": "active",
+    "rationale": "主 C 一旦被切，后续每一回合的运营收益都要打折。",
+    "deviation_hint": "这一回合要保护主 C。",
+    "tags": ["主C", "保护"],
+    "source": {
+      "guide": "云顶之弈测试夹具库",
+      "locator": "夹具 / 装备运营",
+      "url": "",
+      "quoted": "主 C 要缩角保护。",
+      "collected_at": "2026-10-18"
+    }
+  },
+  {
+    "id": "TFT-ITEM-002",
+    "game": "tft",
+    "version": "13.1",
+    "title": "5 阶段装备达到 4 件且血量不超过 30 时必须搜牌",
+    "category": "装备运营",
+    "trigger": {
+      "all": [
+        {"fact": "stage", "op": "==", "value": 5},
+        {"fact": "item_count", "op": ">=", "value": 4},
+        {"fact": "health", "op": "<=", "value": 30}
+      ],
+      "any": [],
+      "none": []
+    },
+    "expect": {"fact": "econ_action", "op": "in", "value": ["reroll", "roll"]},
+    "severity": "medium",
+    "status": "active",
+    "rationale": "装备没成型时硬追星会把经济断掉。",
+    "deviation_hint": "先攒经济，别在这个装备量上追三星。",
+    "tags": ["装备", "经济"],
+    "source": {
+      "guide": "云顶之弈测试夹具库",
+      "locator": "夹具 / 装备运营",
+      "url": "",
+      "quoted": "装备不过三件就先存钱。",
+      "collected_at": "2026-10-18"
+    }
+  },
+  {
+    "id": "TFT-POP-001",
+    "game": "tft",
+    "version": "13.1",
+    "title": "3 阶段人口低于 6 时应升人口",
+    "category": "人口运营",
+    "trigger": {
+      "all": [
+        {"fact": "stage", "op": "==", "value": 3},
+        {"fact": "level", "op": "<", "value": 6}
+      ],
+      "any": [],
+      "none": []
+    },
+    "expect": {"fact": "econ_action", "op": "in", "value": ["rush_level"]},
+    "severity": "high",
+    "status": "active",
+    "rationale": "3 阶段 6 人口是第一个强度分水岭，人口落后会同时输在血线和上限上。",
+    "deviation_hint": "这一回合要冲人口到 6。",
+    "tags": ["人口", "节奏"],
+    "source": {
+      "guide": "云顶之弈测试夹具库",
+      "locator": "夹具 / 人口运营",
+      "url": "",
+      "quoted": "3 阶段必须到 6 人口。",
+      "collected_at": "2026-10-18"
+    }
+  },
+  {
+    "id": "TFT-POP-002",
+    "game": "tft",
+    "version": "13.1",
+    "title": "4 阶段人口低于 8 时应升人口",
+    "category": "人口运营",
+    "trigger": {
+      "all": [
+        {"fact": "stage", "op": ">=", "value": 4},
+        {"fact": "level", "op": "<", "value": 8}
+      ],
+      "any": [],
+      "none": []
+    },
+    "expect": {"fact": "econ_action", "op": "in", "value": ["rush_level"]},
+    "severity": "high",
+    "status": "active",
+    "rationale": "4 阶段 8 人口决定你能不能进入高强度对局。",
+    "deviation_hint": "这一回合要冲人口到 8。",
+    "tags": ["人口", "节奏"],
+    "source": {
+      "guide": "云顶之弈测试夹具库",
+      "locator": "夹具 / 人口运营",
+      "url": "",
+      "quoted": "4 阶段要到 8 人口。",
+      "collected_at": "2026-10-18"
+    }
+  },
+  {
+    "id": "TFT-POS-001",
+    "game": "tft",
+    "version": "13.1",
+    "title": "局势压力为高压时应调整站位保护自己",
+    "category": "站位运营",
+    "trigger": {
+      "all": [
+        {"fact": "pressure", "op": "==", "value": "high"}
+      ],
+      "any": [],
+      "none": []
+    },
+    "expect": {"fact": "positioning_action", "op": "in", "value": ["adjust", "counter"]},
+    "severity": "medium",
+    "status": "active",
+    "rationale": "高压局站位没调整会被直接开掉，减员之后经济差继续扩大。",
+    "deviation_hint": "这一回合要调整站位。",
+    "tags": ["站位", "压力"],
+    "source": {
+      "guide": "云顶之弈测试夹具库",
+      "locator": "夹具 / 站位运营",
+      "url": "",
+      "quoted": "局势危急的时候要调站位。",
+      "collected_at": "2026-10-18"
+    }
+  },
+  {
+    "id": "TFT-POS-002",
+    "game": "tft",
+    "version": "13.1",
+    "title": "关键决策回合应针对对位而不是原地保持",
+    "category": "站位运营",
+    "trigger": {
+      "all": [
+        {"fact": "is_decision_point", "op": "==", "value": true}
+      ],
+      "any": [],
+      "none": []
+    },
+    "expect": {"fact": "positioning_action", "op": "in", "value": ["counter", "adjust"]},
+    "severity": "low",
+    "status": "active",
+    "rationale": "关键决策回合原地不动等于把先手让给对方。",
+    "deviation_hint": "这一回合要针对对位。",
+    "tags": ["站位", "决策点"],
+    "source": {
+      "guide": "云顶之弈测试夹具库",
+      "locator": "夹具 / 站位运营",
+      "url": "",
+      "quoted": "关键回合要针对对位。",
+      "collected_at": "2026-10-18"
+    }
+  },
+  {
+    "id": "TFT-RHYTHM-001",
+    "game": "tft",
+    "version": "13.1",
+    "title": "局面压力为高压时应保持血量而不是继续追星",
+    "category": "节奏运营",
+    "trigger": {
+      "all": [
+        {"fact": "pressure", "op": "==", "value": "high"}
+      ],
+      "any": [],
+      "none": []
+    },
+    "expect": {"fact": "econ_action", "op": "in", "value": ["save", "break_streak"]},
+    "severity": "high",
+    "status": "active",
+    "rationale": "高压局追星会被对手一波带走，血线崩了后面什么都做不了。",
+    "deviation_hint": "这一回合要稳住血量。",
+    "tags": ["节奏", "止损"],
+    "source": {
+      "guide": "云顶之弈测试夹具库",
+      "locator": "夹具 / 节奏运营",
+      "url": "",
+      "quoted": "局势危急的时候不要梭哈。",
+      "collected_at": "2026-10-18"
+    }
+  },
+  {
+    "id": "TFT-RHYTHM-002",
+    "game": "tft",
+    "version": "13.1",
+    "title": "人口节奏超前时应停止升人口",
+    "category": "节奏运营",
+    "trigger": {
+      "all": [
+        {"fact": "round_tempo", "op": "==", "value": "fast"},
+        {"fact": "level", "op": ">=", "value": 7}
+      ],
+      "any": [],
+      "none": []
+    },
+    "expect": {"fact": "econ_action", "op": "in", "value": ["save"]},
+    "severity": "medium",
+    "status": "active",
+    "rationale": "人口已经超前，再升人口只是把钱烧掉。",
+    "deviation_hint": "这一回合不要继续升人口。",
+    "tags": ["节奏", "人口"],
+    "source": {
+      "guide": "云顶之弈测试夹具库",
+      "locator": "夹具 / 节奏运营",
+      "url": "",
+      "quoted": "人口够了就别再升。",
+      "collected_at": "2026-10-18"
+    }
+  },
+  {
+    "id": "TFT-D-ROLL-001",
+    "game": "tft",
+    "version": "13.1",
+    "title": "5 阶段已确定阵容且血量低于 40 时应大额抽卡",
+    "category": "斗法运营",
+    "trigger": {
+      "all": [
+        {"fact": "stage", "op": "==", "value": 5},
+        {"fact": "has_main_carry", "op": "==", "value": true},
+        {"fact": "health", "op": "<", "value": 40}
+      ],
+      "any": [],
+      "none": []
+    },
+    "expect": {"fact": "econ_action", "op": "in", "value": ["roll"]},
+    "severity": "high",
+    "status": "active",
+    "rationale": "阵容已经定了、血线又撑不住的时候，抽卡是唯一能立刻换回强度的动作。",
+    "deviation_hint": "这一回合要直接 D 牌追三星，不要存钱。",
+    "tags": ["斗法", "抽卡"],
+    "source": {
+      "guide": "云顶之弈测试夹具库",
+      "locator": "夹具 / 斗法运营",
+      "url": "",
+      "quoted": "血线撑不住就直接 D 牌。",
+      "collected_at": "2026-10-18"
+    }
+  },
+  {
+    "id": "TFT-SEASON-001",
+    "game": "tft",
+    "version": "13.2",
+    "title": "3 阶段中后期金币低于 30 且连胜 3 以上时应主动断连",
+    "category": "节奏运营",
+    "trigger": {
+      "all": [
+        {"fact": "stage", "op": "==", "value": 3},
+        {"fact": "gold", "op": "<", "value": 30},
+        {"fact": "streak", "op": ">=", "value": 3}
+      ],
+      "any": [],
+      "none": []
+    },
+    "expect": {"fact": "econ_action", "op": "in", "value": ["break_streak", "save"]},
+    "severity": "high",
+    "status": "active",
+    "rationale": "金币不足却继续连胜，等对手断你的连胜时你已经没钱翻盘。",
+    "deviation_hint": "这一回合要主动断连胜。",
+    "tags": ["连胜", "节奏"],
+    "source": {
+      "guide": "云顶之弈测试夹具库",
+      "locator": "夹具 / 13.2 新增",
+      "url": "",
+      "quoted": "金币不够就断连胜。",
+      "collected_at": "2026-10-18"
+    }
+  }
+]

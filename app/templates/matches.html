@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>对局记录</title>
+{% include "_theme_head.html" %}
+<link rel="stylesheet" href="{{ asset('report.css') }}">
+<link rel="stylesheet" href="{{ asset('app.css') }}">
+<link rel="stylesheet" href="{{ asset('nav.css') }}">
+<link rel="stylesheet" href="{{ asset('dialog.css') }}">
+<style>
+/* 主卡铺满整页。对局少的时候卡片只包住那几行，下面一大片空白
+   看着像没加载完 —— 卡片延伸到视口底部就干净了。 */
+.app-main.page-fill { min-block-size: calc(100vh - 28px); }
+
+/* 检索框：只按对局名找。放在分路筛选左边 —— 先说要找什么，再缩小范围。 */
+.msearch {
+  display: flex; gap: 10px; align-items: center; flex-wrap: wrap;
+  margin-bottom: 14px;
+}
+.msearch .input { flex: 1 1 240px; min-inline-size: 0; }
+
+/* 分路分组：一条分路一个小节，节头给分路名和条数。 */
+.lane-sec { margin-bottom: 26px; }
+.lane-sec-h {
+  display: flex; align-items: baseline; gap: 10px;
+  font-size: 15px; font-weight: 700; margin: 0 0 10px;
+  padding-bottom: 8px; border-bottom: 1px solid var(--line);
+}
+.lane-sec-h .n {
+  font-size: 12px; color: var(--muted); font-weight: 600;
+}
+
+/* 删除按钮：红色，和「报告」这种中性动作区分开。 */
+.btn-del { color: var(--sev-high); }
+.btn-del:hover { border-color: var(--sev-high); }
+.btn-del:disabled { opacity: .5; cursor: default; }
+</style>
+</head>
+<body class="app-body">
+{% set nav_active = "matches" %}
+{% include "_header.html" %}
+
+<main class="app-main page-fill">
+
+  <div class="page-head duo-head">
+    <div>
+      <h1>对局记录</h1>
+    </div>
+
+    {# 狄仁杰与诸葛亮，注视着屏幕里的人 #}
+    {% include "_duo.html" %}
+  </div>
+
+  <form class="msearch" method="get" action="/matches" id="msearch">
+    <input type="hidden" name="lane" value="{{ active_lane }}">
+    <input class="input" type="search" name="q" id="qInput" value="{{ q }}"
+           placeholder="按对局名检索" aria-label="按对局名检索" autocomplete="off">
+    {% if q %}
+    <a class="btn-ghost" href="/matches{% if active_lane %}?lane={{ active_lane }}{% endif %}">清空</a>
+    {% endif %}
+  </form>
+
+  <div class="filters">
+    <div class="pills" role="group" aria-label="按分路筛选">
+      <a class="pill{{ ' on' if not active_lane }}"
+         href="/matches{% if q %}?q={{ q | urlencode }}{% endif %}">全部</a>
+      {% for code, label in lane_labels.items() %}
+      <a class="pill{{ ' on' if code == active_lane }}"
+         href="/matches?lane={{ code }}{% if q %}&q={{ q | urlencode }}{% endif %}">{{ label }}</a>
+      {% endfor %}
+    </div>
+    <span class="tag" id="cntTag">共 {{ rows | length }} 局</span>
+  </div>
+
+  {% for g in groups %}
+    {% if g.matches and (not active_lane or g.code == active_lane) %}
+    <section class="lane-sec" data-lane="{{ g.code }}">
+      <h2 class="lane-sec-h">{{ g.label }}<span class="n">{{ g.matches | length }} 局</span></h2>
+      {% for x in g.matches %}
+      <div class="item" data-name="{{ x.name }}">
+        <div class="item-main">
+          <div class="item-title">{{ x.name }}<span class="tag">{{ x.source }}</span></div>
+          <div class="item-meta">
+            {# 只留时间。「7 回合」「偏离 3/6」和那个执行度圆环都是内部账 ——
+               回合数是采集的产物，执行度是判定口径；这一页回答的是
+               「我打过哪些局」，不是「我打得好不好」。 #}
+            <span>{{ x.played_at }}</span>
+          </div>
+        </div>
+        <div class="item-acts">
+          <a class="btn-ghost" href="/api/matches/{{ x.id }}/report">报告</a>
+          {# BP 在比赛之前，单独一页。录过的对局给「BP 复盘」（看结论）
+             和「改 BP」（回去改录入）两个入口；没录过的只给「录 BP」。
+             曾经写的是「有 BP 就叫 BP 复盘，但链到录入页」——
+             名字说看结论，点进去是张空表，等于骗人。 #}
+          {% if x.has_bp %}
+          <a class="btn-ghost" href="/api/matches/{{ x.id }}/bp/report">BP 复盘</a>
+          <a class="btn-ghost" href="/api/matches/{{ x.id }}/bp">改 BP</a>
+          {% else %}
+          <a class="btn-ghost" href="/api/matches/{{ x.id }}/bp">录 BP</a>
+          {% endif %}
+          {# 保存到本地：导出一个自包含的单文件（样式脚本全内联），
+             双击就能在自己电脑上打开，转给别人也能看。
+             没有登录这回事 —— 打开就是打开。 #}
+          <button class="btn-ghost" type="button"
+                  data-save-url="/api/matches/{{ x.id }}/report/export"
+                  data-save-name="操作模式分析_{{ x.name }}">保存报告</button>
+          {% if x.has_bp %}
+          <button class="btn-ghost" type="button"
+                  data-save-url="/api/matches/{{ x.id }}/bp/report/export"
+                  data-save-name="BP复盘_{{ x.name }}">保存BP复盘</button>
+          {% endif %}
+          <button class="btn-ghost btn-del" type="button"
+                  data-id="{{ x.id }}" data-name="{{ x.name }}">删除</button>
+        </div>
+      </div>
+      {% endfor %}
+    </section>
+    {% endif %}
+  {% endfor %}
+
+  {% if not rows %}
+  <div class="empty">
+    {% if q %}没有叫「{{ q }}」的对局{% else %}还没有对局{% endif %}
+  </div>
+  {% endif %}
+
+</main>
+
+{% include "_theme_script.html" %}
+{% include "_dialog.html" %}
+<script src="{{ asset('dialog.js') }}"></script>
+
+<script>
+// 检索在前端做：整页刷新会把输入框的焦点弄丢，而检索是「边打边看」的动作。
+// 服务端仍然认 ?q= —— 分享链接、刷新页面时结果一致。
+const qInput = document.getElementById('qInput');
+const cntTag = document.getElementById('cntTag');
+
+if (qInput) {
+  const apply = () => {
+    const kw = qInput.value.trim().toLowerCase();
+    let shown = 0;
+    document.querySelectorAll('.item[data-name]').forEach(card => {
+      const hit = !kw || card.dataset.name.toLowerCase().includes(kw);
+      card.style.display = hit ? '' : 'none';
+      if (hit) shown += 1;
+    });
+    // 空的小节连标题一起收掉 —— 只剩一个空标题比什么都没有更让人困惑
+    document.querySelectorAll('.lane-sec').forEach(sec => {
+      const cards = [...sec.querySelectorAll('.item[data-name]')];
+      const any = cards.some(c => c.style.display !== 'none');
+      sec.style.display = any ? '' : 'none';
+      // 小节标题上的条数也跟着变 —— 它写的是这一节**当前**有几局
+      const n = sec.querySelector('.lane-sec-h .n');
+      if (n) n.textContent = cards.filter(c => c.style.display !== 'none').length + ' 局';
+    });
+    if (cntTag) cntTag.textContent = '共 ' + shown + ' 局';
+  };
+  qInput.addEventListener('input', apply);
+  apply();
+}
+
+// ---------- 删除 ----------
+// 删的是一局对局，删了找不回来 —— 先问一句。
+//
+// 问句用页内弹层（见 _dialog.html），不用浏览器的 confirm()：
+// 系统那个黑底白字的小框跟整页的浅紫底、圆角卡片完全不像，
+// 而且只能塞一行字，说不清「删的是哪一局、删了会怎样」。
+document.querySelectorAll('.btn-del').forEach(btn => {
+  btn.addEventListener('click', async () => {
+    const id = btn.dataset.id;
+    const name = btn.dataset.name || id;
+
+    // 正文分两段：先说删的是哪一局，再说不 reversible 的后果。
+    const body = document.createElement('div');
+    const what = document.createElement('div');
+    what.className = 'dlg-emph';
+    what.textContent = '「' + name + '」';
+    const how = document.createElement('div');
+    how.className = 'dlg-warn';
+    how.textContent = '删了就找不回来了 —— 这一局的报告和 BP 记录一起没了。';
+    body.appendChild(what);
+    body.appendChild(how);
+
+    const ok = await askConfirm({
+      title: '删掉这一局？',
+      node: body,
+      yes: '删掉',
+      no: '再想想',
+      danger: true,
+    });
+    if (!ok) return;
+
+    btn.disabled = true;
+    try {
+      const res = await fetch('/api/matches/' + encodeURIComponent(id), {method: 'DELETE'});
+      if (!res.ok) throw new Error('服务器没有删掉这一局');
+      const card = btn.closest('.item');
+      card.remove();
+      // 计数跟着变 —— 留着旧数字的话，页面会说「共 3 局」而列表只有 2 局
+      const left = document.querySelectorAll('.item[data-name]').length;
+      if (cntTag) cntTag.textContent = '共 ' + left + ' 局';
+      document.querySelectorAll('.lane-sec').forEach(sec => {
+        const cards = [...sec.querySelectorAll('.item[data-name]')];
+        sec.style.display = cards.length ? '' : 'none';
+        const n = sec.querySelector('.lane-sec-h .n');
+        if (n) n.textContent = cards.length + ' 局';
+      });
+    } catch (err) {
+      btn.disabled = false;
+      await askNotice({
+        title: '没删掉',
+        text: '删除失败：' + err.message,
+        ok: '知道了',
+      });
+    }
+  });
+});
+
+// ---------- 保存到自己的电脑 ----------
+// 导出一个自包含的单文件（样式、脚本都内联在文件里），
+// 双击就能在自己电脑上打开，转给别人也能看。
+//
+// 两条路：
+//   浏览器支持 showSaveFilePicker（Chrome / Edge，HTTPS 或 localhost）
+//     → 弹系统保存对话框，用户自己选位置、选名字
+//   不支持
+//     → 退回普通下载，文件落进浏览器的下载目录
+//
+// 弹框必须在用户点击那一刻就调出来：中间只要 await 一次 fetch，
+// 浏览器认的「用户手势」就过期了，弹框会被直接拒绝。
+async function saveToDisk(url, suggested) {
+  let handle = null;
+  if (window.showSaveFilePicker) {
+    try {
+      handle = await window.showSaveFilePicker({
+        suggestedName: suggested + '.html',
+        types: [{description: 'HTML 报告', accept: {'text/html': ['.html']}}]
+      });
+    } catch (err) {
+      if (err && err.name === 'AbortError') return;  // 用户自己取消了，不是错误
+      handle = null;                                 // 别的失败就退回下载
+    }
+  }
+
+  const res = await fetch(url);
+  if (!res.ok) throw new Error('服务器没有生成这个文件（HTTP ' + res.status + '）');
+  const blob = await res.blob();
+
+  if (handle) {
+    const w = await handle.createWritable();
+    await w.write(blob);
+    await w.close();
+    return;
+  }
+
+  // 文件名优先用服务器给的 —— 它带了对局名和时间戳，比这里拼的准
+  let name = suggested + '.html';
+  const cd = res.headers.get('Content-Disposition') || '';
+  const m = cd.match(/filename\*=UTF-8''([^;]+)/i);
+  if (m) { try { name = decodeURIComponent(m[1]); } catch (e) { /* 用默认名 */ } }
+
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = name;
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+  setTimeout(() => URL.revokeObjectURL(a.href), 4000);
+}
+
+document.querySelectorAll('[data-save-url]').forEach(btn => {
+  btn.addEventListener('click', async () => {
+    const label = btn.textContent;
+    btn.disabled = true;
+    btn.textContent = '保存中…';
+    try {
+      await saveToDisk(btn.dataset.saveUrl, btn.dataset.saveName);
+      btn.textContent = '已保存';
+    } catch (err) {
+      // 失败也用页内弹层说 —— 系统的 alert 框跟这页不是一套东西，
+      // 而且它会把「保存失败」四个字直接怼在屏幕上，看不出是哪一步失败。
+      await askNotice({
+        title: '没保存成',
+        text: '保存失败：' + err.message,
+        ok: '知道了',
+      });
+      btn.textContent = label;
+    } finally {
+      btn.disabled = false;
+      setTimeout(() => { btn.textContent = label; }, 2000);
+    }
+  });
+});
+
+</script>
+</body>
+</html>

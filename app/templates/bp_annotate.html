@@ -1,0 +1,379 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="dark">
+<meta name="generator" content="rule-execution-analyzer">
+<title>BP 记录 · {{ match.id }}</title>
+{% include "_theme_head.html" %}
+<link rel="stylesheet" href="{{ asset('report.css') }}">
+<link rel="stylesheet" href="{{ asset('app.css') }}">
+<link rel="stylesheet" href="{{ asset('nav.css') }}">
+<style>
+/* BP 录入页与 BP 复盘页是同一件事的两面，骨架必须一模一样：
+   概览卡 → 一节 → 卡片 → 去处 → 页脚。
+   报告页版式（卡片浮在浅紫底上）+ 内层页面的左栏。 */
+
+/* 主区不铺白底 —— 卡片要浮在页面上（理由同 bp_report.html）。 */
+.app-main.bp-page {
+  background: transparent;
+  -webkit-backdrop-filter: none;
+  backdrop-filter: none;
+  box-shadow: none;
+  padding: 20px 24px 36px;
+}
+
+.bp-hero .duo { margin-left: auto; margin-top: -18px; }
+
+/* 第一节顶到最上面（主区已经有内边距了）。 */
+.section.first { margin-top: 0; }
+
+/* 勾选块：勾上就变成主色的胶囊 —— 一眼看出「这条事实我已经登记了」。 */
+.bp-checks { display: flex; flex-wrap: wrap; gap: 10px; }
+.bp-checks label {
+  display: inline-flex; align-items: center; gap: 8px;
+  padding: 8px 15px; border: 1px solid var(--line); border-radius: 999px;
+  background: var(--panel); color: var(--muted);
+  font-size: 13.5px; cursor: pointer; user-select: none;
+  transition: border-color .15s, color .15s, background .15s;
+}
+.bp-checks label:hover { border-color: var(--accent); color: var(--text); }
+.bp-checks label:has(input:checked) {
+  border-color: var(--accent); background: var(--accent-soft);
+  color: var(--accent); font-weight: 600;
+}
+.bp-checks input { accent-color: var(--accent); margin: 0; }
+
+/* 一行一条决策。行序就是 draft 顺序 —— 不用再另加一列「第几手」：
+   「手」是自走棋的说法，而环节名（一抢 / 二抢 / 三抢）自己就把先后说清楚了。 */
+.bp-grid {
+  display: grid;
+  grid-template-columns: 96px 156px 1fr 1fr 40px;
+  gap: 10px; align-items: center;
+}
+.bp-grid.head {
+  color: var(--muted); font-size: 12px; padding: 0 2px 8px;
+}
+.bp-row { margin-bottom: 8px; }
+.bp-row select, .bp-row input {
+  width: 100%; padding: 9px 11px; border-radius: 8px;
+  border: 1px solid var(--line); background: var(--bg);
+  color: var(--text); font-size: 13.5px; font-family: inherit;
+}
+.bp-row select:focus, .bp-row input:focus {
+  outline: none; border-color: var(--accent);
+  box-shadow: 0 0 0 3px var(--accent-soft);
+}
+.bp-del {
+  border: 1px solid var(--line); background: var(--bg); color: var(--muted);
+  border-radius: 8px; height: 36px; width: 36px; cursor: pointer; font-size: 15px;
+}
+.bp-del:hover { border-color: var(--sev-high); color: var(--sev-high); }
+
+/* .panel 本身不带内边距（报告页的卡片都是自己定内边距的），
+   表单这几个块得自己留出来 —— 否则勾选块贴着卡片边，看着像漏了留白。 */
+.bp-block { margin-bottom: 12px; padding: 16px 18px; }
+.bp-block:last-child { margin-bottom: 0; }
+.bp-block > h3 { font-size: 14.5px; margin: 0 0 12px; }
+
+/* 「加一条」那一行。 */
+.bp-actions { display: flex; align-items: center; gap: 12px; margin-top: 12px; }
+.bp-actions .btn-ghost { padding: 9px 16px; font-size: 13.5px; }
+
+.bp-acts {
+  display: flex; flex-wrap: wrap; align-items: center; gap: 10px;
+  margin-top: 26px;
+}
+.bp-acts .btn-ghost {
+  display: inline-block; padding: 9px 16px; font-size: 13.5px; text-decoration: none;
+}
+.bp-acts .btn-primary {
+  width: auto; margin-top: 0; padding: 10px 22px; font-size: 14px;
+}
+.bp-msg { font-size: 13.5px; color: var(--muted); }
+.bp-msg.err { color: var(--sev-high); }
+
+@media (max-width: 860px) {
+  .bp-grid { grid-template-columns: 34px 1fr 1fr 40px; }
+  .bp-grid > *:nth-child(4) { grid-column: 2 / 4; }
+}
+</style>
+</head>
+<body class="app-body">
+{% set nav_active = "matches" %}
+{% include "_header.html" %}
+
+<main class="app-main bp-page">
+
+  <!-- ============ 顶部概览 ============ -->
+  <section class="section first" id="overview">
+    <div class="panel hero bp-hero">
+      <div class="hero-top">
+        <div class="hero-id">
+          <h1>王者荣耀 · BP 记录</h1>
+          {# 只留「哪一局、哪个游戏」—— 与 BP 复盘页同一套。 #}
+          <div class="hero-meta">
+            <span>对局 <b>{{ match_name or match.id }}</b></span>
+            <span>游戏 <b>{{ '王者荣耀' if match.game == 'hok' else match.game }}</b></span>
+          </div>
+        </div>
+        {% include "_duo.html" %}
+      </div>
+    </div>
+  </section>
+
+  <form id="bp-form" onsubmit="return false;">
+
+    <!-- ============ 01 BP 录入 ============ -->
+    {# 一节，三个卡片 —— 与 BP 复盘页「一节、若干条目卡」同形。 #}
+    <section class="section" id="record">
+      <div class="section-head">
+        <span class="idx">01</span>
+        <h2>BP 录入</h2>
+      </div>
+
+      <div class="panel bp-block">
+        <h3>阵容缺了什么</h3>
+        <div class="bp-checks">
+          <label><input type="checkbox" name="my_missing_frontline" {{ 'checked' if bp.get('my_missing_frontline') else '' }}><span>己方缺前排承伤</span></label>
+          <label><input type="checkbox" name="my_missing_engage" {{ 'checked' if bp.get('my_missing_engage') else '' }}><span>己方缺开团点</span></label>
+          <label><input type="checkbox" name="my_missing_protect" {{ 'checked' if bp.get('my_missing_protect') else '' }}><span>己方缺反手保护</span></label>
+          <label><input type="checkbox" name="my_missing_damage" {{ 'checked' if bp.get('my_missing_damage') else '' }}><span>己方缺输出</span></label>
+          <label><input type="checkbox" name="opp_missing_frontline" {{ 'checked' if bp.get('opp_missing_frontline') else '' }}><span>对方缺前排</span></label>
+        </div>
+      </div>
+
+      <div class="panel bp-block">
+        <h3>每一个环节</h3>
+        <div class="bp-grid head">
+          <span>是谁</span><span>环节</span><span>操作类别</span><span>英雄</span><span></span>
+        </div>
+        <div id="bp-rows"></div>
+        <div class="bp-actions">
+          <button type="button" class="btn-ghost" id="bp-add">加一条</button>
+          <button type="button" class="btn-ghost" id="bp-prefill">从 BP 画面读一遍</button>
+          <span class="prefill-note" id="bp-prefill-note"></span>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ 去哪儿 ============ -->
+    <div class="bp-acts">
+      <button type="button" class="btn-primary" id="bp-save">保存并看复盘</button>
+      {# 「查看复盘」只在已经录过 BP 时才摆出来 ——
+         没录过就点进去只会撞上一个 404，那是个点不动的按钮。 #}
+      {% if has_bp %}
+      <a class="btn-ghost" href="/api/matches/{{ match.id }}/bp/report">查看复盘</a>
+      {% endif %}
+      <a class="btn-ghost" href="/matches">← 对局记录</a>
+      <span class="bp-msg" id="bp-msg"></span>
+    </div>
+
+  </form>
+
+  <footer class="footer">
+    生成于 {{ generated_at }}
+  </footer>
+
+</main>
+
+{% include "_theme_script.html" %}
+
+<script>
+const PHASES = {{ phases | tojson }};
+const LEGACY_PHASES = {{ legacy_phases | tojson }};
+const ACTIONS = {{ actions | tojson }};
+const HEROES = {{ heroes | tojson }};
+
+const rows = document.getElementById('bp-rows');
+const msg = document.getElementById('bp-msg');
+const saveBtn = document.getElementById('bp-save');
+
+function option(value, label, selected) {
+  const o = document.createElement('option');
+  o.value = value;
+  o.textContent = label;
+  if (selected) o.selected = true;
+  return o;
+}
+
+/* 操作类别要跟环节对得上：禁用环节只给禁人的动作，选人环节只给选人的动作。
+   否则「一抢 + 针对对方核心」这种自相矛盾的组合会被录进去，
+   复盘时只能干瞪眼。 */
+function actionsForPhase(phase, keep) {
+  let keys;
+  if (phase === 'ban_1') {
+    keys = Object.keys(ACTIONS).filter(k => k.indexOf('ban_') === 0);
+  } else if (phase && phase.indexOf('pick_') === 0) {
+    keys = Object.keys(ACTIONS).filter(k => k.indexOf('pick_') === 0);
+  } else {
+    // 只剩「收尾检查」这一类：「先定体系 / 先定分路」属于已撤下的
+    // 「进入 BP」那一环，没有规则再要求它们，新记录里不该出现。
+    keys = Object.keys(ACTIONS).filter(k => k.indexOf('check_') === 0);
+  }
+  // 旧记录里可能有别的组合 —— 照样留在下拉里，别把已有数据弄丢。
+  if (keep && keys.indexOf(keep) < 0) keys = [keep].concat(keys);
+  return keys;
+}
+
+function fillActions(select, phase, keep) {
+  select.innerHTML = '';
+  actionsForPhase(phase, keep).forEach(function (k) {
+    select.appendChild(option(k, ACTIONS[k], k === keep));
+  });
+}
+
+function addRow(data) {
+  data = data || {};
+  const row = document.createElement('div');
+  row.className = 'bp-grid bp-row';
+
+  const side = document.createElement('select');
+  side.appendChild(option('my', '我方', data.side === 'my' || !data.side));
+  side.appendChild(option('opp', '对方', data.side === 'opp'));
+
+  const phase = document.createElement('select');
+  const phaseKeys = Object.keys(PHASES);
+  // 旧记录里可能有已撤下的环节（「进入 BP」那一环）——
+  // 照样摆出来并选中它，别让那一行在保存时变成别的环节。
+  if (data.phase && phaseKeys.indexOf(data.phase) < 0) phaseKeys.unshift(data.phase);
+  phaseKeys.forEach(function (k) {
+    phase.appendChild(option(k, PHASES[k] || LEGACY_PHASES[k] || k, data.phase === k));
+  });
+
+  const action = document.createElement('select');
+  fillActions(action, data.phase || 'ban_1', data.action);
+
+  const hero = document.createElement('input');
+  hero.type = 'text';
+  hero.placeholder = '英雄名（可留空）';
+  hero.value = data.hero || '';
+  hero.list = 'bp-hero-list';
+  hero.setAttribute('autocomplete', 'off');
+
+  const del = document.createElement('button');
+  del.type = 'button';
+  del.className = 'bp-del';
+  del.textContent = '×';
+  del.title = '删掉这一步';
+  del.onclick = function () { row.remove(); };
+
+  // 换环节就换动作类别 —— 留着上一个环节的动作就是自相矛盾。
+  phase.onchange = function () {
+    fillActions(action, phase.value, null);
+  };
+
+  row.appendChild(side);
+  row.appendChild(phase);
+  row.appendChild(action);
+  row.appendChild(hero);
+  row.appendChild(del);
+  rows.appendChild(row);
+}
+
+const saved = {{ (bp.get('decisions') or []) | tojson }};
+saved.forEach(addRow);
+if (!saved.length) addRow({side: 'my', phase: 'ban_1', action: 'ban_opp_core'});
+
+document.getElementById('bp-add').onclick = function () {
+  addRow({side: 'my', phase: 'pick_1', action: 'pick_flex'});
+};
+
+// 从 BP 画面读一遍（预填，不是替用户决定）。
+// 读不出来的整条不写 —— 宁可少一条，也不要编一条禁用。
+document.getElementById('bp-prefill').onclick = async function () {
+  const btn = this;
+  const note = document.getElementById('bp-prefill-note');
+  btn.disabled = true;
+  note.textContent = '模型在读…';
+  try {
+    const r = await fetch('/api/matches/{{ match.id }}/bp/prefill', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: '{}'
+    });
+    const data = await r.json();
+    if (!r.ok) throw new Error(data.detail || '读取失败');
+    const steps = data.steps || [];
+    if (!steps.length) {
+      note.textContent = '模型没读出来（画面里看不出来），请自己录。';
+    } else {
+      rows.innerHTML = '';
+      steps.forEach(addRow);
+      note.textContent = '模型读了 ' + steps.length + ' 手，请核对。';
+    }
+  } catch (err) {
+    note.textContent = '没读成：' + err.message;
+  } finally {
+    btn.disabled = false;
+  }
+};
+
+saveBtn.onclick = function () {
+  const list = rows.querySelectorAll('.bp-row');
+  if (!list.length) {
+    msg.className = 'bp-msg err';
+    msg.textContent = '至少记一个环节再保存 —— 一个都没有，规则库无从判断。';
+    return;
+  }
+
+  const decisions = [];
+  list.forEach(function (row) {
+    const s = row.querySelectorAll('select, input');
+    decisions.push({
+      side: s[0].value,
+      phase: s[1].value,
+      action: s[2].value,
+      hero: s[3].value.trim()
+    });
+  });
+
+  const form = document.getElementById('bp-form');
+  const checked = function (name) {
+    const el = form.querySelector('[name="' + name + '"]');
+    return el && el.checked ? true : null;
+  };
+
+  const body = {
+    my_missing_frontline: checked('my_missing_frontline'),
+    my_missing_engage: checked('my_missing_engage'),
+    my_missing_protect: checked('my_missing_protect'),
+    my_missing_damage: checked('my_missing_damage'),
+    opp_missing_frontline: checked('opp_missing_frontline'),
+    decisions: decisions
+  };
+
+  msg.className = 'bp-msg';
+  msg.textContent = '保存中…';
+  saveBtn.disabled = true;
+  fetch('/api/matches/{{ match.id }}/bp', {
+    method: 'POST',
+    headers: {'Content-Type': 'application/json'},
+    body: JSON.stringify(body)
+  }).then(function (r) {
+    return r.json().then(function (data) { return {ok: r.ok, data: data}; });
+  }).then(function (res) {
+    if (!res.ok) {
+      msg.className = 'bp-msg err';
+      msg.textContent = res.data.detail || '保存失败';
+      saveBtn.disabled = false;
+      return;
+    }
+    msg.className = 'bp-msg';
+    msg.textContent = '已保存 ' + res.data.entries + ' 处需要改，正在打开复盘…';
+    window.location.href = res.data.report_url;
+  }).catch(function (err) {
+    msg.className = 'bp-msg err';
+    msg.textContent = '保存失败：' + err;
+    saveBtn.disabled = false;
+  });
+};
+</script>
+
+<datalist id="bp-hero-list">
+  {% for h in heroes %}<option value="{{ h }}"></option>{% endfor %}
+</datalist>
+
+</body>
+</html>
