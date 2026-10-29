@@ -190,6 +190,25 @@ def parse_review(
                                                   ("unknown", PREMISE_UNKNOWN)),
                             PREMISE_UNKNOWN)
 
+            # “前提可见”必须能落到攻略中的某一支，并说清画面上看到了
+            # 什么。否则只是模型把“我觉得应该这么打”伪装成了证据；这种
+            # 条目不能进入报告，更不能据此纠正玩家。
+            # 前提成立与玩家实际操作是两套证据；混成一句会把“站在兵线旁”
+            # 错当成“边塔可推”的依据。二者必须分别可回看。
+            premise_evidence = str(raw.get("premise_evidence") or "").strip()
+            action_evidence = str(raw.get("action_evidence") or "").strip()
+            try:
+                branch_no = int(raw.get("branch") or 0)
+            except (TypeError, ValueError):
+                branch_no = 0
+            branches = entry.get("branches") or []
+            if premise == PREMISE_VISIBLE and (not premise_evidence or not action_evidence):
+                notes.append(f"{mode_id} 缺少前提或实际操作的客观画面证据（降为判不了）")
+                premise = PREMISE_UNKNOWN
+            if premise == PREMISE_VISIBLE and branches and not (1 <= branch_no <= len(branches)):
+                notes.append(f"{mode_id} 没有指认可用的攻略分支（降为判不了）")
+                premise = PREMISE_UNKNOWN
+
             if matched == "yes":
                 verdict = VERDICT_OK
             elif matched == "unclear":
@@ -229,12 +248,6 @@ def parse_review(
             # 己方红开」）。玩家读报告时最想知道的不是这张菜单，而是
             # 「**这一局是哪一支**」—— 模型指认了哪支，报告就给出那一支的
             # 具体做法，而不是把整张菜单摆出来让人自己配对。
-            branch_no = 0
-            try:
-                branch_no = int(raw.get("branch") or 0)
-            except (TypeError, ValueError):
-                branch_no = 0
-            branches = entry.get("branches") or []
             branch = None
             if 1 <= branch_no <= len(branches):
                 branch = branches[branch_no - 1]
@@ -257,7 +270,12 @@ def parse_review(
                 "verdict": verdict,
                 "did": str(raw.get("did") or "").strip(),
                 # 「看到了什么」= 画面上的客观状态（模型原话）。
-                "evidence": str(raw.get("evidence") or "").strip(),
+                "premise_evidence": premise_evidence,
+                "action_evidence": action_evidence,
+                "evidence": (
+                    f"前提：{premise_evidence}；实际：{action_evidence}"
+                    if premise_evidence and action_evidence else ""
+                ),
                 # 「凭什么」= 结论与画面的连接。
                 "why": str(raw.get("why") or "").strip(),
                 "frames": frames,

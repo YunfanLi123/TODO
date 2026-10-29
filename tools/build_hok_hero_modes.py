@@ -104,6 +104,16 @@ OUT_PATH = os.path.join(ROOT, "app", "seed", "hok_hero_modes.json")
 SKIP_PATH = os.path.join(ROOT, "app", "seed", "hok_hero_skipped.json")
 HEROES_PATH = os.path.join(ROOT, "app", "seed", "hok_heroes.json")
 
+#: 人工改写的英雄打法。攻略原文里没有这些子树（例如亚连在打野位的打法），
+#: 但库里需要它们 —— 放在这里当**声明式源**，生成器每次都一起写进库。
+#:
+#: 为什么不直接手改 ``hok_hero_modes.json``：那是生成产物，下次重跑生成器
+#: 就被覆盖了（这件事真发生过一次）。手写的内容必须落在一个生成器会读的地方，
+#: 否则「重跑得到一模一样的库」这条保证就不成立。
+REWRITE_PATH = os.path.join(
+    ROOT, "app", "seed", "sources", "hok_hero_rewrites.json"
+)
+
 GAME = "hok"
 VERSION = "S45"
 GUIDE_NAME = "王者荣耀 S45「月照长安」英雄级决策树"
@@ -222,6 +232,13 @@ def _hint_from_branches(branches: List[Any]) -> str:
     return "。".join(clauses)
 
 
+def load_rewrites() -> List[Dict[str, Any]]:
+    """人工改写的英雄打法（攻略原文里没有对应子树，见 ``REWRITE_PATH``）。"""
+    with open(REWRITE_PATH, "r", encoding="utf-8") as fh:
+        data = json.load(fh)
+    return list(data.get("rules") or [])
+
+
 def build_rules() -> Tuple[List[Dict[str, Any]], List[Dict[str, Any]]]:
     """生成英雄层规则。返回 ``(规则列表, 未入库分支清单)``。"""
     rules: List[Dict[str, Any]] = []
@@ -316,6 +333,11 @@ def build_rules() -> Tuple[List[Dict[str, Any]], List[Dict[str, Any]]]:
                         },
                         "subject": {"fact": fact, "values": subject},
                         "expect_scope": "at_least_once",
+                        # 期望动作是「做视野」的那些，现有识别链路产不出来 ——
+                        # 硬判只会每局挂一条「判不了」，标成不可判
+                        # （见 app/core/dsl.py 的 Rule.unjudgeable）。
+                        **({"unjudgeable": True}
+                           if "ward_vision" in values else {}),
                         "severity": severity,
                         "status": "active",
                         "premise": premise,
@@ -339,6 +361,9 @@ def build_rules() -> Tuple[List[Dict[str, Any]], List[Dict[str, Any]]]:
                         },
                     }
                     rules.append(rule)
+    # 生成完再把手写的那批并进来：``build_rules()`` 是**唯一**的产出口，
+    # 种子库与它逐条相等（tests/test_hero_mode_library.py 盯着这条）。
+    rules.extend(load_rewrites())
     return rules, skipped
 
 
@@ -448,17 +473,25 @@ def validate(rules: List[Dict[str, Any]]) -> List[str]:
 
 
 def check_quotes(rules: List[Dict[str, Any]]) -> List[str]:
-    """引用必须能在**对应那份**原文里逐字找到。"""
+    """引用必须能在**对应那份**原文里逐字找到。
+
+    人工改写的规则没有攻略原文可对，改对 ``REWRITE_PATH`` ——
+    要求引用与改写源里的那条一致，防止两边各改一半。
+    """
     problems: List[str] = []
     texts: Dict[str, str] = {}
     for lane, _, path in hero_guide_paths():
         with open(path, "r", encoding="utf-8") as fh:
             texts[lane] = strip_ws(fh.read())
+    rewrite_ids = {r["id"] for r in load_rewrites()}
     for r in rules:
         lane = r["trigger"]["all"][0]["value"]
         quoted = r["source"]["quoted"]
         if not quoted.strip():
             problems.append(f"{r['id']} 缺引用")
+        elif r["id"] in rewrite_ids:
+            # 人工改写的规则没有攻略原文可对，对照改写源即可。
+            continue
         elif strip_ws(quoted) not in texts.get(lane, ""):
             problems.append(f"{r['id']} 的引用在原文里找不到")
     return problems

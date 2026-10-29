@@ -18,6 +18,7 @@
 
 from __future__ import annotations
 
+import json
 import os
 from typing import Any, Dict, List, Optional
 
@@ -48,11 +49,18 @@ def config_path() -> str:
 def _read_yaml(path: str) -> Optional[Dict[str, Any]]:
     try:
         import yaml
-    except Exception:                              # noqa: BLE001
-        return None
-    try:
         with open(path, "r", encoding="utf-8") as fh:
             data = yaml.safe_load(fh)
+        return data if isinstance(data, dict) else None
+    except ImportError:
+        # JSON 是 YAML 的合法子集。没有 PyYAML（例如新 Python 尚未有
+        # 对应 wheel）时，仍可读写本应用自己生成的配置，不让模型配置页
+        # 因一个可选格式库而彻底失效。
+        try:
+            with open(path, "r", encoding="utf-8") as fh:
+                data = json.load(fh)
+        except (OSError, ValueError):
+            return None
     except Exception:                              # noqa: BLE001
         return None
     return data if isinstance(data, dict) else None
@@ -65,12 +73,16 @@ def app_config() -> Dict[str, Any]:
 
 
 def _write_config(data: Dict[str, Any]) -> str:
-    import yaml
-
     path = config_path()
     os.makedirs(data_dir(), exist_ok=True)
-    with open(path, "w", encoding="utf-8") as fh:
-        yaml.safe_dump(data, fh, allow_unicode=True, sort_keys=False)
+    try:
+        import yaml
+    except ImportError:
+        with open(path, "w", encoding="utf-8") as fh:
+            json.dump(data, fh, ensure_ascii=False, indent=2)
+    else:
+        with open(path, "w", encoding="utf-8") as fh:
+            yaml.safe_dump(data, fh, allow_unicode=True, sort_keys=False)
     return path
 
 
@@ -103,7 +115,8 @@ def display_slots() -> Dict[str, Dict[str, Any]]:
             "provider": provider,
             "provider_label": resolved["label"],
             "model": str(raw.get("model") or resolved["model"]),
-            "endpoint": str(raw.get("endpoint") or resolved["endpoint"]),
+            "endpoint": model_presets.normalize_endpoint(
+                str(raw.get("endpoint") or resolved["endpoint"])) ,
             "protocol": str(raw.get("protocol") or resolved["protocol"]),
             "has_key": bool(str(raw.get("api_key") or "")),
             "key_masked": model_presets.mask_key(str(raw.get("api_key") or "")),
@@ -129,7 +142,7 @@ def save_slot(slot: str, provider: str, api_key: str = "", model: str = "",
     if provider == "custom":
         if not endpoint.strip():
             raise ValueError("自定义供应方要填完整的请求地址")
-        resolved["endpoint"] = endpoint.strip()
+        resolved["endpoint"] = model_presets.normalize_endpoint(endpoint)
     if not resolved["model"]:
         raise ValueError("模型名不能为空（从控制台复制完整的模型 ID）")
 
@@ -189,8 +202,9 @@ def credentials_for(slot: str):
         return None
     provider = str(raw.get("provider") or "")
     resolved = model_presets.resolve(provider, str(raw.get("model") or ""), slot)
-    endpoint = (env["endpoint"] or str(raw.get("endpoint") or "")
-                or resolved["endpoint"]).strip()
+    endpoint = model_presets.normalize_endpoint(
+        env["endpoint"] or str(raw.get("endpoint") or "")
+        or resolved["endpoint"])
     if not endpoint:
         return None
     model = env["model"] or str(raw.get("model") or "") or resolved["model"]

@@ -166,6 +166,25 @@ def rule_windows(rules: Iterable[Any]) -> List[Window]:
     return windows_from_rules(rules, merge=False)
 
 
+def checkpoint_windows(windows: Sequence[Window]) -> List[Window]:
+    """把规则时间窗展开成逐分钟的复盘节点。
+
+    规则库里的 ``6~9``、``12~60`` 描述的是**适用范围**，不是说整段
+    只值得看一次。若直接拿它们做视频分析，6~9 分钟只能得到一份笼统
+    结论，团战、转线和推塔很容易被揉在一起。
+
+    这里保留“只看规则覆盖的分钟”这个边界，同时将每个有效分钟拆成一个
+    节点。没有规则的第 5、11 分钟仍不额外调用模型；超过实际录像长度的
+    节点在打包时自然没有切片，也不会产生调用。
+    """
+    minutes = {
+        minute
+        for window in windows or []
+        for minute in range(max(0, int(window.lo)), int(window.hi) + 1)
+    }
+    return [Window(minute, minute) for minute in sorted(minutes)]
+
+
 def segments(windows: Sequence[Window]) -> List[Window]:
     """把判定单元合并成**分析段**（相邻或重叠的并成一段）。
 

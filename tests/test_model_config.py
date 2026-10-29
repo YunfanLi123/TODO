@@ -133,6 +133,21 @@ def test_the_provider_catalog_carries_the_full_endpoint(client):
         assert endpoint.endswith("/chat/completions")
     # DeepSeek 官方 base **不带 /v1** —— 少写一段就是 404
     assert "/v1/" not in providers["deepseek"]["endpoint"]
+    assert providers["ark"]["endpoint"].endswith("/api/v3/chat/completions")
+
+
+def test_ark_base_url_is_completed_for_existing_custom_config(client):
+    """已保存的方舟基址不能继续造成 404。"""
+    from app.collection import settings
+
+    settings.save_slot(
+        "vlm", provider="custom", api_key="ark-test-key",
+        model="doubao-seed-2-1-pro-260915",
+        endpoint="https://ark.cn-beijing.volces.com/api/v3",
+    )
+    creds = settings.credentials_for("vlm")
+    assert creds is not None
+    assert creds.endpoint == "https://ark.cn-beijing.volces.com/api/v3/chat/completions"
 
 
 # ---------------------------------------------------------------- 存

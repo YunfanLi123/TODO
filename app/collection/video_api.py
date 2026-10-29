@@ -21,6 +21,7 @@ import json
 import os
 import time
 import uuid
+from collections import Counter
 from datetime import datetime
 from typing import Any, Dict, List, Optional
 
@@ -79,6 +80,26 @@ def _register_session(job, base_dir: str) -> None:
 #: 扫描任务缓存。进程内保存「视频 → 扫描结果」，标注页要用。
 #: 用内存而不是数据库：这是一次性的中转状态，进程重启后重新上传即可。
 _SESSIONS: Dict[str, Dict[str, Any]] = {}
+
+
+def _lane_from_raw_rounds(raw: Dict[str, Any]) -> str:
+    """用已落入原始对局的窗口位置补全全局分路。
+
+    这是落库前的最后一道保障：身份预填失败不能抹掉 7 个窗口已经
+    读出的同向位置证据。仅在至少三段、且某一位置占 60% 时采用。
+    """
+    aliases = {"野区": "jungle", "中路": "mid", "对抗路": "side",
+               "发育路": "carry"}
+    seen: List[str] = []
+    for rnd in raw.get("rounds") or []:
+        value = ((rnd.get("facts") or {}).get("position")) if isinstance(rnd, dict) else None
+        lane = aliases.get(str(value or "").strip())
+        if lane:
+            seen.append(lane)
+    if len(seen) < 3:
+        return ""
+    lane, count = Counter(seen).most_common(1)[0]
+    return lane if count / len(seen) >= 0.60 else ""
 
 
 class RoundAnnotation(BaseModel):
@@ -435,13 +456,16 @@ def register_routes(app: FastAPI, base_dir: str) -> None:
         if provider:
             from . import model_presets
             resolved = model_presets.resolve(provider, model, slot)
-            endpoint = str(body.get("endpoint") or "").strip() or resolved["endpoint"]
+            endpoint = model_presets.normalize_endpoint(
+                str(body.get("endpoint") or "").strip() or resolved["endpoint"])
             protocol = str(body.get("protocol") or "").strip() or resolved["protocol"]
             thinking_field = resolved["thinking_field"]
             model = model or resolved["model"]
         else:
             saved = settings.slot_config(slot)
-            endpoint = str(body.get("endpoint") or "").strip() or str(saved.get("endpoint") or "")
+            endpoint = model_presets.normalize_endpoint(
+                str(body.get("endpoint") or "").strip()
+                or str(saved.get("endpoint") or ""))
             protocol = str(body.get("protocol") or "").strip() or str(saved.get("protocol") or "openai")
             thinking_field = str(saved.get("thinking_field") or "thinking")
             model = model or str(saved.get("model") or "")
@@ -561,6 +585,7 @@ def register_routes(app: FastAPI, base_dir: str) -> None:
                 f"正在后台扫描 {video.duration_sec / 60:.1f} 分钟的视频…"
                 + ("" if spec.get("ok")
                    else f"　⚠ 录屏规格：{spec['note']}")
+                + "".join(f"　⚠ {w}" for w in (spec.get("warnings") or []))
                 + ("" if (spec.get("recognition") or {}).get("ok")
                    else f"　⚠ {(spec.get('recognition') or {}).get('note', '')}")
             ),
@@ -640,8 +665,11 @@ def register_routes(app: FastAPI, base_dir: str) -> None:
         raw["match_id"] = match_id
         # 分路与胜负是**模型读出来的**；读不出来就留空
         # （留空 = 那些带分路条件的规则不触发，而不是「没做到」）。
+        position = str(prefill.get("position") or "").strip()
+        if position in ("", "unknown"):
+            position = _lane_from_raw_rounds(raw)
         raw["player"] = {
-            "position": str(prefill.get("position") or ""),
+            "position": position,
             "matchup": "unknown",
             "hero": str(prefill.get("hero") or ""),
         }

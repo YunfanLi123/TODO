@@ -173,13 +173,19 @@ def test_seed_hero_library_is_exactly_what_the_generator_produces(hero_modes):
 
 
 def test_every_quote_is_verbatim_from_its_guide(hero_modes):
-    """引用必须能在**对应那份**攻略里逐字找到。"""
+    """引用必须能在**对应那份**攻略里逐字找到。
+
+    人工改写的规则（见 ``app/seed/sources/hok_hero_rewrites.json``）没有
+    攻略原文可对 —— 它们的前提是「攻略没写、但确实该这么打」，豁免这一条。
+    """
+    from tools.build_hok_hero_modes import load_rewrites
     from tools.build_hok_modes import strip_ws
     from tools.hok_hero_sources import hero_guide_paths
 
     texts: Dict[str, str] = {}
     for lane, _label, path in hero_guide_paths():
         texts[lane] = strip_ws(Path(path).read_text("utf-8"))
+    rewrite_ids = {r["id"] for r in load_rewrites()}
 
     problems: List[str] = []
     for m in hero_modes:
@@ -187,6 +193,8 @@ def test_every_quote_is_verbatim_from_its_guide(hero_modes):
         quoted = (m["source"] or {}).get("quoted") or ""
         if not quoted.strip():
             problems.append(f"{m['id']} 缺引用")
+        elif m["id"] in rewrite_ids:
+            continue
         elif strip_ws(quoted) not in texts.get(lane, ""):
             problems.append(f"{m['id']} 的引用在原文里找不到")
     assert not problems, "引用有问题：\n  " + "\n  ".join(problems[:20])
@@ -244,6 +252,7 @@ def test_hero_names_match_the_guide_exactly(hero_modes):
     错一个字的后果是**静默失效**：针对那个英雄的模式永远不触发，
     界面上看起来只是「这个英雄的建议没出现」，没有任何报错。
     """
+    from tools.build_hok_hero_modes import load_rewrites
     from tools.hok_hero_sources import hero_guide_paths
     from tools.hok_hero_tree import load_hero_guide
 
@@ -251,8 +260,13 @@ def test_hero_names_match_the_guide_exactly(hero_modes):
     for lane, _label, path in hero_guide_paths():
         guide = load_hero_guide(path, lane)
         known[lane] = {hb.hero for hb in guide.heroes}
+    # 人工改写的规则可以是攻略该分路没收录的英雄（亚连打野就是这种）——
+    # 它们不参与「英雄名必须与原文一字不差」这条校验。
+    rewrite_ids = {r["id"] for r in load_rewrites()}
 
     for m in hero_modes:
+        if m["id"] in rewrite_ids:
+            continue
         lane = m["trigger"]["all"][0]["value"]
         hero = [c for c in m["trigger"]["all"] if c["fact"] == "my_hero"][0]["value"]
         assert hero in known[lane], f"{m['id']} 的英雄「{hero}」不在{lane}那份攻略里"

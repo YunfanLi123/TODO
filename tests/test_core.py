@@ -94,6 +94,17 @@ class TestTrigger:
         resolve = lambda f: (2, True) if f == "b" else (0, True)    # noqa: E731
         assert t.evaluate(resolve).fired is True
 
+    def test_any_group_requires_at_least_one_match(self):
+        """any 组全不匹配时不能触发，防止建议被硬套到无关局面。"""
+        t = Trigger(any=[self._cond("a", "==", 1), self._cond("b", "==", 2)])
+        assert t.evaluate(lambda f: (0, True)).fired is False
+
+    @pytest.mark.parametrize("op,value", [("!=", "disadvantage"),
+                                           ("not_in", ["disadvantage"])])
+    def test_unknown_is_not_a_real_categorical_value(self, op, value):
+        """没有识别到对位，不能因此当作“不是劣势”而触发规则。"""
+        assert Condition("matchup", op, value).evaluate("unknown") is False
+
     def test_none_group_blocks(self):
         t = Trigger(none=[self._cond("a", "==", 1)])
         resolve = lambda f: (1, True)                                # noqa: E731
@@ -270,13 +281,18 @@ class TestEngine:
         )
         assert analyze_match([rule], fake_ctx)["stats"].compliance_rate is None
 
-    def test_low_confidence_is_flagged(self, fake_ctx, fake_rule):
-        report = analyze_match([fake_rule], fake_ctx)
-        # 4-1 mood=2 不触发；要触发得构造一个高 mood 低置信度的回合
+    def test_low_confidence_action_is_not_judged(self, fake_ctx, fake_rule):
+        """置信度不够的动作是「没读清」，不该据此判偏离。
+
+        0.5 上下的成分本质是模型在摇摆。早先会把它当成差距并打上
+        ``low_confidence`` 标记；现在直接标为判不了 —— 一条「需调整」
+        被玩家当场推翻，比少说一句更伤可信度。
+        """
         ctx = _FakeGameContext(match_id="fake-3")
-        ctx.rounds = [_round(1, 1, {"mood": 9}, [("action", "rush", "激进", 0.55)])]
+        ctx.rounds = [_round(1, 1, {"mood": 9}, [("action", "rush", "激进", 0.5)])]
         rep = analyze_match([fake_rule], ctx)
-        assert rep["gaps"][0].low_confidence is True
+        assert rep["gaps"] == []
+        assert rep["stats"].undetermined == 1
 
     def test_only_selected_rules(self, fake_ctx, fake_rule):
         report = analyze_match([fake_rule], fake_ctx, only_rules=["FAKE-001"])

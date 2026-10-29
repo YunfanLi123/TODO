@@ -130,6 +130,46 @@ RECOGNITION_MIN_W = 545
 RECOGNITION_MIN_H = 336
 
 
+#: 玩家英雄「长相可分辨」的最低画布高度。
+#:
+#: 这条线比 :data:`RECOGNITION_MIN_H`（336）高得多，两者不是一回事：
+#: 336 是**读时钟数字**的下限（字形 7 像素就够），而认英雄要看的是
+#: 屏幕中央那个小人 —— 实测 960×432 的画布里它只有约 40×40 像素，
+#: 模型给不出稳定答案（同一帧连问四次得到韩信 / 哪吒 / 孙策 / 曜）。
+#: 按同样比例，画布高 720 时约 67 像素，才开始稳定。
+#:
+#: **这是经验线，不是硬门槛** —— 不达标只在报告与上传提示里警告，
+#: 不拦上传：读时间线、判动作照样能做，只是英雄层规则会走空。
+HERO_READABLE_MIN_H = 720
+
+#: 英雄在画布里大约占多高（实测 40 / 432 ≈ 0.093）。
+HERO_HEIGHT_RATIO = 0.093
+
+
+def hero_feasibility(canvas_w: int, canvas_h: int) -> Dict[str, Any]:
+    """这份录屏**够不够认出玩家英雄**。
+
+    返回 ``{"ok": bool, "note": str, "hero_px": float}``。
+    和 :func:`recognition_feasibility` 分开算：一个管「认得出时间」，
+    一个管「认得出英雄」，门槛差一倍。
+    """
+    hero_px = canvas_h * HERO_HEIGHT_RATIO
+    if canvas_h >= HERO_READABLE_MIN_H:
+        return {
+            "ok": True,
+            "note": (f"画布 {canvas_w}×{canvas_h}，玩家英雄约 {hero_px:.0f} 像素高"
+                     f" —— 认英雄够用"),
+            "hero_px": round(hero_px, 1),
+        }
+    return {
+        "ok": False,
+        "note": (f"画布只有 {canvas_w}×{canvas_h}，玩家英雄约 {hero_px:.0f} 像素高"
+                 f" —— 认英雄不稳（建议画布高 ≥ {HERO_READABLE_MIN_H}，"
+                 f"全屏横屏录、别压缩转发）"),
+        "hero_px": round(hero_px, 1),
+    }
+
+
 def recognition_feasibility(canvas_w: int, canvas_h: int) -> Dict[str, Any]:
     """这份录屏**够不够自动识别**。
 

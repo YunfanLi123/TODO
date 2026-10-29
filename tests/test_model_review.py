@@ -80,6 +80,8 @@ def _entry(**kw):
         "action": "带兵线推塔",
         "outcome": "塔的经济到手",
         "advice": "带兵线推塔。",
+        "branches": [{"premise": "塔的早期护盾已消失",
+                      "action": "带兵线推塔", "outcome": "塔的经济到手"}],
         "expect_fact": "positioning_action",
         "expect_values": ["push_wave"],
         "subject": {"fact": "positioning_action",
@@ -95,8 +97,11 @@ def _review(**kw):
     base = {
         "mode_id": "HOK-MODE-JGL-T0400-01",
         "premise": "visible",
+        "branch": 1,
         "matched": "no",
         "frames": [1, 2],
+        "premise_evidence": "防御塔护盾标识已经消失，敌方打野没有出现在我方半区小地图",
+        "action_evidence": "玩家连续两帧在野区攻击野怪，没有带兵线靠近防御塔",
         "did": "在刷野",
         "why": "第 1 帧小地图在红 buff 野区",
     }
@@ -171,6 +176,16 @@ def test_a_deviation_without_a_real_frame_is_dropped():
         [{"kind": "positioning_action", "value": "pull_back"}])
     assert not items
     assert notes
+
+
+def test_visible_premise_needs_evidence_and_a_branch():
+    """没有客观证据或具体分支，不能把模型意见伪装成复盘结论。"""
+    for review in (_review(premise_evidence=""), _review(branch=0)):
+        items, notes = vlm_review.parse_review(
+            {"review": [review]}, [_entry()], 4,
+            [{"kind": "positioning_action", "value": "pull_back"}])
+        assert items[0]["verdict"] == vlm_review.VERDICT_UNCLEAR
+        assert notes
 
 
 def test_frames_out_of_range_are_dropped_but_the_finding_stands():

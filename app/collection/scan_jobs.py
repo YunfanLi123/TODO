@@ -19,6 +19,7 @@ from __future__ import annotations
 
 import threading
 import traceback
+from collections import Counter
 from concurrent.futures import ThreadPoolExecutor
 from dataclasses import dataclass, field
 from datetime import datetime
@@ -170,11 +171,12 @@ class JobRunner:
                 # :func:`app.rules.checklist.window_checklist`），
                 # 分路得在读窗**之前**知道。读分路只需要开局那几帧，
                 # 不依赖抽帧结果，所以排在最前面。
-                lane_info = self._read_lane(
-                    job, base_dir, clock_track.get("game_start_t"))
+                identity = self._read_identity(
+                    job, base_dir, clock_track.get("game_start_t"), scan)
                 product = self._phase_product(
                     job, base_dir, clock_track, scan, on_ex,
-                    lane=(lane_info.get("position") or ""),
+                    lane=(identity.get("position") or ""),
+                    hero=(identity.get("hero") or ""),
                 )
             else:
                 # 读不到时钟（机型没标定、录屏是竖屏带黑边…）。
@@ -191,22 +193,37 @@ class JobRunner:
                 )
                 job.set(status=EXTRACTING, progress=0.85,
                          stage_text="正在读画面")
-                lane_info = self._read_lane(
-                    job, base_dir, self._guess_start_t(points, scan))
+                identity = self._read_identity(
+                    job, base_dir, self._guess_start_t(points, scan), scan)
                 product = self._moba_product(
                     job, base_dir, points, scan, on_ex,
-                    lane=(lane_info.get("position") or ""),
+                    lane=(identity.get("position") or ""),
+                    hero=(identity.get("hero") or ""),
                 )
 
             shots = product["rounds"]
             bp = product.get("bp") or []
+
+            # 身份读取是独立的一次 VLM 投票；它可能因 HUD 遮挡而保守地
+            # 留空。但窗级识别已经看到了整局的位置，不能丢掉这份跨窗证据。
+            # 例如本局 6 段都在野区，是「打野」的强证据，不该仍给出
+            # 「分路未知」并跳过全部规则。
+            # ``read_lane_and_result`` 以字面量 ``unknown`` 表示未识别；
+            # 它和空字符串一样都必须进入窗口证据兜底，不能把它当成分路。
+            identity_position = str((identity or {}).get("position") or "").strip()
+            if identity_position in ("", "unknown"):
+                inferred = self._infer_lane_from_rounds(shots)
+                if inferred:
+                    identity = dict(identity or {})
+                    identity["position"] = inferred
+                    identity["position_source"] = "window_positions"
 
             # 读**这一局的整体情况**：分路、胜负、BP 禁用与选人。
             #
             # 这三样以前是让人一格一格填的（用户原话：「难道还要我自己去选？」）。
             # 现在由模型从画面里读 —— 读不出来的就留空，**不猜**。
             prefill = self._read_prefills(job, base_dir, product,
-                                          lane_info=lane_info)
+                                          lane_info=identity)
 
             summary = vu.summarize(
                 job.video, scan, shots, bp=bp, product=product["kind"]
@@ -256,9 +273,32 @@ class JobRunner:
             if on_done:
                 on_done(job)
 
+    @staticmethod
+    def _infer_lane_from_rounds(rounds: List[Any]) -> str:
+        """从多个时间窗的已识别位置推断稳定分路。
+
+        仅在至少 3 段、且单一位置占 60% 以上时采用。"野区"是
+        打野职责的强证据；其它路线也必须是模型明确读到的路线名，
+        不会把河道、泉水或一次游走硬归进某条线。
+        """
+        aliases = {"野区": "jungle", "中路": "mid", "对抗路": "side",
+                   "发育路": "carry"}
+        values: List[str] = []
+        for rnd in rounds or []:
+            for fact in getattr(rnd, "facts", []) or []:
+                if getattr(fact, "name", "") != "position":
+                    continue
+                mapped = aliases.get(str(getattr(fact, "value", "") or "").strip())
+                if mapped:
+                    values.append(mapped)
+        if len(values) < 3:
+            return ""
+        lane, count = Counter(values).most_common(1)[0]
+        return lane if count / len(values) >= 0.60 else ""
+
     def _phase_product(self, job: ScanJob, base_dir: str,
                        clock_track: Dict[str, Any], scan: Dict[str, Any],
-                       on_ex, lane: str = "") -> Dict[str, Any]:
+                       on_ex, lane: str = "", hero: str = "") -> Dict[str, Any]:
         """MOBA 的产物：BP 帧序列 + 按阶段均匀抽帧。"""
         result = vu.sample_by_phase(
             job.video, clock_track, base_dir,
@@ -270,7 +310,7 @@ class JobRunner:
             hero_track=self._hero_track(scan),
             # 分路：清单按它裁剪。模型要拿画面去对攻略，
             # 得先知道「玩家打的是哪条线」。
-            game=job.game, lane=lane,
+            game=job.game, lane=lane, hero=hero,
         )
         if not result or not result.get("rounds"):
             raise RuntimeError("按阶段抽帧没有产出任何帧")
@@ -290,7 +330,7 @@ class JobRunner:
 
     def _moba_product(self, job: ScanJob, base_dir: str,
                       points: List[Any], scan: Dict[str, Any],
-                      on_ex, lane: str = "") -> Dict[str, Any]:
+                      on_ex, lane: str = "", hero: str = "") -> Dict[str, Any]:
         """MOBA 读不到时钟时的产物：按信息密度切时间片。"""
         result = vu.moba_slice_product(
             job.video, points, base_dir,
@@ -307,7 +347,7 @@ class JobRunner:
             analysis_windows=self._analysis_windows(job.game),
             # 英雄轨迹（时钟探测那一趟顺带采的）
             hero_track=self._hero_track(scan),
-            game=job.game, lane=lane,
+            game=job.game, lane=lane, hero=hero,
         )
         if not result or not result.get("rounds"):
             raise RuntimeError("按信息密度切时间片没有产出任何帧")
@@ -331,8 +371,9 @@ class JobRunner:
             return None
         return float(span[0]) + vu.MATCH_LOAD_SEC
 
-    def _read_lane(self, job: ScanJob, base_dir: str,
-                   start_t: Optional[float]) -> Dict[str, Any]:
+    def _read_identity(self, job: ScanJob, base_dir: str,
+                       start_t: Optional[float], scan: Optional[Dict[str, Any]] = None
+                       ) -> Dict[str, Any]:
         """读「玩家打哪条线」+「这局赢没赢」。
 
         为什么排在读窗**之前**
@@ -350,13 +391,18 @@ class JobRunner:
             return {}
         if settings.credentials_for("vlm") is None:
             return {}
-        if not start_t:
+        if start_t is None:
             return {}
         try:
-            from .vlm_prefill import read_lane_and_result
+            from .vlm_prefill import infer_lane_from_track, read_lane_and_result
+            lane_track = infer_lane_from_track(
+                (scan or {}).get("hero_track") or [], float(start_t))
             return read_lane_and_result(
                 job.video, vu.video_store_dir(base_dir), float(start_t),
-                float(getattr(job.video, "duration_sec", 0.0) or 0.0))
+                float(getattr(job.video, "duration_sec", 0.0) or 0.0),
+                position_hint=str(lane_track.get("position") or "")) | {
+                    "lane_track": lane_track
+                }
         except Exception:                          # noqa: BLE001
             return {}
 
@@ -368,7 +414,8 @@ class JobRunner:
         这三样以前是让人一格一格填的（用户原话：「难道还要我自己去选？」）。
         现在由模型从画面里读 —— 读不出来的**留空，不猜**。
 
-        分路与胜负通常**已经读过了**（读窗之前那趟，见 :meth:`_read_lane`），
+        分路、英雄与胜负通常**已经读过了**（读窗之前那趟，见
+        :meth:`_read_identity`），
         那一趟的结果直接复用 —— 同一个模型调用读两遍是白花钱。
         """
         from . import settings
@@ -407,17 +454,20 @@ class JobRunner:
 
     @staticmethod
     def _analysis_windows(game: str) -> List[Any]:
-        """这个游戏的**分析单元**：时间窗。
+        """这个游戏的**分析单元**：逐分钟复盘节点。
 
-        窗从规则库倒推（每条规则的 ``time_min between``）——
-        那是规则的时间口径，不是我拍脑袋定的分段。
+        节点仍从规则库倒推（每条规则的 ``time_min between``），但会把
+        长窗口展开到每个有效分钟：6~9 分钟会分析 6、7、8、9 四次。
+        这样报告能指出具体哪一分钟该转线、该参团或该回撤，而不是只给
+        一段笼统的中期总结。
         王者 S45 实测：1681 条规则用 8 种窗，合成 6 个分析段。
 
         从种子库读，不碰数据库（与 :meth:`_rule_weights` 同理）。
         """
         try:
             from ..rules.density import seed_windows
-            return list(seed_windows(game))
+            from .window_analysis import checkpoint_windows
+            return checkpoint_windows(seed_windows(game))
         except Exception:                          # noqa: BLE001
             return []
 

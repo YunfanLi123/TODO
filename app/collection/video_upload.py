@@ -1767,6 +1767,7 @@ def moba_slice_product(
     hero_track: Optional[List[Any]] = None,
     game: str = "",
     lane: str = "",
+    hero: str = "",
 ) -> Optional[Dict[str, Any]]:
     """MOBA 的产物：**按信息密度切时间片**。
 
@@ -1889,7 +1890,8 @@ def moba_slice_product(
         # 逐窗读并行：一局 8 个窗串行要好几分钟（模型调用是网络等待）。
         window_bundles = _read_window_bundles(
             video, base_dir, pending, hud_regions, hero_track,
-            float(game_start_t or 0.0), progress, game=game, lane=lane)
+            float(game_start_t or 0.0), progress, game=game, lane=lane,
+            hero=hero)
 
     return {
         "rounds": rounds,
@@ -1938,6 +1940,10 @@ def recording_spec(canvas_w: int, canvas_h: int,
         problems.append(
             f"游戏画面只占 {ratio * 100:.0f}%，其余是黑边"
             f"（需要 ≥ {FULLSCREEN_MIN_RATIO * 100:.0f}%）")
+    hero = clock.hero_feasibility(canvas_w, canvas_h)
+    # 分辨率不够认英雄**不算**规格问题（``ok`` 不动）：时间线、动作照样能判，
+    # 只是英雄层规则会走空。单独放 warnings，上传提示与报告都能拿去说清楚。
+    warnings = [] if hero["ok"] else [hero["note"]]
     return {
         "ok": not problems,
         "landscape": land,
@@ -1946,7 +1952,9 @@ def recording_spec(canvas_w: int, canvas_h: int,
         "canvas": [canvas_w, canvas_h],
         "frame": [frame_w, frame_h],
         "recognition": clock.recognition_feasibility(canvas_w, canvas_h),
+        "hero_readable": hero,
         "problems": problems,
+        "warnings": warnings,
         "note": (
             f"符合标准：横屏 {canvas_w}×{canvas_h}，游戏画面占满全屏"
             if not problems else "；".join(problems)),
@@ -2014,7 +2022,8 @@ def _read_window_bundles(video: "UploadedVideo", base_dir: str,
                          game_start_t: float = 0.0,
                          progress=None,
                          game: str = "",
-                         lane: str = "") -> List[Dict[str, Any]]:
+                         lane: str = "",
+                         hero: str = "") -> List[Dict[str, Any]]:
     """并行地把每个分析窗交给识别器，返回填好 ``facts`` 的窗列表。
 
     ``pending`` 是 ``[(bundle, dict), ...]``：bundle 是窗口对象，
@@ -2066,7 +2075,7 @@ def _read_window_bundles(video: "UploadedVideo", base_dir: str,
                 # 不然轨迹上的点不够，探测器算不出运动特征。
                 t0=gs + window.lo * 60.0,
                 t1=gs + (window.hi + 1) * 60.0,
-                game=game, lane=lane,
+                game=game, lane=lane, hero=hero,
             )
         except Exception as exc:                   # noqa: BLE001
             facts = {
@@ -2095,7 +2104,8 @@ def _recognize_window(video: "UploadedVideo", base_dir: str, bundle,
                        t0: Optional[float] = None,
                        t1: Optional[float] = None,
                        game: str = "",
-                       lane: str = "") -> Dict[str, Any]:
+                       lane: str = "",
+                       hero: str = "") -> Dict[str, Any]:
     """对**一窗的若干帧**做一次综合分析，返回这一窗识别出来的事实。
 
     识别器有**两套**（见 :mod:`app.collection.settings`）：
@@ -2123,20 +2133,77 @@ def _recognize_window(video: "UploadedVideo", base_dir: str, bundle,
         return _recognize_window_cv(video, base_dir, bundle, segment_key,
                                      regions, hero_track, t0, t1)
     out = _recognize_window_vlm(video, base_dir, bundle, segment_key,
-                                 regions, t0, t1, game=game, lane=lane)
+                                 regions, t0, t1, game=game, lane=lane, hero=hero)
     out["segment_key"] = segment_key
     return out
 
 
-#: 喂给模型的帧密度：每 6 秒一帧，最多 16 帧。
+#: 喂给模型的帧密度：窗口内分散取样，同时每一个取样点取一对相邻帧。
 #:
-#: 阶段抽帧是「一分钟一帧」，一窗只有两三帧 —— 那点画面看不出
-#: 「在野区来回」还是「路过野区」。每 6 秒一帧才能看出移动，
-#: 也让窗内的关键动作（打龙、转线、开团）更不容易恰好落在两帧之间漏掉。
-#: 代价是每窗帧更多、模型输入更大，所以上限仍卡在 VLM_MAX_FRAMES。
-VLM_FRAME_PERIOD_SEC = 6.0
-VLM_MIN_FRAMES = 4
-VLM_MAX_FRAMES = 16
+#: 只用“每 4 秒一张”的均匀帧有一个致命盲区：击飞、眩晕、先手进场通常
+#: 不足两秒，但控制判定又必须有连续画面证据，于是系统结构上不可能识别
+#: 出控制。成对帧既保留整段的运营覆盖，又让模型能在同一小段确认动作
+#: 的前后关系；它不是增加猜测，而是补齐判定所需的证据。
+VLM_FRAME_PERIOD_SEC = 4.0
+VLM_BURST_GAP_SEC = 0.75
+VLM_COMBAT_FRAME_GAP_SEC = 0.25
+VLM_COMBAT_BURST_FRAMES = 6
+VLM_MIN_FRAMES = 8
+VLM_MAX_FRAMES = 24
+
+
+def vlm_window_times(t0: float, t1: float,
+                     event_times: Optional[Sequence[float]] = None) -> List[float]:
+    """返回 VLM 窗口的抽帧时刻：全局证据对 + 团战微片段。
+
+    总帧数沿用既有预算，防止一次请求无限膨胀。每对帧相隔约 0.75 秒，
+    足以看到控制/进场的持续过程；各对锚点均匀散在整个窗口，仍能覆盖
+    刷野、转线、推线这类较长动作。若阶段切片已发现高活动事件，则把
+    一部分预算换成该事件前后每 0.25 秒一帧的连续微片段，供控制链、
+    先后手、被控对象识别使用。
+    """
+    lo, hi = float(t0), float(t1)
+    span = max(0.0, hi - lo)
+    if span <= 0:
+        return [lo]
+    count = int(max(VLM_MIN_FRAMES,
+                    min(VLM_MAX_FRAMES, round(span / VLM_FRAME_PERIOD_SEC))))
+    # 阶段切片本来就按画面变化峰值取点；只取相隔至少 6 秒的前两个，
+    # 避免同一波团战重复占满所有输入预算。
+    events: List[float] = []
+    for raw in event_times or []:
+        try:
+            t = float(raw)
+        except (TypeError, ValueError):
+            continue
+        if not lo <= t <= hi or any(abs(t - old) < 6.0 for old in events):
+            continue
+        events.append(t)
+        if len(events) == 2:
+            break
+    burst_size = min(VLM_COMBAT_BURST_FRAMES, max(0, count // max(1, len(events))))
+    if not events:
+        burst_size = 0
+    base_count = max(2, count - burst_size * len(events))
+    pair_count = max(1, base_count // 2)
+    # 很短的窗不能让一对帧越出窗口；间隔最多是相邻锚点距离的一半，
+    # 否则两对会混成一团，模型无法判断谁和谁是同一个过程。
+    gap = min(VLM_BURST_GAP_SEC, span / max(pair_count * 2, 1))
+    half = gap / 2.0
+    times: List[float] = []
+    for i in range(pair_count):
+        anchor = lo + span * (i + 0.5) / pair_count
+        times.extend((max(lo, anchor - half), min(hi, anchor + half)))
+    if base_count % 2:
+        times.append(lo + span * 0.5)
+    # 微片段以事件帧为中心，前后都留证据；控制通常短于 1 秒，0.25 秒
+    # 的连帧才能看见“谁先出手 → 谁被控 → 后续接招”的顺序。
+    for anchor in events:
+        center = (burst_size - 1) / 2.0
+        for i in range(burst_size):
+            t = anchor + (i - center) * VLM_COMBAT_FRAME_GAP_SEC
+            times.append(max(lo, min(hi, t)))
+    return sorted(round(t, 3) for t in times)
 
 
 def _recognize_window_vlm(video: "UploadedVideo", base_dir: str, bundle,
@@ -2144,7 +2211,8 @@ def _recognize_window_vlm(video: "UploadedVideo", base_dir: str, bundle,
                            t0: Optional[float] = None,
                            t1: Optional[float] = None,
                            game: str = "",
-                           lane: str = "") -> Dict[str, Any]:
+                           lane: str = "",
+                           hero: str = "") -> Dict[str, Any]:
     """按窗重抽帧 → 合成 HUD 面板 → 交给模型读。"""
     from .hud_panel import build_panel
     from .vlm_recognizer import FrameInput, VlmRecognizer, WindowInput
@@ -2163,10 +2231,11 @@ def _recognize_window_vlm(video: "UploadedVideo", base_dir: str, bundle,
     except Exception:                              # noqa: BLE001
         return {"facts": {}, "missing": ["画面"], "notes": ["识别器不可用"]}
 
-    # 1) 这一窗重抽帧（密度按窗口时长算）
+    # 1) 这一窗重抽帧（全段覆盖 + 高活动时段的控制微片段）
     span = float(t1 - t0)
-    count = int(max(VLM_MIN_FRAMES, min(VLM_MAX_FRAMES, round(span / VLM_FRAME_PERIOD_SEC))))
-    times = [t0 + span * (i + 0.5) / count for i in range(count)]
+    event_times = [float(s.get("timestamp") or 0.0)
+                   for s in (getattr(bundle, "slices", None) or [])]
+    times = vlm_window_times(float(t0), float(t1), event_times)
     prefix = f"vlm-{window.key}"
     shots = extract_frames_at(
         video, [(f"第 {i + 1} 帧", t) for i, t in enumerate(times)],
@@ -2212,7 +2281,7 @@ def _recognize_window_vlm(video: "UploadedVideo", base_dir: str, bundle,
     if game:
         try:
             from ..rules import checklist
-            modes = checklist.window_checklist(game, lo, hi, lane=lane)
+            modes = checklist.window_checklist(game, lo, hi, lane=lane, hero=hero)
         except Exception:                          # noqa: BLE001
             modes = []
 
@@ -2538,6 +2607,7 @@ def sample_by_phase(
     progress=None,
     game: str = "",
     lane: str = "",
+    hero: str = "",
 ) -> Optional[Dict[str, Any]]:
     """产出 MOBA 的扫描产物：**BP 帧序列 + 按阶段均匀抽帧**。
 
@@ -2665,7 +2735,7 @@ def sample_by_phase(
         window_bundles = _read_window_bundles(
             video, base_dir, pending, hud_regions, hero_track,
             float(clock_info.get("game_start_t") or 0.0), progress,
-            game=game, lane=lane)
+            game=game, lane=lane, hero=hero)
 
     return {
         "rounds": rounds,

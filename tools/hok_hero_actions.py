@@ -407,6 +407,9 @@ KEYWORDS: List[Tuple[str, str]] = [
     ("不单独进团", "split_fight"),
 
     # -- 通用打法（英雄技能各不相同，但意图是这几类） --------------------
+    # 「脱离被控范围后重进」= 被控后挣出来再进场，是开团不是撤退。
+    # 光看「脱离」会翻成 retreat —— 与原文「不退出前排位置」正好相反。
+    ("重进", "engage"),
     ("直接进", "engage"),
     ("开打", "engage"),
     ("贴身", "engage"),
@@ -466,6 +469,12 @@ def _clause_categories(clause: str, fact: Optional[str] = None) -> List[str]:
         if idx < 0:
             continue
         if _negated(clause, idx):
+            continue
+        if kw == "脱离" and any(
+            cc in clause[idx: idx + 6] for cc in ("被控", "控制")
+        ):
+            # 「脱离被控范围后重进」是被控后挣出来**再进场**，不是撤退 ——
+            # 这条小句的性质由后面的「重进」（engage）决定。
             continue
         hits.append((rank, cat))
     hits.sort()

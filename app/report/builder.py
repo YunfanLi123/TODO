@@ -21,7 +21,7 @@ from ..core.lane_analysis import (
     VERDICT_OCCASIONAL,
     VERDICT_SYSTEMIC,
 )
-from ..core.matcher import STATUS_DEVIATED
+from ..core.matcher import STATUS_DEVIATED, STATUS_SATISFIED
 
 from . import organize
 
@@ -113,6 +113,31 @@ _ACTION_FACT_TEXT = {
     "positioning_action": "站位",
     "teamfight_action": "团战处理",
 }
+
+#: 「判不了」的**前提类**原因码 -> 玩家看得懂的说法。
+#:
+#: 这些状态画面里读不出来（草丛里有没有人、谁先手控了谁、谁还在复活），
+#: 报告要说的是「缺这类信息」，而不是「缺少站位」—— 站位读得出来。
+_PREMISE_REASON_LABELS = {
+    "ward_vision": "视野（草丛 / 河道里有没有人）",
+    "cc": "控制（谁先手、有没有被控）",
+    "respawn": "复活进度（谁还没复活）",
+    "matchup": "对位优劣",
+}
+
+
+def _undetermined_reason(adapter: GameAdapter, code: str) -> str:
+    """原因码 -> 报告里那句「为什么判不了」。"""
+    if code.startswith("premise:"):
+        fact = code.split(":", 1)[1]
+        label = _PREMISE_REASON_LABELS.get(fact) or adapter.describe_fact(fact)
+        return f"前提要看{label}，画面里读不出来"
+    if code == "confidence":
+        return "动作在几个候选之间摇摆，识别置信度不足"
+    if code.startswith("missing_fact:"):
+        fact = code.split(":", 1)[1]
+        return f"缺少「{adapter.describe_fact(fact)}」，无法判定"
+    return ""
 
 
 def _unit(adapter) -> str:
@@ -753,6 +778,19 @@ def _review_entries(
                     continue
                 if player_lane and item.get("lane") and item["lane"] != player_lane:
                     continue
+                # 旧版识别曾允许“给了截图、却没说看到了什么”的裁决进入
+                # 报告；它们无法复核，最容易形成看似专业的错误建议。
+                # 新版解析层已阻断，这里再挡一次，保证历史对局也不会继续
+                # 显示这类无证据结论。
+                if (not str(item.get("premise_evidence") or "").strip()
+                        or not str(item.get("action_evidence") or "").strip()):
+                    continue
+                try:
+                    branch_no = int(item.get("branch_no") or 0)
+                except (TypeError, ValueError):
+                    branch_no = 0
+                if branch_no <= 0:
+                    continue
                 seen.add(mode_id)
             elif kind != "node":
                 continue
@@ -976,16 +1014,25 @@ def build_mode_analysis(
 
     for finding in lanes.get("findings") or []:
         mode_id = finding.get("mode_id") or ""
-        # 有分路结论的模式以分路结论为准 —— 逐回合那层只是它的明细，
-        # 同一件事不该在报告里出现两条。
-        covered.add(mode_id)
         if mode_id in {e.get("mode_id") for e in review_entries}:
             continue
         if finding.get("verdict") not in _PROBLEM_VERDICTS:
+            # 「信息不足」的分路汇总不能遮住逐回合层已经明确识别出的偏离。
+            # 后者仍会生成一张标为“前提待确认”的参考卡片。
             continue
-        if rules and corrective is not None and mode_id not in corrective:
-            # 前提读不出来的模式：这一局他做的可能就是对的，不纠正。
-            continue
+        # 有可判的分路结论时才以它为准；逐回合那层只是它的明细，
+        # 同一件事不该在报告里出现两条。
+        covered.add(mode_id)
+        # 前提读不出来的模式不能拿来给玩家下「做错了」的结论；但也不该
+        # 从报告中消失。保留为同版式的「参考」卡片，让玩家能回看原片、
+        # 知道模式库在什么条件下会给出这条建议。
+        is_reference = bool(
+            rules and corrective is not None and mode_id not in corrective
+        )
+        # 用户要求把所有偏离点列出来：视频里缺少完整前提证据的条目也
+        # 保留，但只能作为“待核实”，绝不能伪装成确定的纠正结论。
+        if video_id:
+            is_reference = True
         vs = by_rule.get(mode_id, [])
         deviated = [v for v in vs if v.status == STATUS_DEVIATED]
         if not deviated:
@@ -1023,7 +1070,16 @@ def build_mode_analysis(
             "title": finding.get("title") or "",
             "lane_label": finding.get("lane_label") or "",
             "phase_label": finding.get("phase_label") or "",
-            "verdict_label": finding.get("verdict_label") or "",
+            "verdict_label": (
+                "待核实 · 偏离点"
+                if is_reference else finding.get("verdict_label") or ""
+            ),
+            "is_reference": is_reference,
+            "reference_note": (
+                "已识别到与模式库不一致的动作，但当前没有完整证据证明"
+                "该攻略前提在这一刻成立；保留供你回看核实，不计入本局“需要调整”。"
+                if is_reference else ""
+            ),
             # 1. 对局时间区间
             # 窗口标签优先（「12:00 之后」「6:00 ~ 10:00」）——
             # 规则管的是一整段，只写「第 12 分钟」会把范围说成时点。
@@ -1066,8 +1122,11 @@ def build_mode_analysis(
         rule = rule_by_id.get(mode_id)
         if rule is None or rule.status != "active":
             continue
-        if rules and corrective is not None and mode_id not in corrective:
-            continue
+        is_reference = bool(
+            rules and corrective is not None and mode_id not in corrective
+        )
+        if video_id:
+            is_reference = True
 
         labels = [v.round_label for v in deviated if v.round_label]
         moments = []
@@ -1098,7 +1157,13 @@ def build_mode_analysis(
             "title": rule.title or "",
             "lane_label": "",
             "phase_label": "",
-            "verdict_label": "这里可以调整",
+            "verdict_label": "待核实 · 偏离点" if is_reference else "这里可以调整",
+            "is_reference": is_reference,
+            "reference_note": (
+                "已识别到与模式库不一致的动作，但当前没有完整证据证明"
+                "该攻略前提在这一刻成立；保留供你回看核实，不计入本局“需要调整”。"
+                if is_reference else ""
+            ),
             "time_range": _round_range_text(
                 [minutes_of.get(v.round_label) for v in deviated], labels,
                 unit=_unit(adapter),
@@ -1124,6 +1189,62 @@ def build_mode_analysis(
 
     # 时间区间从早到晚排 —— 玩家是照着时间轴改自己的操作的。
     entries.sort(key=lambda e: _range_start(e.get("time_range") or ""))
+    return entries
+
+
+def build_success_highlights(
+    adapter: GameAdapter, ctx: MatchContext, verdicts: List[Any],
+    rules: Optional[Sequence[Rule]], video_id: str, video_url: str,
+    limit: int = 3,
+) -> List[Dict[str, Any]]:
+    """全对时仍保留少量带原视频的正向示例。"""
+    rule_by_id = {r.id: r for r in rules or []}
+    rounds = {r.label: r for r in ctx.rounds}
+    minutes = _round_minutes(ctx)
+    grouped: Dict[str, List[Any]] = {}
+    for verdict in verdicts:
+        if verdict.status == STATUS_SATISFIED and verdict.rule_id in rule_by_id:
+            grouped.setdefault(verdict.rule_id, []).append(verdict)
+
+    candidates = []
+    for mode_id, matched in grouped.items():
+        first = min(matched, key=lambda v: minutes.get(v.round_label) or 0)
+        candidates.append((minutes.get(first.round_label) or 0, mode_id, matched))
+
+    entries: List[Dict[str, Any]] = []
+    for _minute, mode_id, matched in sorted(candidates)[:limit]:
+        rule = rule_by_id[mode_id]
+        finding = _rule_as_finding(rule, adapter)
+        labels = [v.round_label for v in matched if v.round_label]
+        moments = []
+        for verdict in matched[:1]:
+            rnd = rounds.get(verdict.round_label)
+            if rnd is None or rnd.video_time <= 0:
+                continue
+            moments.append({
+                "label": verdict.round_label, "time": rnd.video_time,
+                "time_label": "%d:%02d" % (int(rnd.video_time) // 60,
+                                           int(rnd.video_time) % 60),
+                "image_url": (f"/api/videos/{video_id}/frames/{rnd.image}"
+                              if video_id and rnd.image else ""),
+            })
+        if not moments:
+            continue
+        advice = _advice_text(finding)
+        entries.append({
+            "mode_id": mode_id, "category": rule.category or "",
+            "title": rule.title or "", "verdict_label": "这段做对了",
+            "is_highlight": True,
+            "time_range": _round_range_text(
+                [minutes.get(v.round_label) for v in matched], labels, _unit(adapter)),
+            "clip": {"video_url": video_url, "moments": moments,
+                     "seconds": CLIP_SECONDS},
+            "actual_text": _segment_actual_text(adapter, matched),
+            "evidence": [], "absent_kinds": [], "advice_text": advice,
+            "advice_lines": _split_clauses(advice),
+            "reason_text": "这一段实际操作与模式库要求相符，可以作为复盘参考。",
+            "low_confidence": False, "confidence": 1.0,
+        })
     return entries
 
 
@@ -1215,8 +1336,37 @@ def _range_start(text: str) -> int:
     return int(m.group(1)) if m else 10 ** 6
 
 
+def _lane_rule_counts(rules: Sequence[Rule], position: str, hero: str):
+    """数出这条分路有多少条模式、其中多少条是这个英雄的专属模式。
+
+    分路级通用模式在认出英雄后一律让位（触发条件里 ``none: my_hero in
+    [全部英雄]``），这个设计的前提是「每个英雄在这条路都有自己的模式」。
+    可库里并非如此 —— 例如亚连只有对抗路的模式，他去打野时通用打野模式
+    让位、专属打野模式又不存在，于是一条都不判。报告据此说明「库里缺这一份」，
+    而不是笼统地说玩家「没做对」或「没读出来」。
+    """
+    lane_total = 0
+    lane_hero = 0
+    for rule in rules:
+        conds = list(getattr(rule.trigger, "all", None) or [])
+        in_lane = any(
+            c.fact == "position" and c.op == "==" and c.value == position
+            for c in conds
+        )
+        if not in_lane:
+            continue
+        lane_total += 1
+        if hero and any(
+            c.fact == "my_hero" and c.op == "==" and c.value == hero
+            for c in conds
+        ):
+            lane_hero += 1
+    return lane_total, lane_hero
+
+
 def build_coverage(ctx: MatchContext, verdicts: Sequence[Any],
-                   adapter: GameAdapter) -> Dict[str, Any]:
+                   adapter: GameAdapter,
+                   corrective: Optional[set] = None) -> Dict[str, Any]:
     """分析覆盖小结：按时间窗交代「这一段看到了什么、判了几条」。
 
     报告主体只列偏离，玩家无从分辨某条规则是「做对了 / 没做到 /
@@ -1228,6 +1378,11 @@ def build_coverage(ctx: MatchContext, verdicts: Sequence[Any],
     「不适用」（subject 不匹配或做了节点认可的别的事）匹配器直接返回 None，
     不在判定里出现 —— 它体现在「触发的规则数 < 这段相关规则数」上，
     这里不强行估算，避免再编一个数。只如实摆能确证的四件事。
+
+    ``corrective`` 不为 None 时，偏离计数**只算能拿来纠正的规则** ——
+    前提读不出来的那些偏离不计入「需调整」。但 checked / satisfied /
+    undetermined 保持全量，因为它们是客观判定结果。
+    被排除的偏离总数在 ``filtered_deviated`` 里给出。
     """
     # 窗口标签 -> 回合（同一标签可能有多个观测点，动作数取合计）。
     window_order: List[str] = []
@@ -1253,6 +1408,7 @@ def build_coverage(ctx: MatchContext, verdicts: Sequence[Any],
 
     # 窗口标签 -> 判定计数。
     cnt: Dict[str, Dict[str, int]] = {}
+    filtered_dev_total = 0
     for v in verdicts:
         label = str(getattr(v, "round_label", "") or "").strip()
         if not label:
@@ -1261,7 +1417,15 @@ def build_coverage(ctx: MatchContext, verdicts: Sequence[Any],
                                       "deviated": 0, "undetermined": 0})
         cell["checked"] += 1
         st = getattr(v, "status", "")
-        if st in ("satisfied", "deviated", "undetermined"):
+        if st == "deviated":
+            # 前提读不出来的偏离不计入「需调整」—— 但仍然在全局统计里记一笔，
+            # 好让报告说明有多少条被排除了。
+            rid = getattr(v, "rule_id", "")
+            if corrective is not None and rid not in corrective:
+                filtered_dev_total += 1
+            else:
+                cell["deviated"] += 1
+        elif st in ("satisfied", "undetermined"):
             cell[st] += 1
 
     windows: List[Dict[str, Any]] = []
@@ -1291,6 +1455,8 @@ def build_coverage(ctx: MatchContext, verdicts: Sequence[Any],
         "checked": total_checked,
         "satisfied": total_sat,
         "deviated": total_dev,
+        # corrective 过滤排除的偏离数 —— 报告底部要说明这些不计入「需调整」。
+        "filtered_deviated": filtered_dev_total,
     }
 
 
@@ -1407,6 +1573,7 @@ def build_match_report(
         missing = {e["fact"] for e in v.evidence if not e.get("present")}
         if exp_fact:
             missing.add(exp_fact)
+        reason_code = getattr(v, "undetermined_reason", "") or ""
         undetermined.append(
             {
                 "rule_id": v.rule_id,
@@ -1415,11 +1582,18 @@ def build_match_report(
                 # 要指名缺的是**哪个**事实。早先只从触发证据里挑「没采到」的，
                 # 而触发条件往往都成立（时间、分路都在），挑出来是空表 ——
                 # 报告于是只说一句「无法判定」，玩家不知道该补填什么。
-                # 真正缺的是**判定动作那一类**（玩家没标这一帧做了什么）。
+                #
+                # 现在按内核给出的原因码说：前提缺信息就说缺「视野 / 控制 /
+                # 复活」，动作在摇摆就说置信度不足。都不说成「缺少站位」——
+                # 站位本来读得出来，照着补也补不到点上。
                 "reason": (
-                    f"缺少「{adapter.describe_fact(exp_fact)}」，无法判定"
-                    if exp_fact else "关键事实未采集到，无法判定"
+                    _undetermined_reason(adapter, reason_code)
+                    or (
+                        f"缺少「{adapter.describe_fact(exp_fact)}」，无法判定"
+                        if exp_fact else "关键事实未采集到，无法判定"
+                    )
                 ),
+                "reason_code": reason_code,
                 "missing_facts": sorted(missing),
                 # 中文名。原始码是给程序看的，页面上要给人看。
                 "missing_fact_labels": [
@@ -1442,19 +1616,38 @@ def build_match_report(
         )
     ]
 
-    # 判不了的原因**汇总**：哪一类动作读不出来，挡掉了多少条规则。
+    # 判不了的原因**汇总**：哪一类信息读不出来，挡掉了多少条规则。
     #
     # 逐条的「无法判定」写在 undetermined 里，但玩家看到的是一堆条目，
-    # 不知道**整体上**缺什么。汇总一句就够：「补刀、开团这两类读不出来，
-    # 所以 645 条规则判不了」。
+    # 不知道**整体上**缺什么。汇总一句就够：「视野、复活这两类读不出来，
+    # 所以 N 条规则判不了」。
+    #
+    # 按**原因**汇总而不是按期望的事实：「缺少站位」这种说法没有用 ——
+    # 站位读得出来，真正卡住的是它在看向视野/控制/复活。
     blocked: Dict[str, int] = {}
+    blocked_label: Dict[str, str] = {}
     for v in analysis["undetermined"]:
-        fact = (v.expected or {}).get("fact") or ""
-        if fact:
-            blocked[fact] = blocked.get(fact, 0) + 1
+        code = getattr(v, "undetermined_reason", "") or ""
+        if code.startswith(("premise:", "missing_fact:")):
+            fact = code.split(":", 1)[1]
+            if code.startswith("premise:"):
+                label = (_PREMISE_REASON_LABELS.get(fact)
+                         or adapter.describe_fact(fact))
+            else:
+                label = adapter.describe_fact(fact)
+            blocked[code] = blocked.get(code, 0) + 1
+            blocked_label[code] = label
+        elif code == "confidence":
+            blocked[code] = blocked.get(code, 0) + 1
+            blocked_label[code] = "动作识别置信度"
+        else:
+            fact = (v.expected or {}).get("fact") or ""
+            if fact:
+                blocked[f"fact:{fact}"] = blocked.get(f"fact:{fact}", 0) + 1
+                blocked_label[f"fact:{fact}"] = adapter.describe_fact(fact)
     unreadable = [
-        {"fact": f, "label": adapter.describe_fact(f), "blocked": n}
-        for f, n in sorted(blocked.items(), key=lambda kv: -kv[1])
+        {"fact": k, "label": blocked_label[k], "blocked": n}
+        for k, n in sorted(blocked.items(), key=lambda kv: -kv[1])
     ]
 
     # 给每条分路结论补上「去哪看原画面」。
@@ -1462,25 +1655,86 @@ def build_match_report(
     # 内核只带出回合在视频里的秒数与截图文件名 —— 它不认识 HTTP，也不该认识。
     # URL 在这里按 video_id 拼：截图和视频是两个地址，快照轻、点开才拉视频。
     video_id = recognition.get("video_id", "")
-    lanes = _with_media(analysis["lanes"], video_id)
-    lanes = _lane_text(
-        adapter, lanes,
+    lanes_all = _with_media(analysis["lanes"], video_id)
+    lanes_all = _lane_text(
+        adapter, lanes_all,
         [v.to_dict() for v in analysis["verdicts"]],
     )
     # 分路结论同样只留**能拿来纠正**的 —— 报告与 JSON 要说同一件事。
-    lanes = _filter_corrective(lanes, corrective)
+    lanes = _filter_corrective(lanes_all, corrective)
 
     # 分路结论与逐回合差距合成一份「操作模式分析」。
     # 两条链路是同一件事的两个视角：分路说「哪一段做错了」，
     # 逐回合说「哪一回合错在哪」。分开摆着，玩家要自己对两次，
     # 而这页只要能照着改。
     mode_analysis = build_mode_analysis(
-        adapter, ctx, lanes, list(analysis["verdicts"]), rules, corrective
+        adapter, ctx, lanes_all, list(analysis["verdicts"]), rules, corrective
     )
+    # 全对时也留带截图的正向示例；否则用户只看到一句结论，会误以为
+    # 视频片段没有生成。
+    success_highlights: List[Dict[str, Any]] = []
+    if not mode_analysis and not analysis["stats"].deviated:
+        success_highlights = build_success_highlights(
+            adapter, ctx, list(analysis["verdicts"]), rules,
+            str(lanes_all.get("video_id") or ""),
+            str(lanes_all.get("video_url") or ""),
+        )
 
     # 分析覆盖小结：每个时间窗看到了什么、判了几条（满足/偏离/无法判定）。
     # 让「报告只列偏离」之外，玩家能核对系统确实分析过每一段、没漏。
-    coverage = build_coverage(ctx, list(analysis["verdicts"]), adapter)
+    coverage = build_coverage(ctx, list(analysis["verdicts"]), adapter, corrective)
+
+    # 「操作模式分析」为空时要**说清是哪一种空**。
+    #
+    # 「确认没偏离」「有偏离但前提读不出」「画面证不出来」「库里没这一份」
+    # 「根本没判」这几件事对玩家的下一步完全不同，一句「没有发现偏离」
+    # 会把它们都说成第一种 —— 而覆盖表又明明写着「需调整 N 条」，两处对不上。
+    analysis_empty: Dict[str, Any] = {}
+    if not mode_analysis:
+        deviated_ids = {
+            v.rule_id for v in analysis["verdicts"] if v.status == STATUS_DEVIATED
+        }
+        filtered_ids = {
+            rid for rid in deviated_ids
+            if corrective is not None and rid not in corrective
+        }
+        unclear = 0
+        for rnd in _round_reviews(ctx):
+            for item in rnd.get("items") or []:
+                if item.get("verdict") == "unclear":
+                    unclear += 1
+        if filtered_ids:
+            kind, count = "filtered", len(filtered_ids)
+        elif analysis["stats"].deviated:
+            # 规则层发现了动作差异，但没有通过“前提 + 分支 + 画面证据”
+            # 三重闸门；这既不是做对，也不是没有分析。
+            kind, count = "unverified", analysis["stats"].deviated
+        elif unclear:
+            kind, count = "unclear", unclear
+        elif analysis["verdicts"]:
+            kind, count = "clean", len(analysis["verdicts"])
+        else:
+            kind, count = "no_data", 0
+        position = str((ctx.player or {}).get("position") or "unknown")
+        hero = str((ctx.player or {}).get("hero") or "")
+        # 分路读出来了、英雄也认出来了，却一条都没判 —— 最常见的原因是
+        # 库里没有「这个英雄 × 这条路」的专属模式，而该路的通用模式又会
+        # 在认出英雄后让位（触发条件里 ``none: my_hero in [全部英雄]``）。
+        # 说「动作没读出来」是冤枉玩家：事实明明读到了。
+        if kind == "no_data" and position != "unknown":
+            lane_total, lane_hero = _lane_rule_counts(rules, position, hero)
+            if lane_total == 0 or (hero and lane_hero == 0):
+                kind = "no_lane_rules"
+        analysis_empty = {
+            "kind": kind,
+            "count": count,
+            "player_position": position,
+            "hero": hero,
+            "position_label": (adapter.fact_value_labels.get("position") or {}).get(
+                position, position
+            ),
+            "unreadable": [u["label"] for u in unreadable][:3],
+        }
 
     return {
         "meta": {
@@ -1509,10 +1763,13 @@ def build_match_report(
         "lanes": lanes,
         # 报告正文真正渲染的那一份：分路 + 逐回合合成，每条四部分。
         "mode_analysis": mode_analysis,
+        "success_highlights": success_highlights,
         # 分析覆盖小结：逐时间窗的采样动作与判定计数（满足/偏离/无法判定）。
         "coverage": coverage,
         "by_category": by_category,
         "undetermined": undetermined,
+        # 操作模式分析为空时，说明是哪一种空（模板据此换措辞）。
+        "analysis_empty": analysis_empty,
         # 判不了的原因汇总：哪一类动作读不出来，挡掉了多少条规则。
         "unreadable_kinds": unreadable,
         "curve": curve or {},

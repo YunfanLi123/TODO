@@ -40,6 +40,7 @@ MOBA_FACT_NAMES: List[str] = [
     "teamfight_action",      # 动作事实：团战处理方式
     "has_ult_ready",         # 核心大招是否就绪
     "in_combat",             # 此刻是否在团战里
+    "cc",                    # 画面是否确认出现控制链（仅多帧证据时写入）
     "is_decision_point",     # 是否关键决策时刻
     "pressure",              # 派生事实：局势压力 low/mid/high
     "my_hero",               # 自己玩的英雄（分路层之下再细分一层）
@@ -173,6 +174,7 @@ MOBA_FACT_LABELS: Dict[str, str] = {
     "teamfight_action": "团战处理",
     "has_ult_ready": "大招就绪",
     "in_combat": "是否在团战",
+    "cc": "控制事件",
     "is_decision_point": "关键决策时刻",
     "pressure": "局势压力",
     "position": "分路",
@@ -350,6 +352,9 @@ POSITION_LABELS: Dict[str, str] = {
 #: 攻略里常见的别称 -> 规范值。抽取和录入都走这张表。
 POSITION_ALIASES: Dict[str, str] = {
     "打野": "jungle", "野核": "jungle", "刺客": "jungle",
+    # 模型描述打野时更常说「野区」—— 那是地图区域，但在这句问「玩家主要
+    # 打哪条路」的话里，它指的就是打野这个分工。
+    "野区": "jungle", "野怪区": "jungle",
     "中单": "mid", "中路": "mid", "法师": "mid",
     "对抗路": "side", "边路": "side", "战士": "side", "对抗": "side",
     "射手": "carry", "c位": "carry", "输出": "carry", "发育路": "carry",

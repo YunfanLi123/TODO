@@ -178,11 +178,19 @@ def build_request(
     system: Optional[str] = None,
     max_tokens: int = 4096,
     thinking: bool = False,
+    temperature: Optional[float] = None,
 ) -> Tuple[str, Dict[str, str], Dict[str, Any]]:
     """造出 (url, headers, body)。拆出来是为了能单测。
 
     ``url`` 就是配置里的**完整端点**，这里一个字都不加 ——
     加路径是踩过坑的地方。
+
+    ``temperature`` 默认 ``None`` 表示**不传**，走供应方自己的默认值。
+    读画面那几个调用显式传 0 —— 它们的默认温度不为 0，同一帧问两次
+    能给出两个不同的英雄（实测连问四次得到韩信/哪吒/孙策/曜），
+    结论跟着采样抖动，报告就无法复现。
+    只有需要稳定的调用才传，其余不传：有的模型（推理类）不接受这个字段，
+    一律塞进去会让那些配置直接 400。
     """
     url = creds.endpoint
     if creds.protocol == "anthropic":
@@ -200,6 +208,8 @@ def build_request(
         }
         if system:
             body["system"] = system
+        if temperature is not None:
+            body["temperature"] = temperature
     else:
         headers = {
             "Content-Type": "application/json",
@@ -220,6 +230,8 @@ def build_request(
             "max_tokens": max_tokens,
             "messages": messages,
         }
+        if temperature is not None:
+            body["temperature"] = temperature
     if not thinking:
         body.update(_thinking_body(creds.thinking_field))
     return url, headers, body
@@ -248,6 +260,7 @@ def call_model(
     thinking: bool = False,
     timeout: float = DEFAULT_TIMEOUT,
     retry: int = MAX_RETRY,
+    temperature: Optional[float] = None,
 ) -> VlmResult:
     """发一次请求。失败抛 :class:`VlmError`，并带上可判别的 ``kind``。"""
     if creds is None:
@@ -257,7 +270,7 @@ def call_model(
 
     url, headers, body = build_request(
         model, blocks, creds, system=system, max_tokens=max_tokens,
-        thinking=thinking)
+        thinking=thinking, temperature=temperature)
     raw = json.dumps(body, ensure_ascii=False).encode("utf-8")
     if len(raw) > MAX_BODY_BYTES:
         raise VlmError(

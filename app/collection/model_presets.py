@@ -71,6 +71,20 @@ PROVIDERS: Dict[str, Dict[str, Any]] = {
         "thinking_field": "thinking",
         "note": "已实测能读王者画面。",
     },
+    "ark": {
+        "label": "火山方舟（豆包）",
+        "protocol": "openai",
+        # 方舟控制台常展示的是 /api/v3 基址；这里必须存完整的 Chat
+        # 地址，客户端按原样 POST，不能期待它再替我们补路径。
+        "endpoint": "https://ark.cn-beijing.volces.com/api/v3/chat/completions",
+        "endpoint_note": "方舟基础地址会自动补为 /chat/completions。",
+        "key_url": "https://console.volcengine.com/ark/region:cn-beijing/api-key",
+        "key_prefix": "",
+        "default_model": "doubao-seed-2-1-pro-260915",
+        "default_text_model": "doubao-seed-2-1-pro-260915",
+        "thinking_field": "thinking",
+        "note": "选择视觉模型；完整请求地址为 /api/v3/chat/completions。",
+    },
     "custom": {
         "label": "自定义",
         "protocol": "openai",
@@ -84,6 +98,21 @@ PROVIDERS: Dict[str, Dict[str, Any]] = {
         "note": "填完整的请求地址（只填域名会 404）。",
     },
 }
+
+
+ARK_BASE_URL = "https://ark.cn-beijing.volces.com/api/v3"
+
+
+def normalize_endpoint(endpoint: str) -> str:
+    """把方舟常见的基础地址补成此客户端需要的完整 Chat 地址。
+
+    其他供应商的地址一律原样保留。客户端使用 OpenAI Chat Completions
+    请求体，因此这里不能把方舟基址指向 ``/responses``。
+    """
+    value = (endpoint or "").strip()
+    if value.rstrip("/") == ARK_BASE_URL:
+        return ARK_BASE_URL + "/chat/completions"
+    return value
 
 #: 两个槽位：看画面 / 对账措辞。
 SLOTS = ("vlm", "text")

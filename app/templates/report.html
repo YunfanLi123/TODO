@@ -33,6 +33,8 @@
 {%- set is_growth = kind == 'growth' -%}
 {# 操作模式分析：报告正文。分路结论与逐回合差距已合成这一份。 #}
 {%- set entries = report.get('mode_analysis') or [] -%}
+{%- set highlights = report.get('success_highlights') or [] -%}
+{%- set shown_entries = entries or highlights -%}
 {# 曲线与「最需改进」只属于**跨对局**的成长报告。
    单局报告已经只剩「操作模式分析」一节 —— 执行度、执行度曲线、
    「最需要改进的规则」这些统计口径对「照着改」这件事没有帮助，
@@ -117,6 +119,7 @@
       <span class="coverage-summary">
         共分析 {{ cov.window_count }} 个时段 ·
         判了 {{ cov.checked }} 条模式，其中做对 {{ cov.satisfied }} 条、需要调整 {{ cov.deviated }} 条
+        {%- if cov.filtered_deviated %} · 另有 {{ cov.filtered_deviated }} 条偏离因前提画面读不出，供参考不计入纠正{% endif %}
       </span>
     </div>
     <div class="panel coverage-panel">
@@ -138,7 +141,8 @@
       </table>
       <p class="coverage-note">
         空白或「—」表示这一段没有可对应判定的模式（多为当时在做模式库适用范围之外的事，如线上补兵、拉扯），并非漏看；
-        下面「操作模式分析」只展开需要调整的时段。
+        {% if cov.filtered_deviated %}前提画面读不出（如塔的护盾、对方是否减员、龙坑归属）的偏离不计入「需调整」，供参考不计入纠正；{% endif %}
+        下面「操作模式分析」会展开需要调整的时段，以及前提待确认、可回看核对的参考时段。
       </p>
     </div>
   </section>
@@ -155,16 +159,38 @@
       <h2>操作模式分析</h2>
     </div>
 
-    {% if not entries %}
-    <div class="empty">这一局没有发现偏离操作模式的地方。</div>
+    {% if not shown_entries %}
+    {%- set empty = report.get('analysis_empty') or {} -%}
+    <div class="empty">
+      {%- if empty.kind == 'filtered' -%}
+        这一局有 {{ empty.count }} 处做法和模式库不一样，但这些模式的前提（塔的护盾、对方是否减员、龙坑归属）在画面里读不出来，系统不据此纠正 —— 覆盖表里也不计入「需调整」，仅供参考。
+      {%- elif empty.kind == 'unverified' -%}
+        这一局有 {{ empty.count }} 处动作与模式库不一致，但缺少能同时证明“前提成立、具体适用分支、画面客观证据”的完整链路，系统不把它写成建议。这不等于你做对或做错，只是目前证据不足以负责地下结论。
+      {%- elif empty.kind == 'unclear' -%}
+        模型对着 {{ empty.count }} 条模式看了画面，前提既没被证实也没被否定，所以一条都不纠正。这不等于「没做错」，只是这一局的画面证不出来。
+      {%- elif empty.kind == 'no_lane_rules' -%}
+        {%- if empty.hero -%}
+        模式库里还没有「{{ empty.hero }} · {{ empty.position_label }}」的专属模式；{{ empty.position_label }}的通用模式在认出英雄后一律让位，所以这一局不判。这不是你没做对，是库里缺这一份。
+        {%- else -%}
+        模式库里还没有「{{ empty.position_label }}」的模式，所以这一局不判。
+        {%- endif -%}
+      {%- elif empty.kind == 'no_data' -%}
+        这一局没有可判的模式：{% if empty.player_position == 'unknown' %}分路没读出来{% else %}动作没读出来{% endif %}{% if empty.unreadable %}（读不出的有：{{ empty.unreadable|join('、') }}）{% endif %}。补填分路或重跑识别后再看。
+      {%- else -%}
+        这一局判过的 {{ empty.count or 0 }} 条模式都对上了，没有需要调整的地方。
+      {%- endif -%}
+    </div>
     {% else %}
-    {% for e in entries %}
-    <article class="mode-item">
+    {% if highlights and not entries %}
+    <div class="empty empty-success">这一局没有需要调整的地方。下面保留 {{ highlights|length }} 段做对的原视频片段，方便你回看复用。</div>
+    {% endif %}
+    {% for e in shown_entries %}
+    <article class="mode-item{% if e.is_reference %} mode-item-reference{% endif %}{% if e.is_highlight %} mode-item-success{% endif %}">
       <div class="mode-item-head">
         {% if e.category %}<span class="mode-chip">{{ e.category }}</span>{% endif %}
         {# 进入这份列表的都是「值得调整」的条目，用固定的问题色类；
            verdict_label 是会随措辞调整的中文，不拿它当 CSS 类名。 #}
-        <span class="cell-v cell-v-problem">{{ e.verdict_label }}</span>
+        <span class="cell-v {% if e.is_highlight %}cell-v-ok{% else %}cell-v-problem{% endif %}">{{ e.verdict_label }}</span>
         {# 这条结论建立在低置信度的识别之上 —— 必须标出来。
            报告正文只有这一节，所以标记挂在条目上，不另起一节。 #}
         {% if e.low_confidence %}
@@ -172,6 +198,9 @@
         {% endif %}
       </div>
       <h3 class="mode-item-title">{{ e.title }}</h3>
+      {% if e.reference_note %}
+      <p class="mode-reference-note">{{ e.reference_note }}</p>
+      {% endif %}
 
       {# 1. 对局时间区间 #}
       <div class="mo-row">
@@ -252,12 +281,12 @@
     {% endfor %}
     {% endif %}
 
-    {# 判不了的原因汇总：哪一类操作读不出来，挡掉了多少条规则。
+    {# 判不了的原因汇总：哪一类信息读不出来，挡掉了多少条规则。
        不写这一段，玩家只看到「无法判定」，不知道整体上缺什么。 #}
     {%- set unreadable_kinds = report.get('unreadable_kinds') or [] -%}
     {%- if unreadable_kinds %}
     <div class="mode-gap-note">
-      <b>这些操作暂时读不出来，所以相关模式判不了：</b>
+      <b>这些信息暂时读不出来，所以相关模式判不了：</b>
       {%- for u in unreadable_kinds %}
       <span class="gap-kind">{{ u.label }}（{{ u.blocked }} 条）</span>
       {%- endfor %}

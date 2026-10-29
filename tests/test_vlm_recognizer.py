@@ -238,6 +238,30 @@ def test_the_prompt_asks_the_model_to_judge_the_premise():
     assert "预期动作" not in prompt
 
 
+def test_window_sampling_keeps_continuous_evidence_pairs():
+    """控制持续很短，抽帧必须同时有连续证据和全段覆盖。"""
+    from app.collection.video_upload import VLM_BURST_GAP_SEC, vlm_window_times
+
+    times = vlm_window_times(0.0, 120.0)
+    assert len(times) == 24
+    gaps = [b - a for a, b in zip(times, times[1:])]
+    assert sum(g <= VLM_BURST_GAP_SEC + 0.01 for g in gaps) >= 12
+    assert times[0] > 0 and times[-1] < 120
+
+
+def test_window_sampling_adds_dense_combat_bursts_at_activity_events():
+    """高活动切片要换成 0.25 秒连续帧，控制链才有可复查的前后顺序。"""
+    from app.collection.video_upload import (
+        VLM_COMBAT_FRAME_GAP_SEC, vlm_window_times,
+    )
+
+    times = vlm_window_times(0.0, 120.0, event_times=[30.0, 90.0])
+    near_30 = [t for t in times if 29.0 <= t <= 31.0]
+    near_90 = [t for t in times if 89.0 <= t <= 91.0]
+    assert len(near_30) >= 6 and len(near_90) >= 6
+    assert max(b - a for a, b in zip(near_30, near_30[1:])) <= VLM_COMBAT_FRAME_GAP_SEC + 0.01
+
+
 # ---------------------------------------------------------------- 解析
 
 
@@ -267,6 +291,15 @@ def test_actions_without_frames_are_dropped():
     parsed = vlm_recognizer.parse_answer(answer, _vocab())
     assert not parsed.actions
     assert parsed.notes
+
+
+def test_actions_without_visual_evidence_are_dropped():
+    """动作会影响规则判定，模型没有写看到了什么就不能入库。"""
+    answer = {"actions": [{"kind": "objective_action", "value": "farm_jungle",
+                           "frames": [1], "confidence": 0.99}]}
+    parsed = vlm_recognizer.parse_answer(answer, _vocab())
+    assert not parsed.actions
+    assert any("画面依据" in note for note in parsed.notes)
 
 
 def test_the_position_must_be_one_of_the_enumerated_ones():
@@ -361,6 +394,27 @@ def test_the_answer_is_cached(mock_server, tmp_path):
     rec.analyze(inp)
     rec.analyze(inp)
     assert len(handler.received) == 1, "缓存没生效"
+
+
+def test_cache_identity_changes_with_the_actual_model_and_endpoint():
+    """换模型/端点不能复用旧答案；生产路径的 self.model 常为空。"""
+    inp = WindowInput(lo=2, hi=4, frames=[FrameInput(t=1.0, data=b"x")])
+    rec = vlm_recognizer.VlmRecognizer()
+    a = rec._cache_key(inp, model="model-a", provider="https://a.example/v1")
+    b = rec._cache_key(inp, model="model-b", provider="https://a.example/v1")
+    c = rec._cache_key(inp, model="model-a", provider="https://b.example/v1")
+    assert len({a, b, c}) == 3
+
+
+def test_hero_mode_is_included_only_for_the_recognized_hero():
+    """英雄身份必须传进窗口清单，不能只裁剪分路后丢掉英雄层。"""
+    from app.rules import checklist
+
+    generic = checklist.window_checklist("hok", 0, 4, lane="side")
+    hero = checklist.window_checklist("hok", 0, 4, lane="side", hero="哪吒")
+    assert hero and len(hero) > len(generic)
+    assert any(item["id"].startswith("HOK-HERO-") for item in hero)
+    assert not any(item["id"].startswith("HOK-HERO-") for item in generic)
 
 
 # ---------------------------------------------------------------- 接线

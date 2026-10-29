@@ -97,6 +97,15 @@ class Condition:
             return present
         if not present or actual is None:
             return False
+        # ``unknown`` 是“没有读到”，不是一个可拿来通过 ``!=`` / ``not_in``
+        # 条件的真实局面。否则“对位不处于劣势”会在对位根本未知时成立，
+        # 随后把规则硬套到视频上；只有规则显式要求 unknown 时才允许命中。
+        if actual == "unknown":
+            if self.op == "==":
+                return self.value == "unknown"
+            if self.op == "in":
+                return "unknown" in self.value
+            return False
 
         try:
             if self.op == "==":
@@ -174,7 +183,10 @@ class Trigger:
                 # all 组一旦不成立即可短路，减少无谓求值
                 return TriggerResult(False, evidence)
 
-        any_ok = True
+        # ``any`` 不是可选的装饰条件：只要规则写了它，就必须至少有
+        # 一项成立。这里过去从 True 开始再做 ``or``，会让每一个含
+        # any 的规则无条件触发，进而把不相干的打法套进报告。
+        any_ok = False
         any_seen = False
         for cond in self.any:
             value, present = resolve(cond.fact)
@@ -367,6 +379,15 @@ class Rule:
     #: 不能纠正的规则**仍然在模式库里**（攻略内容照常可查），
     #: 只是不会拿它去指责玩家。
     corrective: bool = True
+    #: **现有识别能力下判不出来**。
+    #:
+    #: 有些模式的动作本身要靠画面去探草/放眼（``ward_vision``），而识别链路
+    #: 几乎不产出这个动作 —— 期望的动作永远没出现，规则每局都挂在
+    #: 「判不了」上，报告看起来像出了问题，实际是能力边界。
+    #:
+    #: 标了它的规则**不参与判定**，也不计入判不了统计；攻略内容照常在
+    #: 模式库里可查。识别能力补上之后把标记去掉即可。
+    unjudgeable: bool = False
     #: **同一时段（节点）里攻略认可的全部打法**。
     #:
     #: 为什么需要它
@@ -480,6 +501,9 @@ class Rule:
             "tags": list(self.tags),
             "node_actions": list(self.node_actions),
             "corrective": self.corrective,
+            # 只有标了的规则才写这个键 —— 种子文件里绝大多数规则没有它，
+            # 无条件写 False 会让序列化往返对不上（与 ``branches`` 同理）。
+            **({"unjudgeable": True} if self.unjudgeable else {}),
             # 分支**为空时不写这个键** —— 英雄层的种子没有分支，
             # 写了就会与种子文件对不上（序列化往返要无损）。
             **({"branches": [dict(b) for b in self.branches]}
@@ -537,6 +561,7 @@ class Rule:
             branches=[dict(b) for b in (data.get("branches") or [])
                       if isinstance(b, dict)],
             corrective=bool(data.get("corrective", True)),
+            unjudgeable=bool(data.get("unjudgeable", False)),
             source=Source(**src) if src else None,
         )
 

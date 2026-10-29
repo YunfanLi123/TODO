@@ -393,6 +393,11 @@ def build_rules(tree: DecisionTree, specs: Dict[str, Any]) -> List[Dict[str, Any
                     ),
                     # 这一条能不能用来纠正玩家（判据见上面）。
                     "corrective": bool(entry.get("_corrective", True)),
+                    # 期望动作是「做视野」的那些，现有识别链路产不出来 ——
+                    # 硬判只会每局挂一条「判不了」，标成不可判
+                    # （见 app/core/dsl.py 的 Rule.unjudgeable）。
+                    **({"unjudgeable": True}
+                       if "ward_vision" in _as_values(expect) else {}),
                     "source": {
                         "guide": GUIDE_NAME,
                         "locator": f"{LANE_LABELS[lane_code]} / {node.header} / "
@@ -412,6 +417,12 @@ def build_rules(tree: DecisionTree, specs: Dict[str, Any]) -> List[Dict[str, Any
                     }
                 rules.append(rule)
     return rules
+
+
+def _as_values(expect: Dict[str, Any]) -> List[str]:
+    """期望动作的取值，统一成列表。"""
+    value = expect.get("value")
+    return value if isinstance(value, list) else [value]
 
 
 def _default_rationale(premise: str, outcome: str) -> str:

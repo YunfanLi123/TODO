@@ -399,6 +399,7 @@
       ]
     },
     "expect_scope": "at_least_once",
+    "unjudgeable": true,
     "severity": "medium",
     "status": "active",
     "premise": "塔的早期护盾已移除、敌方打野最后出现位置在另一半地图",
@@ -4957,6 +4958,7 @@
       ]
     },
     "expect_scope": "at_least_once",
+    "unjudgeable": true,
     "severity": "medium",
     "status": "active",
     "premise": "双方同时抵达、均未开龙",
@@ -11579,6 +11581,7 @@
       ]
     },
     "expect_scope": "at_least_once",
+    "unjudgeable": true,
     "severity": "medium",
     "status": "active",
     "premise": "反向开局完成、敌方三人以上在我方半区",
@@ -12364,6 +12367,7 @@
       ]
     },
     "expect_scope": "at_least_once",
+    "unjudgeable": true,
     "severity": "high",
     "status": "active",
     "premise": "反向开局完成、已到 4 级（2:00 至 2:30 之间到 4 级）；野区换边完成、敌方打野最后出现位置在另一半地图",
@@ -26151,6 +26155,7 @@
       ]
     },
     "expect_scope": "at_least_once",
+    "unjudgeable": true,
     "severity": "medium",
     "status": "active",
     "premise": "河道草丛内无法确认是否有敌方",
@@ -26296,6 +26301,7 @@
       ]
     },
     "expect_scope": "at_least_once",
+    "unjudgeable": true,
     "severity": "high",
     "status": "active",
     "premise": "草区已探、敌方打野不在我方半区",
@@ -26937,6 +26943,7 @@
       ]
     },
     "expect_scope": "at_least_once",
+    "unjudgeable": true,
     "severity": "medium",
     "status": "active",
     "premise": "对方中单进入我方塔前；河道草丛有敌方头像",
@@ -28502,6 +28509,7 @@
       ]
     },
     "expect_scope": "at_least_once",
+    "unjudgeable": true,
     "severity": "medium",
     "status": "active",
     "premise": "河道草丛有敌方头像",
@@ -29343,6 +29351,7 @@
       ]
     },
     "expect_scope": "at_least_once",
+    "unjudgeable": true,
     "severity": "medium",
     "status": "active",
     "premise": "河道草丛无法确认是否有敌方",
@@ -30126,6 +30135,7 @@
       ]
     },
     "expect_scope": "at_least_once",
+    "unjudgeable": true,
     "severity": "medium",
     "status": "active",
     "premise": "河道草丛有敌方头像",
@@ -30320,7 +30330,7 @@
       "fact": "teamfight_action",
       "op": "in",
       "value": [
-        "retreat"
+        "engage"
       ]
     },
     "subject": {
@@ -30335,7 +30345,7 @@
       ]
     },
     "expect_scope": "at_least_once",
-    "severity": "medium",
+    "severity": "high",
     "status": "active",
     "premise": "团战敌方先打出控制并命中己方前排",
     "action": "不退出前排位置，用二技能脱离被控范围后重进",
@@ -30346,7 +30356,7 @@
       "中路",
       "嫦娥",
       "中期",
-      "撤退脱离"
+      "开团先手"
     ],
     "source": {
       "guide": "王者荣耀 S45「月照长安」英雄级决策树",
@@ -30690,6 +30700,7 @@
       ]
     },
     "expect_scope": "at_least_once",
+    "unjudgeable": true,
     "severity": "medium",
     "status": "active",
     "premise": "对方中单已贴脸；河道草丛有敌方头像",
@@ -32324,6 +32335,7 @@
       ]
     },
     "expect_scope": "at_least_once",
+    "unjudgeable": true,
     "severity": "medium",
     "status": "active",
     "premise": "河道草丛有敌方头像",
@@ -33179,6 +33191,7 @@
       ]
     },
     "expect_scope": "at_least_once",
+    "unjudgeable": true,
     "severity": "medium",
     "status": "active",
     "premise": "河道草丛有敌方头像",
@@ -33894,6 +33907,7 @@
       ]
     },
     "expect_scope": "at_least_once",
+    "unjudgeable": true,
     "severity": "medium",
     "status": "active",
     "premise": "河道草丛有敌方头像",
@@ -35253,6 +35267,7 @@
       ]
     },
     "expect_scope": "at_least_once",
+    "unjudgeable": true,
     "severity": "medium",
     "status": "active",
     "premise": "河道草丛有敌方头像",
@@ -36036,6 +36051,7 @@
       ]
     },
     "expect_scope": "at_least_once",
+    "unjudgeable": true,
     "severity": "medium",
     "status": "active",
     "premise": "河道草丛有敌方头像",
@@ -36821,6 +36837,7 @@
       ]
     },
     "expect_scope": "at_least_once",
+    "unjudgeable": true,
     "severity": "medium",
     "status": "active",
     "premise": "河道草丛有敌方头像",
@@ -37319,6 +37336,7 @@
       ]
     },
     "expect_scope": "at_least_once",
+    "unjudgeable": true,
     "severity": "medium",
     "status": "active",
     "premise": "对方中单进入我方塔前；河道草丛有敌方头像",
@@ -37965,6 +37983,7 @@
       ]
     },
     "expect_scope": "at_least_once",
+    "unjudgeable": true,
     "severity": "medium",
     "status": "active",
     "premise": "河道草丛有敌方头像",
@@ -38678,6 +38697,7 @@
       ]
     },
     "expect_scope": "at_least_once",
+    "unjudgeable": true,
     "severity": "medium",
     "status": "active",
     "premise": "河道草丛有敌方头像",
@@ -40676,6 +40696,7 @@
       ]
     },
     "expect_scope": "at_least_once",
+    "unjudgeable": true,
     "severity": "medium",
     "status": "active",
     "premise": "河道草丛有敌方头像",
@@ -41389,6 +41410,7 @@
       ]
     },
     "expect_scope": "at_least_once",
+    "unjudgeable": true,
     "severity": "medium",
     "status": "active",
     "premise": "河道草丛有敌方头像",
@@ -42032,6 +42054,7 @@
       ]
     },
     "expect_scope": "at_least_once",
+    "unjudgeable": true,
     "severity": "medium",
     "status": "active",
     "premise": "河道草丛有敌方头像",
@@ -42677,6 +42700,7 @@
       ]
     },
     "expect_scope": "at_least_once",
+    "unjudgeable": true,
     "severity": "medium",
     "status": "active",
     "premise": "河道草丛有敌方头像",
@@ -43386,6 +43410,7 @@
       ]
     },
     "expect_scope": "at_least_once",
+    "unjudgeable": true,
     "severity": "medium",
     "status": "active",
     "premise": "河道草丛有敌方头像",
@@ -43959,6 +43984,7 @@
       ]
     },
     "expect_scope": "at_least_once",
+    "unjudgeable": true,
     "severity": "medium",
     "status": "active",
     "premise": "1 级且对方中单站在兵线前排；河道草丛有敌方头像",
@@ -45810,6 +45836,7 @@
       ]
     },
     "expect_scope": "at_least_once",
+    "unjudgeable": true,
     "severity": "medium",
     "status": "active",
     "premise": "开局一级对位，对方站位靠后；开局一级对方站位前压；对方一级蹲在兵线侧草丛；对方一级蹲在兵线侧草丛；草丛里只有一人",
@@ -47739,6 +47766,7 @@
       ]
     },
     "expect_scope": "at_least_once",
+    "unjudgeable": true,
     "severity": "medium",
     "status": "active",
     "premise": "对方一级站位靠后；对方一级在兵线侧草丛；对方一级在兵线侧草丛；草丛里不止一人",
@@ -48097,6 +48125,7 @@
       ]
     },
     "expect_scope": "at_least_once",
+    "unjudgeable": true,
     "severity": "medium",
     "status": "active",
     "premise": "单杀完成，敌方位移已交且己方打野在对方半区且你这条线兵线已进对方塔下；敌方三人以上出现在我方防御塔范围内",
@@ -48599,6 +48628,7 @@
       ]
     },
     "expect_scope": "at_least_once",
+    "unjudgeable": true,
     "severity": "medium",
     "status": "active",
     "premise": "对方一级站位靠后；对方一级在兵线侧草丛；对方一级在兵线侧草丛；草丛里不止一人",
@@ -48671,6 +48701,7 @@
       ]
     },
     "expect_scope": "at_least_once",
+    "unjudgeable": true,
     "severity": "medium",
     "status": "active",
     "premise": "首波抢到线权，河道路口有眼且敌方打野在下半地图",
@@ -49672,6 +49703,7 @@
       ]
     },
     "expect_scope": "at_least_once",
+    "unjudgeable": true,
     "severity": "medium",
     "status": "active",
     "premise": "对方一级站位靠后；对方一级在兵线侧草丛；对方一级在兵线侧草丛；草丛里不止一人",
@@ -50098,6 +50130,7 @@
       ]
     },
     "expect_scope": "at_least_once",
+    "unjudgeable": true,
     "severity": "medium",
     "status": "active",
     "premise": "单杀完成，敌方位移已交且己方打野在对方半区且你这条线兵线已进对方塔下",
@@ -50528,6 +50561,7 @@
       ]
     },
     "expect_scope": "at_least_once",
+    "unjudgeable": true,
     "severity": "medium",
     "status": "active",
     "premise": "对方一级站位靠后；对方一级在兵线侧草丛；对方一级在兵线侧草丛；草丛里不止一人",
@@ -50600,6 +50634,7 @@
       ]
     },
     "expect_scope": "at_least_once",
+    "unjudgeable": true,
     "severity": "medium",
     "status": "active",
     "premise": "首波抢到线权，河道路口有眼且敌方打野在下半地图",
@@ -51026,6 +51061,7 @@
       ]
     },
     "expect_scope": "at_least_once",
+    "unjudgeable": true,
     "severity": "medium",
     "status": "active",
     "premise": "单杀完成，敌方位移已交且己方打野在对方半区且你这条线兵线已进对方塔下；敌方三人以上出现在我方防御塔范围内",
@@ -51524,6 +51560,7 @@
       ]
     },
     "expect_scope": "at_least_once",
+    "unjudgeable": true,
     "severity": "medium",
     "status": "active",
     "premise": "对方一级站位靠后；对方一级在兵线侧草丛；对方一级在兵线侧草丛；草丛里只有一人；对方一级在兵线侧草丛；草丛里不止一人",
@@ -51948,6 +51985,7 @@
       ]
     },
     "expect_scope": "at_least_once",
+    "unjudgeable": true,
     "severity": "medium",
     "status": "active",
     "premise": "单杀完成，敌方位移已交且己方打野在对方半区且你这条线兵线已进对方塔下；敌方三人以上出现在我方防御塔范围内",
@@ -52451,6 +52489,7 @@
       ]
     },
     "expect_scope": "at_least_once",
+    "unjudgeable": true,
     "severity": "medium",
     "status": "active",
     "premise": "对方一级站位靠后；对方一级在兵线侧草丛；对方一级在兵线侧草丛；草丛里不止一人",
@@ -53311,6 +53350,7 @@
       ]
     },
     "expect_scope": "at_least_once",
+    "unjudgeable": true,
     "severity": "medium",
     "status": "active",
     "premise": "开局一级对位且对方没有位移；对方一级站位靠后；对方一级在兵线侧草丛；对方一级在兵线侧草丛；草丛里只有一人；对方一级在兵线侧草丛；草丛里不止一人",
@@ -53737,6 +53777,7 @@
       ]
     },
     "expect_scope": "at_least_once",
+    "unjudgeable": true,
     "severity": "medium",
     "status": "active",
     "premise": "单杀完成，敌方位移已交且己方打野在对方半区且你这条线兵线已进对方塔下；敌方三人以上出现在我方防御塔范围内",
@@ -54305,6 +54346,7 @@
       ]
     },
     "expect_scope": "at_least_once",
+    "unjudgeable": true,
     "severity": "medium",
     "status": "active",
     "premise": "对方一级站位靠后；对方一级在兵线侧草丛；对方一级在兵线侧草丛；草丛里不止一人",
@@ -54376,6 +54418,7 @@
       ]
     },
     "expect_scope": "at_least_once",
+    "unjudgeable": true,
     "severity": "medium",
     "status": "active",
     "premise": "首波抢到线权，河道路口有眼且敌方打野在下半地图",
@@ -54799,6 +54842,7 @@
       ]
     },
     "expect_scope": "at_least_once",
+    "unjudgeable": true,
     "severity": "medium",
     "status": "active",
     "premise": "单杀完成，敌方位移已交且己方打野在对方半区且你这条线兵线已进对方塔下；敌方三人以上出现在我方防御塔范围内",
@@ -55301,6 +55345,7 @@
       ]
     },
     "expect_scope": "at_least_once",
+    "unjudgeable": true,
     "severity": "medium",
     "status": "active",
     "premise": "对方一级站位靠后；对方一级在兵线侧草丛；对方一级在兵线侧草丛；草丛里不止一人",
@@ -55729,6 +55774,7 @@
       ]
     },
     "expect_scope": "at_least_once",
+    "unjudgeable": true,
     "severity": "medium",
     "status": "active",
     "premise": "单杀完成，敌方位移已交且己方打野在对方半区且你这条线兵线已进对方塔下",
@@ -56297,6 +56343,7 @@
       ]
     },
     "expect_scope": "at_least_once",
+    "unjudgeable": true,
     "severity": "medium",
     "status": "active",
     "premise": "对方一级站位靠后；对方一级在兵线侧草丛",
@@ -56862,6 +56909,7 @@
       ]
     },
     "expect_scope": "at_least_once",
+    "unjudgeable": true,
     "severity": "medium",
     "status": "active",
     "premise": "单杀完成，敌方位移已交且己方打野在对方半区且你这条线兵线已进对方塔下",
@@ -57369,6 +57417,7 @@
       ]
     },
     "expect_scope": "at_least_once",
+    "unjudgeable": true,
     "severity": "medium",
     "status": "active",
     "premise": "对方一级站位靠后；对方一级在兵线侧草丛；对方一级在兵线侧草丛；草丛里不止一人",
@@ -58298,6 +58347,7 @@
       ]
     },
     "expect_scope": "at_least_once",
+    "unjudgeable": true,
     "severity": "medium",
     "status": "active",
     "premise": "对方一级站位靠后；对方一级在兵线侧草丛；对方一级在兵线侧草丛；草丛里不止一人",
@@ -58725,6 +58775,7 @@
       ]
     },
     "expect_scope": "at_least_once",
+    "unjudgeable": true,
     "severity": "medium",
     "status": "active",
     "premise": "单杀完成，敌方位移已交且己方打野在对方半区且你这条线兵线已进对方塔下；敌方三人以上出现在我方防御塔范围内",
@@ -59293,6 +59344,7 @@
       ]
     },
     "expect_scope": "at_least_once",
+    "unjudgeable": true,
     "severity": "medium",
     "status": "active",
     "premise": "对方一级站位靠后；对方一级在兵线侧草丛；对方一级在兵线侧草丛；草丛里不止一人",
@@ -59720,6 +59772,7 @@
       ]
     },
     "expect_scope": "at_least_once",
+    "unjudgeable": true,
     "severity": "medium",
     "status": "active",
     "premise": "单杀完成，敌方位移已交且己方打野在对方半区且你这条线兵线已进对方塔下",
@@ -60287,6 +60340,7 @@
       ]
     },
     "expect_scope": "at_least_once",
+    "unjudgeable": true,
     "severity": "medium",
     "status": "active",
     "premise": "对方一级站位靠后；对方一级在兵线侧草丛；对方一级在兵线侧草丛；草丛里不止一人",
@@ -60714,6 +60768,7 @@
       ]
     },
     "expect_scope": "at_least_once",
+    "unjudgeable": true,
     "severity": "medium",
     "status": "active",
     "premise": "单杀完成，敌方位移已交且己方打野在对方半区且你这条线兵线已进对方塔下；敌方三人以上出现在我方防御塔范围内",
@@ -61143,6 +61198,7 @@
       ]
     },
     "expect_scope": "at_least_once",
+    "unjudgeable": true,
     "severity": "medium",
     "status": "active",
     "premise": "对方一级站位靠后；对方一级在兵线侧草丛；对方一级在兵线侧草丛；草丛里不止一人",
@@ -61566,6 +61622,7 @@
       ]
     },
     "expect_scope": "at_least_once",
+    "unjudgeable": true,
     "severity": "medium",
     "status": "active",
     "premise": "锁定对方 C 位，敌方后排无法走位且己方打野在对方半区且你这条线兵线已进对方塔下",
@@ -61924,6 +61981,7 @@
       ]
     },
     "expect_scope": "at_least_once",
+    "unjudgeable": true,
     "severity": "medium",
     "status": "active",
     "premise": "开局一级对位且对方没有位移；对方一级站位靠后；对方一级在兵线侧草丛；对方一级在兵线侧草丛；草丛里不止一人",
@@ -62350,6 +62408,7 @@
       ]
     },
     "expect_scope": "at_least_once",
+    "unjudgeable": true,
     "severity": "medium",
     "status": "active",
     "premise": "单杀完成，敌方位移已交且己方打野在对方半区且你这条线兵线已进对方塔下",
@@ -62777,6 +62836,7 @@
       ]
     },
     "expect_scope": "at_least_once",
+    "unjudgeable": true,
     "severity": "medium",
     "status": "active",
     "premise": "对方一级站位靠后；对方一级在兵线侧草丛；对方一级在兵线侧草丛；草丛里不止一人",
@@ -63200,6 +63260,7 @@
       ]
     },
     "expect_scope": "at_least_once",
+    "unjudgeable": true,
     "severity": "medium",
     "status": "active",
     "premise": "单杀完成，敌方位移已交且己方打野在对方半区且你这条线兵线已进对方塔下",
@@ -63772,6 +63833,7 @@
       ]
     },
     "expect_scope": "at_least_once",
+    "unjudgeable": true,
     "severity": "medium",
     "status": "active",
     "premise": "对方一级站位靠后；对方一级在兵线侧草丛；对方一级在兵线侧草丛；草丛里不止一人",
@@ -64773,6 +64835,7 @@
       ]
     },
     "expect_scope": "at_least_once",
+    "unjudgeable": true,
     "severity": "medium",
     "status": "active",
     "premise": "对方一级站位靠后；对方一级在兵线侧草丛；对方一级在兵线侧草丛；草丛里不止一人",
@@ -65196,6 +65259,7 @@
       ]
     },
     "expect_scope": "at_least_once",
+    "unjudgeable": true,
     "severity": "medium",
     "status": "active",
     "premise": "单杀完成，敌方位移已交且己方打野在对方半区且你这条线兵线已进对方塔下",
@@ -65695,6 +65759,7 @@
       ]
     },
     "expect_scope": "at_least_once",
+    "unjudgeable": true,
     "severity": "medium",
     "status": "active",
     "premise": "对方一级站位靠后；对方一级在兵线侧草丛；对方一级在兵线侧草丛；草丛里只有一人；对方一级在兵线侧草丛；草丛里不止一人",
@@ -66119,6 +66184,7 @@
       ]
     },
     "expect_scope": "at_least_once",
+    "unjudgeable": true,
     "severity": "medium",
     "status": "active",
     "premise": "单杀完成，敌方位移已交且己方打野在对方半区且你这条线兵线已进对方塔下；敌方三人以上出现在我方防御塔范围内",
@@ -66617,6 +66683,7 @@
       ]
     },
     "expect_scope": "at_least_once",
+    "unjudgeable": true,
     "severity": "medium",
     "status": "active",
     "premise": "对方一级站位靠后；对方一级在兵线侧草丛；对方一级在兵线侧草丛；草丛里不止一人",
@@ -67043,6 +67110,7 @@
       ]
     },
     "expect_scope": "at_least_once",
+    "unjudgeable": true,
     "severity": "medium",
     "status": "active",
     "premise": "单杀完成，敌方位移已交且己方打野在对方半区且你这条线兵线已进对方塔下；敌方三人以上出现在我方防御塔范围内",
@@ -67473,6 +67541,7 @@
       ]
     },
     "expect_scope": "at_least_once",
+    "unjudgeable": true,
     "severity": "medium",
     "status": "active",
     "premise": "开局一级对位且对方没有位移；对方一级站位靠后；对方一级在兵线侧草丛；对方一级在兵线侧草丛；草丛里不止一人",
@@ -67898,6 +67967,7 @@
       ]
     },
     "expect_scope": "at_least_once",
+    "unjudgeable": true,
     "severity": "medium",
     "status": "active",
     "premise": "单杀完成，敌方位移已交且己方打野在对方半区且你这条线兵线已进对方塔下",
@@ -68395,6 +68465,7 @@
       ]
     },
     "expect_scope": "at_least_once",
+    "unjudgeable": true,
     "severity": "medium",
     "status": "active",
     "premise": "对方一级站位靠后；对方一级在兵线侧草丛；对方一级在兵线侧草丛；草丛里不止一人",
@@ -68822,6 +68893,7 @@
       ]
     },
     "expect_scope": "at_least_once",
+    "unjudgeable": true,
     "severity": "medium",
     "status": "active",
     "premise": "单杀完成，敌方位移已交且己方打野在对方半区且你这条线兵线已进对方塔下；敌方三人以上出现在我方防御塔范围内",
@@ -69250,6 +69322,7 @@
       ]
     },
     "expect_scope": "at_least_once",
+    "unjudgeable": true,
     "severity": "medium",
     "status": "active",
     "premise": "开局一级对位且对方没有位移；对方一级站位靠后；对方一级在兵线侧草丛；对方一级在兵线侧草丛；草丛里不止一人",
@@ -69673,6 +69746,7 @@
       ]
     },
     "expect_scope": "at_least_once",
+    "unjudgeable": true,
     "severity": "medium",
     "status": "active",
     "premise": "单杀完成，敌方位移已交且己方打野在对方半区且你这条线兵线已进对方塔下",
@@ -70170,6 +70244,7 @@
       ]
     },
     "expect_scope": "at_least_once",
+    "unjudgeable": true,
     "severity": "medium",
     "status": "active",
     "premise": "对方一级站位靠后；对方一级在兵线侧草丛；对方一级在兵线侧草丛；草丛里只有一人；对方一级在兵线侧草丛；草丛里不止一人",
@@ -70596,6 +70671,7 @@
       ]
     },
     "expect_scope": "at_least_once",
+    "unjudgeable": true,
     "severity": "medium",
     "status": "active",
     "premise": "单杀完成，敌方位移已交且己方打野在对方半区且你这条线兵线已进对方塔下",
@@ -71092,6 +71168,7 @@
       ]
     },
     "expect_scope": "at_least_once",
+    "unjudgeable": true,
     "severity": "medium",
     "status": "active",
     "premise": "对方一级站位靠后；对方一级在兵线侧草丛",
@@ -71588,6 +71665,7 @@
       ]
     },
     "expect_scope": "at_least_once",
+    "unjudgeable": true,
     "severity": "medium",
     "status": "active",
     "premise": "单杀完成，敌方位移已交且己方打野在对方半区且你这条线兵线已进对方塔下；敌方三人以上出现在我方防御塔范围内",
@@ -72089,6 +72167,7 @@
       ]
     },
     "expect_scope": "at_least_once",
+    "unjudgeable": true,
     "severity": "medium",
     "status": "active",
     "premise": "对方一级站位靠后；对方一级在兵线侧草丛；对方一级在兵线侧草丛；草丛里不止一人",
@@ -72160,6 +72239,7 @@
       ]
     },
     "expect_scope": "at_least_once",
+    "unjudgeable": true,
     "severity": "medium",
     "status": "active",
     "premise": "首波抢到线权，河道路口有眼且敌方打野在下半地图",
@@ -72583,6 +72663,7 @@
       ]
     },
     "expect_scope": "at_least_once",
+    "unjudgeable": true,
     "severity": "medium",
     "status": "active",
     "premise": "单杀完成，敌方位移已交且己方打野在对方半区且你这条线兵线已进对方塔下；敌方三人以上出现在我方防御塔范围内",
@@ -73014,6 +73095,7 @@
       ]
     },
     "expect_scope": "at_least_once",
+    "unjudgeable": true,
     "severity": "medium",
     "status": "active",
     "premise": "开局一级对位且对方没有位移；对方一级站位靠后；对方一级在兵线侧草丛；对方一级在兵线侧草丛；草丛里不止一人",
@@ -73440,6 +73522,7 @@
       ]
     },
     "expect_scope": "at_least_once",
+    "unjudgeable": true,
     "severity": "medium",
     "status": "active",
     "premise": "单杀完成，敌方位移已交且己方打野在对方半区且你这条线兵线已进对方塔下；敌方三人以上出现在我方防御塔范围内",
@@ -73938,6 +74021,7 @@
       ]
     },
     "expect_scope": "at_least_once",
+    "unjudgeable": true,
     "severity": "medium",
     "status": "active",
     "premise": "对方一级站位靠后；对方一级在兵线侧草丛；对方一级在兵线侧草丛；草丛里只有一人；对方一级在兵线侧草丛；草丛里不止一人",
@@ -74364,6 +74448,7 @@
       ]
     },
     "expect_scope": "at_least_once",
+    "unjudgeable": true,
     "severity": "medium",
     "status": "active",
     "premise": "单杀完成，敌方位移已交且己方打野在对方半区且你这条线兵线已进对方塔下；敌方三人以上出现在我方防御塔范围内",
@@ -74794,6 +74879,7 @@
       ]
     },
     "expect_scope": "at_least_once",
+    "unjudgeable": true,
     "severity": "medium",
     "status": "active",
     "premise": "开局一级对位且对方没有位移；对方一级站位靠后；对方一级在兵线侧草丛；对方一级在兵线侧草丛；草丛里不止一人",
@@ -74866,6 +74952,7 @@
       ]
     },
     "expect_scope": "at_least_once",
+    "unjudgeable": true,
     "severity": "medium",
     "status": "active",
     "premise": "首波抢到线权，河道路口有眼且敌方打野在下半地图；对方血量低于你且位移未交",
@@ -75219,6 +75306,7 @@
       ]
     },
     "expect_scope": "at_least_once",
+    "unjudgeable": true,
     "severity": "medium",
     "status": "active",
     "premise": "传送到位，团战已开且己方打野在对方半区且你这条线兵线已进对方塔下",
@@ -75646,6 +75734,7 @@
       ]
     },
     "expect_scope": "at_least_once",
+    "unjudgeable": true,
     "severity": "medium",
     "status": "active",
     "premise": "开局一级对位且对方没有位移；对方一级站位靠后；对方一级在兵线侧草丛；对方一级在兵线侧草丛；草丛里不止一人",
@@ -76071,6 +76160,7 @@
       ]
     },
     "expect_scope": "at_least_once",
+    "unjudgeable": true,
     "severity": "medium",
     "status": "active",
     "premise": "单杀完成，敌方位移已交且己方打野在对方半区且你这条线兵线已进对方塔下",
@@ -76642,6 +76732,7 @@
       ]
     },
     "expect_scope": "at_least_once",
+    "unjudgeable": true,
     "severity": "high",
     "status": "active",
     "premise": "打完暴君，buff 在手、己方下路外塔已破、敌方打野不在此路；己方下路外塔未破、塔的前期护盾已移除；河道已开视野、转线路径上敌方打野头像出现在附近；附近有团战、己方前排已与对方前排接触",
@@ -77366,6 +77457,7 @@
       ]
     },
     "expect_scope": "at_least_once",
+    "unjudgeable": true,
     "severity": "medium",
     "status": "active",
     "premise": "缩塔，形态冷却在手、河道路口无视野",
@@ -77510,6 +77602,7 @@
       ]
     },
     "expect_scope": "at_least_once",
+    "unjudgeable": true,
     "severity": "high",
     "status": "active",
     "premise": "有龙 buff，人形态、己方下路外塔已破、敌方打野不在此路；己方下路外塔未破；河道已探明、转线途中敌方打野出现在附近",
@@ -78304,6 +78397,7 @@
       ]
     },
     "expect_scope": "at_least_once",
+    "unjudgeable": true,
     "severity": "medium",
     "status": "active",
     "premise": "被动五层，对手被减速、河道路口无视野；敌方刺客贴脸",
@@ -82810,6 +82904,7 @@
       ]
     },
     "expect_scope": "at_least_once",
+    "unjudgeable": true,
     "severity": "medium",
     "status": "active",
     "premise": "被动已叠，攻速上升、河道路口无视野",
@@ -86690,6 +86785,7 @@
       ]
     },
     "expect_scope": "at_least_once",
+    "unjudgeable": true,
     "severity": "medium",
     "status": "active",
     "premise": "被动叠层中、河道路口无视野",
@@ -87689,6 +87785,7 @@
       ]
     },
     "expect_scope": "at_least_once",
+    "unjudgeable": true,
     "severity": "medium",
     "status": "active",
     "premise": "缩塔，炽怒在累积、河道路口无视野",
@@ -89555,6 +89652,7 @@
       ]
     },
     "expect_scope": "at_least_once",
+    "unjudgeable": true,
     "severity": "medium",
     "status": "active",
     "premise": "对方射手前压出塔；敌方刺客两名以上且已进入我方半区",
@@ -92510,6 +92608,7 @@
       ]
     },
     "expect_scope": "at_least_once",
+    "unjudgeable": true,
     "severity": "medium",
     "status": "active",
     "premise": "贯穿已命中，层数在叠、河道路口无视野",
@@ -95799,6 +95898,7 @@
       ]
     },
     "expect_scope": "at_least_once",
+    "unjudgeable": true,
     "severity": "medium",
     "status": "active",
     "premise": "对方射手已进塔下",
@@ -96795,6 +96895,7 @@
       ]
     },
     "expect_scope": "at_least_once",
+    "unjudgeable": true,
     "severity": "medium",
     "status": "active",
     "premise": "河道已探、敌方打野最后出现位置在另一半地图",
@@ -97915,6 +98016,7 @@
       ]
     },
     "expect_scope": "at_least_once",
+    "unjudgeable": true,
     "severity": "medium",
     "status": "active",
     "premise": "河道已探、对方打野位置在另一半地图",
@@ -98620,6 +98722,7 @@
       ]
     },
     "expect_scope": "at_least_once",
+    "unjudgeable": true,
     "severity": "medium",
     "status": "active",
     "premise": "河道已探、对方打野位置在另一半地图",
@@ -100381,6 +100484,7 @@
       ]
     },
     "expect_scope": "at_least_once",
+    "unjudgeable": true,
     "severity": "medium",
     "status": "active",
     "premise": "河道已探、对方打野位置在另一半地图",
@@ -100874,6 +100978,7 @@
       ]
     },
     "expect_scope": "at_least_once",
+    "unjudgeable": true,
     "severity": "medium",
     "status": "active",
     "premise": "C 位已护、对方三人以上出现在我方防御塔范围内；河道已探、对方打野位置在另一半地图",
@@ -101448,6 +101553,7 @@
       ]
     },
     "expect_scope": "at_least_once",
+    "unjudgeable": true,
     "severity": "medium",
     "status": "active",
     "premise": "河道已探、对方打野位置在另一半地图",
@@ -102228,6 +102334,7 @@
       ]
     },
     "expect_scope": "at_least_once",
+    "unjudgeable": true,
     "severity": "medium",
     "status": "active",
     "premise": "河道已探、对方打野位置在另一半地图",
@@ -103213,6 +103320,7 @@
       ]
     },
     "expect_scope": "at_least_once",
+    "unjudgeable": true,
     "severity": "medium",
     "status": "active",
     "premise": "对方打野位置在另一半地图",
@@ -103778,6 +103886,7 @@
       ]
     },
     "expect_scope": "at_least_once",
+    "unjudgeable": true,
     "severity": "medium",
     "status": "active",
     "premise": "野区已反打、对方打野位置在另一半地图",
@@ -104479,6 +104588,7 @@
       ]
     },
     "expect_scope": "at_least_once",
+    "unjudgeable": true,
     "severity": "medium",
     "status": "active",
     "premise": "河道已探、对方打野位置在另一半地图",
@@ -104900,6 +105010,7 @@
       ]
     },
     "expect_scope": "at_least_once",
+    "unjudgeable": true,
     "severity": "medium",
     "status": "active",
     "premise": "河道已探、对方打野位置在另一半地图",
@@ -105462,6 +105573,7 @@
       ]
     },
     "expect_scope": "at_least_once",
+    "unjudgeable": true,
     "severity": "medium",
     "status": "active",
     "premise": "河道已探、对方打野位置在另一半地图",
@@ -105961,6 +106073,7 @@
       ]
     },
     "expect_scope": "at_least_once",
+    "unjudgeable": true,
     "severity": "medium",
     "status": "active",
     "premise": "野区已守住、对方打野位置在另一半地图",
@@ -106518,6 +106631,7 @@
       ]
     },
     "expect_scope": "at_least_once",
+    "unjudgeable": true,
     "severity": "medium",
     "status": "active",
     "premise": "河道已探、对方打野位置在另一半地图",
@@ -107155,6 +107269,7 @@
       ]
     },
     "expect_scope": "at_least_once",
+    "unjudgeable": true,
     "severity": "medium",
     "status": "active",
     "premise": "河道已探、对方打野位置在另一半地图",
@@ -107724,6 +107839,7 @@
       ]
     },
     "expect_scope": "at_least_once",
+    "unjudgeable": true,
     "severity": "medium",
     "status": "active",
     "premise": "河道已探、对方打野位置在另一半地图",
@@ -108217,6 +108333,7 @@
       ]
     },
     "expect_scope": "at_least_once",
+    "unjudgeable": true,
     "severity": "medium",
     "status": "active",
     "premise": "河道已探、对方打野位置在另一半地图",
@@ -108994,6 +109111,7 @@
       ]
     },
     "expect_scope": "at_least_once",
+    "unjudgeable": true,
     "severity": "medium",
     "status": "active",
     "premise": "河道已探、对方打野位置在另一半地图；射手已控住、对方三人以上出现在我方防御塔范围内",
@@ -109982,6 +110100,7 @@
       ]
     },
     "expect_scope": "at_least_once",
+    "unjudgeable": true,
     "severity": "medium",
     "status": "active",
     "premise": "河道已探、对方打野位置在另一半地图",
@@ -110619,6 +110738,7 @@
       ]
     },
     "expect_scope": "at_least_once",
+    "unjudgeable": true,
     "severity": "medium",
     "status": "active",
     "premise": "河道已探、对方打野位置在另一半地图",
@@ -111246,6 +111366,7 @@
       ]
     },
     "expect_scope": "at_least_once",
+    "unjudgeable": true,
     "severity": "medium",
     "status": "active",
     "premise": "河道已探、对方打野位置在另一半地图",
@@ -112722,6 +112843,7 @@
       ]
     },
     "expect_scope": "at_least_once",
+    "unjudgeable": true,
     "severity": "medium",
     "status": "active",
     "premise": "河道已探、对方打野位置在另一半地图；射手已压线、对方三人以上出现在我方防御塔范围内",
@@ -113147,6 +113269,7 @@
       ]
     },
     "expect_scope": "at_least_once",
+    "unjudgeable": true,
     "severity": "medium",
     "status": "active",
     "premise": "河道已探、对方打野位置在另一半地图",
@@ -113566,6 +113689,7 @@
       ]
     },
     "expect_scope": "at_least_once",
+    "unjudgeable": true,
     "severity": "medium",
     "status": "active",
     "premise": "河道已探、对方打野位置在另一半地图",
@@ -113868,5 +113992,618 @@
       "quoted": "动作：站己方 C 位身后，大招留着分割对方进场的队伍",
       "collected_at": "2026-10-21"
     }
+  },
+  {
+    "id": "HOK-HERO-JGL-YL-T0000-01",
+    "game": "hok",
+    "version": "S45",
+    "title": "亚连 0:00 ~ 2:00：蓝开刷满第一轮，1:50 前到 4 级",
+    "category": "打野·亚连·前期",
+    "trigger": {
+      "all": [
+        {
+          "fact": "position",
+          "op": "==",
+          "value": "jungle"
+        },
+        {
+          "fact": "my_hero",
+          "op": "==",
+          "value": "亚连"
+        },
+        {
+          "fact": "time_min",
+          "op": "between",
+          "value": [
+            0,
+            1
+          ]
+        }
+      ],
+      "any": [],
+      "none": []
+    },
+    "expect": {
+      "fact": "objective_action",
+      "op": "in",
+      "value": [
+        "farm_jungle",
+        "invade_jungle"
+      ]
+    },
+    "subject": {
+      "fact": "objective_action",
+      "values": [
+        "contest_dragon",
+        "take_dragon",
+        "fight_baron",
+        "split_push",
+        "siege",
+        "recall",
+        "farm_jungle",
+        "invade_jungle",
+        "defend_inner",
+        "clear_vision_sprite",
+        "last_hit",
+        "take_river_spirit"
+      ]
+    },
+    "expect_scope": "at_least_once",
+    "severity": "high",
+    "status": "active",
+    "premise": "开局在己方野区且惩击可用",
+    "action": "蓝 BUFF → 蜥蜴 → 狼 → 红 BUFF，惩击只留给 BUFF；不为提前一分钟的抓人跳掉野怪，一技能挥剑减速野怪拉长输出窗口",
+    "outcome": "第一轮全清到 4 级，惩击仍在手上，反向开局完成",
+    "rationale": "原文前提：开局在己方野区且惩击可用；原文结果：第一轮全清到 4 级，惩击仍在手上，反向开局完成。",
+    "deviation_hint": "开局在己方野区且惩击可用时：蓝 BUFF → 蜥蜴 → 狼 → 红 BUFF，惩击只留给 BUFF；不为提前一分钟的抓人跳掉野怪，一技能挥剑减速野怪拉长输出窗口",
+    "tags": [
+      "打野",
+      "亚连",
+      "前期",
+      "前期",
+      "刷野节奏"
+    ],
+    "source": {
+      "guide": "王者荣耀 S45「月照长安」英雄级决策树（打野分工改写）",
+      "locator": "打野 / 亚连 / 0:00 ~ 2:00 节点 / 开局在己方野区且惩击可用",
+      "url": "",
+      "quoted": "蓝 BUFF → 蜥蜴 → 狼 → 红 BUFF，惩击只留给 BUFF；不为提前一分钟的抓人跳掉野怪，一技能挥剑减速野怪拉长输出窗口",
+      "collected_at": "2026-10-28"
+    }
+  },
+  {
+    "id": "HOK-HERO-JGL-YL-T0200-01",
+    "game": "hok",
+    "version": "S45",
+    "title": "亚连 2:00 ~ 4:00：第二轮开野前先补视野，再决定反野或转线",
+    "category": "打野·亚连·前期",
+    "trigger": {
+      "all": [
+        {
+          "fact": "position",
+          "op": "==",
+          "value": "jungle"
+        },
+        {
+          "fact": "my_hero",
+          "op": "==",
+          "value": "亚连"
+        },
+        {
+          "fact": "time_min",
+          "op": "between",
+          "value": [
+            2,
+            3
+          ]
+        }
+      ],
+      "any": [],
+      "none": []
+    },
+    "expect": {
+      "fact": "objective_action",
+      "op": "in",
+      "value": [
+        "clear_vision_sprite",
+        "invade_jungle",
+        "farm_jungle"
+      ]
+    },
+    "subject": {
+      "fact": "objective_action",
+      "values": [
+        "contest_dragon",
+        "take_dragon",
+        "fight_baron",
+        "split_push",
+        "siege",
+        "recall",
+        "farm_jungle",
+        "invade_jungle",
+        "defend_inner",
+        "clear_vision_sprite",
+        "last_hit",
+        "take_river_spirit"
+      ]
+    },
+    "expect_scope": "at_least_once",
+    "severity": "medium",
+    "status": "active",
+    "premise": "第一轮刷野完成且二技能未交",
+    "action": "清完野区先补中路视野（清视野精灵），再看对面打野位置决定反野或转线；二技能留着位移进场，不拿来赶路",
+    "outcome": "中路视野补上，对面野区路线错开，二技能仍在手上",
+    "rationale": "原文前提：第一轮刷野完成且二技能未交；原文结果：中路视野补上，对面野区路线错开，二技能仍在手上。",
+    "deviation_hint": "第一轮刷野完成且二技能未交时：清完野区先补中路视野（清视野精灵），再看对面打野位置决定反野或转线；二技能留着位移进场，不拿来赶路",
+    "tags": [
+      "打野",
+      "亚连",
+      "前期",
+      "前期",
+      "野区节奏"
+    ],
+    "source": {
+      "guide": "王者荣耀 S45「月照长安」英雄级决策树（打野分工改写）",
+      "locator": "打野 / 亚连 / 2:00 ~ 4:00 节点 / 第一轮刷野完成且二技能未交",
+      "url": "",
+      "quoted": "清完野区先补中路视野（清视野精灵），再看对面打野位置决定反野或转线；二技能留着位移进场，不拿来赶路",
+      "collected_at": "2026-10-28"
+    }
+  },
+  {
+    "id": "HOK-HERO-JGL-YL-T0200-02",
+    "game": "hok",
+    "version": "S45",
+    "title": "亚连 2:00 ~ 4:00：抓边路：二技能位移贴脸接一技能减速",
+    "category": "打野·亚连·前期",
+    "trigger": {
+      "all": [
+        {
+          "fact": "position",
+          "op": "==",
+          "value": "jungle"
+        },
+        {
+          "fact": "my_hero",
+          "op": "==",
+          "value": "亚连"
+        },
+        {
+          "fact": "time_min",
+          "op": "between",
+          "value": [
+            2,
+            3
+          ]
+        }
+      ],
+      "any": [],
+      "none": []
+    },
+    "expect": {
+      "fact": "teamfight_action",
+      "op": "in",
+      "value": [
+        "engage",
+        "focus_target"
+      ]
+    },
+    "subject": {
+      "fact": "teamfight_action",
+      "values": [
+        "engage",
+        "focus_target",
+        "protect_carry",
+        "retreat",
+        "kite",
+        "split_fight"
+      ]
+    },
+    "expect_scope": "at_least_once",
+    "severity": "medium",
+    "status": "active",
+    "premise": "对面边路位移已交且血量低于你",
+    "action": "二技能位移贴脸接一技能减速与普攻；打完退回河道草丛，不从对方塔下原路走",
+    "outcome": "对面交掉位移并被减速，击杀或逼退完成，自己全身退回河道",
+    "rationale": "原文前提：对面边路位移已交且血量低于你；原文结果：对面交掉位移并被减速，击杀或逼退完成，自己全身退回河道。",
+    "deviation_hint": "对面边路位移已交且血量低于你时：二技能位移贴脸接一技能减速与普攻；打完退回河道草丛，不从对方塔下原路走",
+    "tags": [
+      "打野",
+      "亚连",
+      "前期",
+      "前期",
+      "抓边"
+    ],
+    "source": {
+      "guide": "王者荣耀 S45「月照长安」英雄级决策树（打野分工改写）",
+      "locator": "打野 / 亚连 / 2:00 ~ 4:00 节点 / 对面边路位移已交且血量低于你",
+      "url": "",
+      "quoted": "二技能位移贴脸接一技能减速与普攻；打完退回河道草丛，不从对方塔下原路走",
+      "collected_at": "2026-10-28"
+    }
+  },
+  {
+    "id": "HOK-HERO-JGL-YL-T0400-01",
+    "game": "hok",
+    "version": "S45",
+    "title": "亚连 4:00：龙刷新先到先开，被占就转推边路",
+    "category": "打野·亚连·前期",
+    "trigger": {
+      "all": [
+        {
+          "fact": "position",
+          "op": "==",
+          "value": "jungle"
+        },
+        {
+          "fact": "my_hero",
+          "op": "==",
+          "value": "亚连"
+        },
+        {
+          "fact": "time_min",
+          "op": "between",
+          "value": [
+            4,
+            4
+          ]
+        }
+      ],
+      "any": [],
+      "none": []
+    },
+    "expect": {
+      "fact": "objective_action",
+      "op": "in",
+      "value": [
+        "take_dragon",
+        "contest_dragon",
+        "siege",
+        "split_push"
+      ]
+    },
+    "subject": {
+      "fact": "objective_action",
+      "values": [
+        "contest_dragon",
+        "take_dragon",
+        "fight_baron",
+        "split_push",
+        "siege",
+        "recall",
+        "farm_jungle",
+        "invade_jungle",
+        "defend_inner",
+        "clear_vision_sprite",
+        "last_hit",
+        "take_river_spirit"
+      ]
+    },
+    "expect_scope": "at_least_once",
+    "severity": "high",
+    "status": "active",
+    "premise": "暴君刷新且己方在龙坑一侧",
+    "action": "先到龙坑就开，惩击留给最后一击；对面先占就放弃龙，转推最近一条边路的塔",
+    "outcome": "龙拿下或边路塔血量下降，没有在龙坑和对面僵持",
+    "rationale": "原文前提：暴君刷新且己方在龙坑一侧；原文结果：龙拿下或边路塔血量下降，没有在龙坑和对面僵持。",
+    "deviation_hint": "暴君刷新且己方在龙坑一侧时：先到龙坑就开，惩击留给最后一击；对面先占就放弃龙，转推最近一条边路的塔",
+    "tags": [
+      "打野",
+      "亚连",
+      "前期",
+      "前期",
+      "控龙"
+    ],
+    "source": {
+      "guide": "王者荣耀 S45「月照长安」英雄级决策树（打野分工改写）",
+      "locator": "打野 / 亚连 / 4:00 节点 / 暴君刷新且己方在龙坑一侧",
+      "url": "",
+      "quoted": "先到龙坑就开，惩击留给最后一击；对面先占就放弃龙，转推最近一条边路的塔",
+      "collected_at": "2026-10-28"
+    }
+  },
+  {
+    "id": "HOK-HERO-JGL-YL-T0600-01",
+    "game": "hok",
+    "version": "S45",
+    "title": "亚连 6:00 ~ 10:00：清完野区带边线，用兵线逼对方回防",
+    "category": "打野·亚连·中期",
+    "trigger": {
+      "all": [
+        {
+          "fact": "position",
+          "op": "==",
+          "value": "jungle"
+        },
+        {
+          "fact": "my_hero",
+          "op": "==",
+          "value": "亚连"
+        },
+        {
+          "fact": "time_min",
+          "op": "between",
+          "value": [
+            6,
+            9
+          ]
+        }
+      ],
+      "any": [],
+      "none": []
+    },
+    "expect": {
+      "fact": "objective_action",
+      "op": "in",
+      "value": [
+        "siege",
+        "split_push"
+      ]
+    },
+    "subject": {
+      "fact": "objective_action",
+      "values": [
+        "contest_dragon",
+        "take_dragon",
+        "fight_baron",
+        "split_push",
+        "siege",
+        "recall",
+        "farm_jungle",
+        "invade_jungle",
+        "defend_inner",
+        "clear_vision_sprite",
+        "last_hit",
+        "take_river_spirit"
+      ]
+    },
+    "expect_scope": "at_least_once",
+    "severity": "medium",
+    "status": "active",
+    "premise": "野区清完且双方都没减员",
+    "action": "清完野区把边线推过河再动身，用兵线逼对方回防；不在没兵线时正面开团",
+    "outcome": "边线压到对方塔下，对方至少一人被牵制回防",
+    "rationale": "原文前提：野区清完且双方都没减员；原文结果：边线压到对方塔下，对方至少一人被牵制回防。",
+    "deviation_hint": "野区清完且双方都没减员时：清完野区把边线推过河再动身，用兵线逼对方回防；不在没兵线时正面开团",
+    "tags": [
+      "打野",
+      "亚连",
+      "中期",
+      "中期",
+      "带线"
+    ],
+    "source": {
+      "guide": "王者荣耀 S45「月照长安」英雄级决策树（打野分工改写）",
+      "locator": "打野 / 亚连 / 6:00 ~ 10:00 节点 / 野区清完且双方都没减员",
+      "url": "",
+      "quoted": "清完野区把边线推过河再动身，用兵线逼对方回防；不在没兵线时正面开团",
+      "collected_at": "2026-10-28"
+    }
+  },
+  {
+    "id": "HOK-HERO-JGL-YL-T0600-02",
+    "game": "hok",
+    "version": "S45",
+    "title": "亚连 6:00 ~ 10:00：等对面控制交完，三技能突进击飞 C 位",
+    "category": "打野·亚连·中期",
+    "trigger": {
+      "all": [
+        {
+          "fact": "position",
+          "op": "==",
+          "value": "jungle"
+        },
+        {
+          "fact": "my_hero",
+          "op": "==",
+          "value": "亚连"
+        },
+        {
+          "fact": "time_min",
+          "op": "between",
+          "value": [
+            6,
+            9
+          ]
+        }
+      ],
+      "any": [],
+      "none": []
+    },
+    "expect": {
+      "fact": "teamfight_action",
+      "op": "in",
+      "value": [
+        "engage",
+        "focus_target"
+      ]
+    },
+    "subject": {
+      "fact": "teamfight_action",
+      "values": [
+        "engage",
+        "focus_target",
+        "protect_carry",
+        "retreat",
+        "kite",
+        "split_fight"
+      ]
+    },
+    "expect_scope": "at_least_once",
+    "severity": "high",
+    "status": "active",
+    "premise": "己方前排先手且对面控制已落在前排身上",
+    "action": "等对面控制交完后三技能突进击飞对方 C 位，落地接普攻与一技能；对面控制还在就二技能留在己方 C 位与刺客之间",
+    "outcome": "对方 C 位被击飞并吃满一套，己方 C 位没有被刺客贴身",
+    "rationale": "原文前提：己方前排先手且对面控制已落在前排身上；原文结果：对方 C 位被击飞并吃满一套，己方 C 位没有被刺客贴身。",
+    "deviation_hint": "己方前排先手且对面控制已落在前排身上时：等对面控制交完后三技能突进击飞对方 C 位，落地接普攻与一技能；对面控制还在就二技能留在己方 C 位与刺客之间",
+    "tags": [
+      "打野",
+      "亚连",
+      "中期",
+      "中期",
+      "开团"
+    ],
+    "source": {
+      "guide": "王者荣耀 S45「月照长安」英雄级决策树（打野分工改写）",
+      "locator": "打野 / 亚连 / 6:00 ~ 10:00 节点 / 己方前排先手且对面控制已落在前排身上",
+      "url": "",
+      "quoted": "等对面控制交完后三技能突进击飞对方 C 位，落地接普攻与一技能；对面控制还在就二技能留在己方 C 位与刺客之间",
+      "collected_at": "2026-10-28"
+    }
+  },
+  {
+    "id": "HOK-HERO-JGL-YL-T1000-01",
+    "game": "hok",
+    "version": "S45",
+    "title": "亚连 10:00：暗影暴君先到先开，被占就带线拆塔",
+    "category": "打野·亚连·后期",
+    "trigger": {
+      "all": [
+        {
+          "fact": "position",
+          "op": "==",
+          "value": "jungle"
+        },
+        {
+          "fact": "my_hero",
+          "op": "==",
+          "value": "亚连"
+        },
+        {
+          "fact": "time_min",
+          "op": "between",
+          "value": [
+            10,
+            10
+          ]
+        }
+      ],
+      "any": [],
+      "none": []
+    },
+    "expect": {
+      "fact": "objective_action",
+      "op": "in",
+      "value": [
+        "take_dragon",
+        "contest_dragon",
+        "fight_baron",
+        "split_push",
+        "siege"
+      ]
+    },
+    "subject": {
+      "fact": "objective_action",
+      "values": [
+        "contest_dragon",
+        "take_dragon",
+        "fight_baron",
+        "split_push",
+        "siege",
+        "recall",
+        "farm_jungle",
+        "invade_jungle",
+        "defend_inner",
+        "clear_vision_sprite",
+        "last_hit",
+        "take_river_spirit"
+      ]
+    },
+    "expect_scope": "at_least_once",
+    "severity": "high",
+    "status": "active",
+    "premise": "暗影暴君或主宰刷新且己方五人齐",
+    "action": "五人齐先到就先开龙；对面先占或己方缺人，就带线拆对方边路塔，不接人数不足的团",
+    "outcome": "龙拿下或边路塔被拆，没有以少打多",
+    "rationale": "原文前提：暗影暴君或主宰刷新且己方五人齐；原文结果：龙拿下或边路塔被拆，没有以少打多。",
+    "deviation_hint": "暗影暴君或主宰刷新且己方五人齐时：五人齐先到就先开龙；对面先占或己方缺人，就带线拆对方边路塔，不接人数不足的团",
+    "tags": [
+      "打野",
+      "亚连",
+      "后期",
+      "后期",
+      "控龙"
+    ],
+    "source": {
+      "guide": "王者荣耀 S45「月照长安」英雄级决策树（打野分工改写）",
+      "locator": "打野 / 亚连 / 10:00 节点 / 暗影暴君或主宰刷新且己方五人齐",
+      "url": "",
+      "quoted": "五人齐先到就先开龙；对面先占或己方缺人，就带线拆对方边路塔，不接人数不足的团",
+      "collected_at": "2026-10-28"
+    }
+  },
+  {
+    "id": "HOK-HERO-JGL-YL-T1200-01",
+    "game": "hok",
+    "version": "S45",
+    "title": "亚连 12:00 之后：站侧翼，等控制交完再切 C 位",
+    "category": "打野·亚连·后期",
+    "trigger": {
+      "all": [
+        {
+          "fact": "position",
+          "op": "==",
+          "value": "jungle"
+        },
+        {
+          "fact": "my_hero",
+          "op": "==",
+          "value": "亚连"
+        },
+        {
+          "fact": "time_min",
+          "op": "between",
+          "value": [
+            12,
+            60
+          ]
+        }
+      ],
+      "any": [],
+      "none": []
+    },
+    "expect": {
+      "fact": "positioning_action",
+      "op": "in",
+      "value": [
+        "hold_position",
+        "ward_vision"
+      ]
+    },
+    "subject": {
+      "fact": "positioning_action",
+      "values": [
+        "push_wave",
+        "pull_back",
+        "ward_vision",
+        "hold_position",
+        "rotate_support",
+        "cover_carry"
+      ]
+    },
+    "expect_scope": "at_least_once",
+    "severity": "high",
+    "status": "active",
+    "premise": "风暴龙王刷新且己方五人齐",
+    "action": "站侧翼不第一个进场，落在己方坦克之后；等对面控制交完后三技能突进切对方 C 位，二技能留在对面刺客的进场路线上",
+    "outcome": "对方 C 位被切掉，己方 C 位没有被刺客换掉",
+    "rationale": "原文前提：风暴龙王刷新且己方五人齐；原文结果：对方 C 位被切掉，己方 C 位没有被刺客换掉。",
+    "deviation_hint": "风暴龙王刷新且己方五人齐时：站侧翼不第一个进场，落在己方坦克之后；等对面控制交完后三技能突进切对方 C 位，二技能留在对面刺客的进场路线上",
+    "tags": [
+      "打野",
+      "亚连",
+      "后期",
+      "后期",
+      "团战站位"
+    ],
+    "source": {
+      "guide": "王者荣耀 S45「月照长安」英雄级决策树（打野分工改写）",
+      "locator": "打野 / 亚连 / 12:00 之后 节点 / 风暴龙王刷新且己方五人齐",
+      "url": "",
+      "quoted": "站侧翼不第一个进场，落在己方坦克之后；等对面控制交完后三技能突进切对方 C 位，二技能留在对面刺客的进场路线上",
+      "collected_at": "2026-10-28"
+    },
+    "unjudgeable": true
   }
 ]

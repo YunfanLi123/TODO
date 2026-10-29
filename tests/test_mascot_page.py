@@ -143,7 +143,7 @@ def test_mascot_never_leaves_the_stage(css: str, client):
 
     rise = _keyframes(css, "msRise")
     positions = [float(v) for v in
-                 re.findall(r"inset-block-star<本机目录>)%", rise)]
+                 re.findall(r"inset-block-start:\s*([\d.]+)%", rise)]
     assert positions, "msRise 里没有 inset-block-start，角色根本不会动"
 
     # 放大招 / 解析 / 完成这三个状态停在另一个高度，也要算
@@ -184,7 +184,7 @@ def test_the_character_is_bounded_by_the_stage_height(css: str):
         "角色的上限没有按框高收（只有宽度约束）—— 框一扁角色就会被裁"
 
     # 兜底那条必须在 cqmin 那条**之前**：不认 cqmin 的浏览器要能退回它
-    caps = re.findall(r"max-inline-siz<本机目录>;]+);", mascot)
+    caps = re.findall(r"max-inline-size\s*:\s*([^;]+);", mascot)
     assert len(caps) >= 2, "缺少不认 cqmin 时的兜底上限"
     assert "cqmin" in caps[-1], "cqmin 那条要写在最后（它覆盖兜底）"
     assert "rem" in caps[0], "兜底上限要是一个不依赖 cqmin 的固定值"
@@ -347,7 +347,7 @@ def test_the_controls_and_the_character_are_in_separate_columns(css: str, client
     现在卡片是 grid：控件一列、角色一列，**结构上**就碰不上。
     """
     app = _app_css()
-    assert re.search(r"\.upload-card\s*\{[^}]*displa<本机目录>", app), \
+    assert re.search(r"\.upload-card\s*\{[^}]*display:\s*grid", app), \
         "上传卡不是 grid —— 两列排不出来"
     # 工作台那条曾经写着 display:flex —— 特异性比 .upload-card 高，
     # 会把 grid 顶掉：行高不撑满，角色被压成一小只。
@@ -356,7 +356,7 @@ def test_the_controls_and_the_character_are_in_separate_columns(css: str, client
 
     assert re.search(r"\.up-body\s*\{[^}]*grid-template-columns", app), \
         "控件与角色没有分列"
-    assert re.search(r"\.mascot-stage\s*\{[^}]*grid-colum<本机目录>", app), \
+    assert re.search(r"\.mascot-stage\s*\{[^}]*grid-column:\s*2", app), \
         "角色没有落到第二列 —— 可能又压回控件上"
 
     stage = _block(css, ".mascot-stage")
@@ -394,10 +394,10 @@ def test_the_done_face_is_happy_not_angry(css: str, client):
 
     done_mouth = _block(css, ".mascot.is-done .ms-mouth")
     assert "opacity: 0" in done_mouth, "完成态没有把原来的小嘴收掉"
-    assert re.search(r"\.mascot\.is-done\s+\.ms-mouth-open\s*\{[^}]*opacit<本机目录>", css), \
+    assert re.search(r"\.mascot\.is-done\s+\.ms-mouth-open\s*\{[^}]*opacity:\s*1", css), \
         "完成态没有换成笑口"
     # 圆眼睛要留着 —— 藏掉就只剩那两道弯，又变回凶脸
-    assert not re.search(r"\.mascot\.is-done\s+\.ms-eye\s*\{[^}]*opacit<本机目录>", css), \
+    assert not re.search(r"\.mascot\.is-done\s+\.ms-eye\s*\{[^}]*opacity:\s*0", css), \
         "完成态把圆眼睛藏了 —— 只剩两道弯就是怒眉"
     # 笑口要有舌头（深色一块会读成「洞」）
     assert "ms-mouth-tongue" in html or "F7B9CB" in html, \
@@ -428,7 +428,7 @@ def test_the_eyes_are_shut_while_parsing(css: str):
     闭眼时还要显出一条闭眼线，不然脸上就是两个空窟窿。
     """
     scanning = _block(css, ".mascot.is-scanning")
-    m = re.search(r"--ms-li<本机目录>)", scanning)
+    m = re.search(r"--ms-lid\s*:\s*([\d.]+)", scanning)
     assert m, "解析态没有写眼皮位置"
     assert float(m.group(1)) >= 30, \
         f"解析时眼皮只压到 {m.group(1)}，没闭严（要 ≥ 30）"

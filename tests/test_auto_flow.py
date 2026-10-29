@@ -253,6 +253,7 @@ def test_the_scan_job_carries_the_model_reading_into_the_session(client):
 
     src = (APP_ROOT / "app" / "collection" / "scan_jobs.py").read_text("utf-8")
     assert "read_lane_and_result" in src
+    assert "hero=(identity.get(\"hero\") or \"\")" in src
     assert "read_bp_steps" in src
     assert 'summary["prefill"] = prefill' in src
     assert '"prefill"' in (APP_ROOT / "app" / "collection" / "video_api.py").read_text("utf-8")

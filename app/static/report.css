@@ -1014,6 +1014,22 @@ tr.coverage-empty .cov-acts { opacity: .55; }
   border-radius: var(--radius);
 }
 
+/* 参考卡片：模式库给得出建议，但视频未读全前提。与“需调整”共用版式，
+   只换成中性提示色，避免把可回看的建议误读成已经确认的失误。 */
+.mode-item-reference { border-left-color: var(--sev-medium, #d99b3a); }
+.mode-item-reference .cell-v-problem { color: var(--sev-medium, #d99b3a); }
+.mode-item-success { border-left-color: var(--ok); }
+.empty-success { border-style: solid; border-color: color-mix(in srgb, var(--ok) 28%, var(--line)); }
+.mode-reference-note {
+  margin: 0 0 11px;
+  padding: 7px 10px;
+  color: var(--muted);
+  background: var(--bg-soft, var(--panel));
+  border-radius: 6px;
+  font-size: 12px;
+  line-height: 1.6;
+}
+
 .mode-item-head {
   display: flex;
   align-items: center;

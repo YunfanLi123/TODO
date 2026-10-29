@@ -44,7 +44,8 @@ from . import vlm_client
 #: 攻略的**分支**（模型要指认第几支成立）、「看到了什么」（画面客观状态）
 #: 与「凭什么」（结论）的分工。结论的判法变了，版本号必须跟着变 ——
 #: 否则老结论与新结论在报告里分不出来。
-PROMPT_VERSION = "v2"
+# 提示词增加了跨帧控制识别；必须换缓存键，不能复用旧版单纯动作识别结果。
+PROMPT_VERSION = "v7"
 
 #: 位置（模型能看出来的位置）。与区域表的说法一致。
 POSITION_VALUES = ("泉水", "野区", "河道", "对抗路", "发育路", "中路", "unknown")
@@ -132,7 +133,8 @@ SYSTEM_PROMPT = (
     "1. 不许编造英雄名字、不许编造击杀数、不许提语音播报（录屏没有声音）。\n"
     "2. 看不清的字段一律写 unknown，不要猜、不要美化。\n"
     "3. 动作取值只能从给你的清单里选，不许发明新词。\n"
-    "4. 每条动作必须给出**帧号**（1 起），没有画面依据就不要写这一条。\n"
+    "4. 每条动作必须给出**至少两个帧号**（1 起）；只有技能特效只闪过一帧时，"
+    "才允许给一个帧号。没有跨帧或清晰单帧依据就不要写这一条。\n"
     "5. 随题给你的那份攻略清单是**尺子**，不是让你抄的答案。\n"
     "   你的活是拿画面去对这份攻略：这一条的前提在画面里**看不看得见成立**，\n"
     "   玩家做的**是不是**这一条要求的事。\n"
@@ -196,27 +198,31 @@ def build_prompt(inp: WindowInput) -> str:
         "给出帧号与一句依据（依据里写你看到了什么，不要写坐标）。\n"
         + "2. 玩家大部分时间在哪个位置？取值：" + "、".join(POSITION_VALUES) + "。\n"
         + "3. 有没有明显的团战（多个英雄在一起、技能特效）？true / false / unknown。\n"
-        + "4. 大招按钮是亮着（可用）还是灰着（冷却）？ready / cooling / unknown。\n"
-        + "5. 计时器你读到了吗？读到的数字写在 clock_readings 里（按帧号），"
+        + "4. 这一段有没有能明确看见的控制事件（击飞、眩晕、冰冻、压制等）？"
+        "先按时间顺序核对：谁先放控制 → 谁被控 → 控制后谁接招。"
+        "只在至少两帧能看出同一过程时写 cc_state=seen，并在 cc_evidence 写清这三步；"
+        "看不清目标、只有普通伤害特效、或无法判断先后时写 unknown，绝不猜。\n"
+        + "5. 大招按钮是亮着（可用）还是灰着（冷却）？ready / cooling / unknown。\n"
+        + "6. 计时器你读到了吗？读到的数字写在 clock_readings 里（按帧号），"
         "读不出就写空数组。\n"
-        + "6. 哪一类动作你**看不出来**？写进 unknown（例如你分不清是在刷野还是在赶路）。\n"
-        + "7. **逐条对上面那份攻略清单**：每一条都回答一遍 ——\n"
+        + "7. 哪一类动作你**看不出来**？写进 unknown（例如你分不清是在刷野还是在赶路）。\n"
+        + "8. **只列出有充分画面证据的偏离**，不要逐条复述整份清单：\n"
         + "   - premise：这一条的前提，在画面里**看得见成立**吗？"
         "visible / not_visible / unknown（前提根本读不出来就写 unknown）。\n"
         + "   - branch：**第几支**成立（上面列出来的分支编号；"
         "看得见成立就写那支的编号，看不清写 0）。\n"
         + "   - matched：玩家这一段做的，是这一支要求的事吗？yes / no / unclear。\n"
         + "   - frames：你据以判断的帧号。\n"
-        + "   - evidence：**你看到了什么**（一句话，只写画面上的客观状态，"
-        "比如「小地图上龙坑图标在闪」「敌方有两个英雄在复活倒计时」——"
-        "**不要写结论、不要写该怎么做，也不要写「第几帧」**"
-        "（报告会标出时间）。\n"
+        + "   - premise_evidence：前提为什么成立（只写支持这一支前提的客观画面，"
+        "如「一塔护盾标识已消失」；不能证明前提就写 unknown，premise 也写 unknown）。\n"
+        + "   - action_evidence：实际操作为什么不匹配（只写玩家实际画面，"
+        "如「连续两帧在红 buff 野区攻击野怪」，不得写攻略建议或推测）。\n"
         + "   - why：**凭什么说这一条不成立**（一句话，要**对照着说**："
         "「攻略这一支要的是 X，你做的是 Y」——"
         "只说 X 的话，玩家不知道自己错在哪一步）。\n"
         + "   - did：玩家这一段实际在做什么（一句话）。\n"
-        + "   看得清且确实不符合的才写；看不出就别写这条。\n"
-        + "8. node_gap：**这一整段**里，玩家做的这些事，是不是一条都不在清单里？"
+        + "   看得清且确实不符合的才写；做对、前提不成立或看不出都不要写。\n"
+        + "9. node_gap：**这一整段**里，玩家做的这些事，是不是一条都不在清单里？"
         + "是的话填 {\"lane\": \"这一段的分路\", \"frames\": [...], "
         "\"did\": \"这段在做什么\", \"why\": \"为什么说这整段没走攻略\"}，"
         + "不是的话填空对象 {}\n"
@@ -231,6 +237,9 @@ def build_prompt(inp: WindowInput) -> str:
             }],
             "position": "野区",
             "in_combat": "unknown",
+            "cc_state": "unknown",
+            "cc_frames": [],
+            "cc_evidence": "",
             "ult_button": "ready",
             "clock_readings": [{"frame": 1, "text": "02:08"}],
             "unknown": [],
@@ -240,7 +249,8 @@ def build_prompt(inp: WindowInput) -> str:
                 "branch": 1,
                 "matched": "no",
                 "frames": [3, 5],
-                "evidence": "第 3 帧小地图上龙坑图标在闪，暴君快刷了",
+                "premise_evidence": "小地图上龙坑图标在闪，暴君已进入刷新前倒计时",
+                "action_evidence": "玩家连续两帧在红 buff 野区攻击野怪",
                 "did": "在刷红 buff 野区",
                 "why": "这会儿龙快刷了，该去占龙坑、惩击留到最后",
                 "confidence": 0.8,
@@ -259,6 +269,9 @@ class ParsedReading:
     actions: List[Dict[str, Any]] = field(default_factory=list)
     position: str = "unknown"
     in_combat: str = "unknown"
+    cc_state: str = "unknown"
+    cc_frames: List[int] = field(default_factory=list)
+    cc_evidence: str = ""
     ult_button: str = "unknown"
     clock_readings: List[Dict[str, Any]] = field(default_factory=list)
     unknown: List[str] = field(default_factory=list)
@@ -303,6 +316,11 @@ def parse_answer(answer: Any, vocab: Dict[str, Dict[str, str]]) -> ParsedReading
             if not frames:
                 out.notes.append(f"{kind}:{value} 没有给帧号（已丢弃）")
                 continue
+            why = str(item.get("why") or "").strip()
+            if not why:
+                # 动作会直接进入规则引擎；没有客观画面依据的标签等同于猜测。
+                out.notes.append(f"{kind}:{value} 没有画面依据（已丢弃）")
+                continue
             try:
                 conf = float(item.get("confidence", 0.6))
             except (TypeError, ValueError):
@@ -311,7 +329,7 @@ def parse_answer(answer: Any, vocab: Dict[str, Dict[str, str]]) -> ParsedReading
                 "kind": kind,
                 "value": value,
                 "frames": frames,
-                "why": str(item.get("why") or "").strip(),
+                "why": why,
                 "confidence": max(0.0, min(1.0, conf)),
             })
 
@@ -319,6 +337,26 @@ def parse_answer(answer: Any, vocab: Dict[str, Dict[str, str]]) -> ParsedReading
     out.position = pos if pos in POSITION_VALUES else "unknown"
     combat = str(answer.get("in_combat") or "").strip().lower()
     out.in_combat = combat if combat in ("true", "false", "unknown") else "unknown"
+    cc_state = str(answer.get("cc_state") or "").strip().lower()
+    # 不同模型会把同一个“画面可见的控制”写成 visible / true / yes；
+    # 统一归一，但仍要走下面的“两帧 + 说明”硬闸。
+    if cc_state in ("seen", "visible", "true", "yes", "有", "可见"):
+        out.cc_state = "seen"
+    else:
+        out.cc_state = "unknown"
+    if out.cc_state == "seen":
+        for frame in answer.get("cc_frames") or []:
+            try:
+                out.cc_frames.append(int(frame))
+            except (TypeError, ValueError):
+                continue
+        out.cc_frames = sorted(set(out.cc_frames))
+        out.cc_evidence = str(answer.get("cc_evidence") or "").strip()
+        # 控制判断必须有连续画面和客观描述；否则当作没读到。
+        if len(out.cc_frames) < 2 or not out.cc_evidence:
+            out.cc_state = "unknown"
+            out.cc_frames = []
+            out.cc_evidence = ""
     ult = str(answer.get("ult_button") or "").strip().lower()
     out.ult_button = ult if ult in ("ready", "cooling", "unknown") else "unknown"
 
@@ -416,10 +454,18 @@ class VlmRecognizer:
 
     # -- 缓存 ---------------------------------------------------------------
 
-    def _cache_key(self, inp: WindowInput) -> str:
+    def _cache_key(self, inp: WindowInput, model: str = "",
+                   provider: str = "") -> str:
+        """生成与**实际调用模型**绑定的缓存键。
+
+        ``self.model`` 在生产路径通常为空，真正使用的模型来自设置文件。
+        缓存若只记前者，用户换模型后会继续拿到旧模型的识别结果；这会让
+        报告无法复现，也会把升级模型的效果完全藏掉。
+        """
         h = hashlib.sha256()
         h.update(PROMPT_VERSION.encode("utf-8"))
-        h.update(self.model.encode("utf-8"))
+        h.update((model or self.model).encode("utf-8"))
+        h.update(provider.encode("utf-8"))
         h.update(build_prompt(inp).encode("utf-8"))
         for f in inp.frames:
             h.update(f"{f.t:.2f}".encode("utf-8"))
@@ -467,7 +513,12 @@ class VlmRecognizer:
             empty["missing"] = list(action_vocabulary().keys())
             return empty
 
-        key = self._cache_key(inp)
+        # 先解析一次配置，再将真正的 provider/model 纳入缓存身份。
+        # ``_ask`` 会再次读取配置以保留既有的动态配置行为；二者不一致时
+        # 最坏情况是本次不命中缓存，不会把另一模型的旧答案当成本模型答案。
+        creds, model = self._resolve()
+        provider = (creds.endpoint if creds is not None else "")
+        key = self._cache_key(inp, model=model, provider=provider)
         answer = self._cache_read(key)
         if answer is None:
             answer = self._ask(inp)
@@ -492,7 +543,8 @@ class VlmRecognizer:
         try:
             result = vlm_client.call_model(
                 model, blocks, creds=creds, system=SYSTEM_PROMPT,
-                max_tokens=self.max_tokens, timeout=self.timeout)
+                max_tokens=self.max_tokens, timeout=self.timeout,
+                temperature=0.0)
         except vlm_client.VlmError:
             return None
         try:
@@ -554,6 +606,20 @@ class VlmRecognizer:
         if parsed.in_combat != "unknown":
             facts["in_combat"] = {"value": parsed.in_combat == "true",
                                   "confidence": 0.6}
+        if parsed.cc_state == "seen":
+            cc_frames = [i for i in parsed.cc_frames if i in by_index]
+            if len(cc_frames) >= 2:
+                # ``cc`` 不是“猜测谁被控”，而是确认同一控制过程跨帧可见。
+                # 匹配器只在这里有证据时才不把控制前提降级为“判不了”。
+                facts["cc"] = {"value": "seen", "confidence": 0.7}
+                first = by_index[cc_frames[0]]
+                moments.append({
+                    "t": round(first.t, 1), "nx": 0.0, "ny": 0.0,
+                    "image": first.name,
+                    "why": f"{int(first.t // 60)}:{int(first.t % 60):02d} "
+                           f"{parsed.cc_evidence}",
+                    "kind": "cc", "value": "seen",
+                })
 
         # 模型读不出哪一类 → 那一类记缺失（内核判「无法判定」）
         for kind in parsed.unknown:
@@ -621,9 +687,11 @@ class VlmRecognizer:
         帧越少、给的帧越少 → 越不可信。**不让模型自己说了算**。
         """
         conf = float(act.get("confidence", 0.6))
-        coverage = len(frames) / float(max(1, total_frames))
-        if coverage < 0.25:
-            conf *= 0.7
+        # 动作的持续时长不能按“占满整个窗口的比例”扣分：一个 24 帧窗口
+        # 里，控制链、闪现进场、补刀都可能只出现 2~3 帧，恰好是用户要
+        # 抓的关键动作。已有两帧证据就保留模型置信度；只有一帧才降权。
+        if len(frames) == 1:
+            conf *= 0.72
         if total_frames < 4:
             conf = min(conf, 0.5)
         return max(0.0, min(1.0, round(conf, 3)))
