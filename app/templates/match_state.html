@@ -1,0 +1,13 @@
+<!DOCTYPE html>
+<html lang="zh-CN"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>状态与出装</title>{% include "_theme_head.html" %}<link rel="stylesheet" href="{{ asset('app.css') }}"></head>
+<body class="app-body">{% set nav_active="matches" %}{% include "_header.html" %}
+<main class="app-main"><div class="page-head"><h1>状态与出装</h1><p>按时间点查看状态；后续补扫会新增节点，不把后期装备倒灌到前期。</p></div>
+{% if state.status == 'ready' %}
+<section class="card"><h2>当前已识别状态</h2><p>英雄：{{ state.player.hero or '未识别' }} · 等级：{{ state.player.level or '未识别' }} · 金币：{{ state.player.gold or '未识别' }}</p><p>当前装备：{{ state['player']['items'] | join('、') if state['player']['items'] else '未读到装备栏' }}</p></section>
+{% if state.build.enemy_roster %}<section class="card"><h2>已识别敌方阵容</h2><p>{{ state.build.enemy_roster | map(attribute='hero') | join('、') }}</p></section>{% endif %}
+<section class="card"><h2>当前出装建议</h2><p><b>{{ recommendation.direction }}</b> — {{ recommendation.reason }}</p><p class="muted">建议依据当前已识别的英雄、对位和装备信息生成；未识别字段不会被当作事实。</p></section>
+<section class="card"><h2>状态时间线</h2>{% for point in timeline %}<div style="padding:12px 0;border-bottom:1px solid var(--line)"><b>约 {{ point.time_min }} 分钟</b><p>等级：{{ point.state.player.level or '未识别' }} · 金币：{{ point.state.player.gold or '未识别' }} · 装备：{{ point.state['player']['items'] | join('、') if point.state['player']['items'] else '未读到' }}</p><p>当时建议：{{ point.recommendation.direction }} — {{ point.recommendation.reason }}</p></div>{% endfor %}</section>
+{% if state.build.purchase_events %}<section class="card"><h2>购买时间线</h2><ul>{% for event in state.build.purchase_events %}<li>约 {{ event.time_min }} 分钟：{{ event.item }}{% if event.evidence %}（{{ event.evidence }}）{% endif %}</li>{% endfor %}</ul></section>{% endif %}
+<section class="card"><h2>对位状态</h2><p>英雄：{{ state.matchup.hero or '未识别' }} · 等级：{{ state.matchup.level or '未识别' }}</p></section>
+{% else %}<div class="empty">{{ state.message }}</div>{% endif %}<a class="btn-ghost" href="/api/matches/{{ match_id }}/report">返回本局报告</a></main>{% include "_theme_script.html" %}</body></html>

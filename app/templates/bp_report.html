@@ -52,7 +52,7 @@
 }
 </style>
 </head>
-<body{% if not standalone %} class="app-body"{% endif %}>
+<body{% if not standalone %} class="app-body bp-body"{% endif %}>
 {%- set meta = report.meta or {} -%}
 {%- set summary = report.get('summary') or {} -%}
 {%- set entries = report.get('entries') or [] -%}

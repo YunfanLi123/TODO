@@ -2857,6 +2857,7 @@ def _window_rounds(windows: List[Dict[str, Any]],
                 review=list(reading.get("review") or []),
                 slices=slices,
                 segment_key=str(w.get("segment_key") or ""),
+                state_snapshot=dict(reading.get("state_snapshot") or {}),
                 gate_confidence=1.0,
             )
         )

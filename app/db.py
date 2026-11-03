@@ -105,6 +105,37 @@ class Analysis(Base):
         return json.loads(self.detail or "{}")
 
 
+class TrainingTaskState(Base):
+    """玩家对某局复盘训练项的完成状态。规则 id 是稳定主键，标题改名不影响打卡。"""
+    __tablename__ = "training_task_states"
+    __table_args__ = (UniqueConstraint("match_id", "player_id", "rule_id", name="uq_training_task"),)
+
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    match_id = Column(String(64), ForeignKey("matches.id"), nullable=False, index=True)
+    player_id = Column(String(64), nullable=False, index=True, default="local")
+    rule_id = Column(String(64), nullable=False, index=True)
+    completed = Column(Integer, default=0, nullable=False)
+    updated_at = Column(DateTime, default=utcnow, onupdate=utcnow)
+
+
+class MatchStateSnapshot(Base):
+    """录像识别出的局内状态快照；只保存经过置信度门槛的结构化结果。"""
+    __tablename__ = "match_state_snapshots"
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    match_id = Column(String(64), ForeignKey("matches.id"), nullable=False, index=True)
+    player_id = Column(String(64), nullable=False, index=True, default="local")
+    time_min = Column(Integer, nullable=False, default=0)
+    confidence = Column(Float, nullable=False, default=0.0)
+    payload = Column(Text, default="{}")
+    created_at = Column(DateTime, default=utcnow)
+
+    def set_payload(self, value: Dict[str, Any]) -> None:
+        self.payload = json.dumps(value, ensure_ascii=False)
+
+    def get_payload(self) -> Dict[str, Any]:
+        return json.loads(self.payload or "{}")
+
+
 class RuleRecord(Base):
     """规则库条目。``(game, version, rule_id)`` 唯一 —— 同名规则在不同版本
     可以并存，这是版本适配的基础。"""

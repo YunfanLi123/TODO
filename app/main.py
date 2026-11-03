@@ -59,7 +59,8 @@ from .core.curve import build_curve
 from .core.dsl import Rule
 from .core import device as device_mod
 from .core import session as session_mod
-from .db import Base, get_engine, session_scope
+from .db import Base, MatchStateSnapshot, TrainingTaskState, get_engine, session_scope
+from .collection import match_state
 from .report.builder import (
     build_bp_report,
     build_growth_report,
@@ -76,9 +77,12 @@ from .report.views import (
     STATIC_DIR,
     render_bp_form,
     render_bp_report,
+    render_page,
     render_report,
     render_review,
 )
+from .report.training import build_training_plan
+from .report import qa as match_qa
 from .rules.authoring import (
     RuleWriteError,
     add_source,
@@ -367,6 +371,24 @@ class MatchInput(BaseModel):
     #: 接口照样返回 200，对局也存进去了，到了 BP 复盘页却显示
     #: 「还没录 BP」，而没人会想到是接口把它吃了。
     bp: Optional[Dict[str, Any]] = None
+
+
+class TrainingTaskUpdateInput(BaseModel):
+    completed: bool
+
+
+class MatchQaInput(BaseModel):
+    question: str = Field(min_length=1, max_length=500)
+
+
+class MatchStateInput(BaseModel):
+    time_min: int = Field(ge=0)
+    confidence: float = Field(ge=0, le=1)
+    player: Dict[str, Any] = Field(default_factory=dict)
+    matchup: Dict[str, Any] = Field(default_factory=dict)
+    build: Dict[str, Any] = Field(default_factory=dict)
+
+
 
 
 class GuideExtractInput(BaseModel):
@@ -711,6 +733,8 @@ def api_guide_sources(
 # ==========================================================================
 
 
+
+
 @app.post("/api/matches")
 def api_ingest_match(
     payload: MatchInput,
@@ -867,6 +891,7 @@ class RecognizedRoundInput(BaseModel):
     facts: List[DetectedFactInput] = Field(default_factory=list)
     actions: List[DetectedActionInput] = Field(default_factory=list)
     gate_confidence: float = 1.0
+    state_snapshot: Dict[str, Any] = Field(default_factory=dict)
 
 
 class GateFrameInput(BaseModel):
@@ -948,6 +973,7 @@ def api_ingest_recognition(
                     for a in r.actions
                 ],
                 gate_confidence=r.gate_confidence,
+                state_snapshot=dict(r.state_snapshot),
             )
             for r in payload.rounds
         ],
@@ -971,6 +997,8 @@ def api_ingest_recognition(
     except match_col.MatchValidationError as exc:
         raise HTTPException(status_code=422, detail=str(exc))
 
+    _save_recognized_state_snapshots(session, record.id, player_id, result.rounds)
+
     response: Dict[str, Any] = {
         "match_id": record.id,
         "source_kind": record.source_kind,
@@ -986,6 +1014,31 @@ def api_ingest_recognition(
         response["low_confidence_facts"] = report.get("low_confidence_facts", [])
         response["report_url"] = f"/api/matches/{record.id}/report"
     return response
+
+
+def _save_recognized_state_snapshots(
+    session: Session, match_id: str, player_id: str, rounds: List[RecognizedRound],
+) -> int:
+    """持久化已过门槛的录像状态，不让低置信 HUD 变成“事实”。"""
+    saved = 0
+    for rnd in rounds:
+        raw = dict(rnd.state_snapshot or {})
+        if not raw:
+            continue
+        raw.setdefault("time_min", int(rnd.time_index))
+        normalized = match_state.normalize(raw)
+        if normalized["confidence"] < match_state.ACCEPT:
+            continue
+        row = MatchStateSnapshot(
+            match_id=match_id, player_id=player_id,
+            time_min=normalized["time_min"], confidence=normalized["confidence"],
+        )
+        row.set_payload(normalized)
+        session.add(row)
+        saved += 1
+    if saved:
+        session.flush()
+    return saved
 
 
 def _coerce_phase(value: Union[int, str]) -> int:
@@ -1160,6 +1213,143 @@ def api_report_json(
     session: Session = Depends(db_session),
 ) -> Dict[str, Any]:
     return _load_report(session, match_id, player_id)
+
+
+@app.get("/api/matches/{match_id}/training-plan")
+def api_training_plan(
+    match_id: str,
+    player_id: str = Query("local"),
+    session: Session = Depends(db_session),
+) -> Dict[str, Any]:
+    record = match_col.load_match(session, match_id, player_id)
+    if record is None:
+        raise HTTPException(status_code=404, detail=f"对局 {match_id} 不存在")
+    completed = _completed_training_rule_ids(session, match_id, player_id)
+    return {"match_id": match_id, **build_training_plan(record, completed)}
+
+
+@app.get("/api/matches/{match_id}/training", response_class=HTMLResponse)
+def api_training_plan_page(
+    match_id: str,
+    player_id: str = Query("local"),
+    session: Session = Depends(db_session),
+) -> HTMLResponse:
+    record = match_col.load_match(session, match_id, player_id)
+    if record is None:
+        raise HTTPException(status_code=404, detail=f"对局 {match_id} 不存在")
+    completed = _completed_training_rule_ids(session, match_id, player_id)
+    return HTMLResponse(render_page("training.html", match_id=match_id, plan=build_training_plan(record, completed)))
+
+
+@app.get("/api/matches/{match_id}/qa", response_class=HTMLResponse)
+def api_match_qa_page(
+    match_id: str, player_id: str = Query("local"), session: Session = Depends(db_session),
+) -> HTMLResponse:
+    if match_col.load_match(session, match_id, player_id) is None:
+        raise HTTPException(status_code=404, detail=f"对局 {match_id} 不存在")
+    return HTMLResponse(render_page("match_qa.html", match_id=match_id))
+
+
+@app.post("/api/matches/{match_id}/qa")
+def api_match_qa(
+    match_id: str, payload: MatchQaInput,
+    player_id: str = Query("local"), session: Session = Depends(db_session),
+) -> Dict[str, Any]:
+    record = match_col.load_match(session, match_id, player_id)
+    if record is None:
+        raise HTTPException(status_code=404, detail=f"对局 {match_id} 不存在")
+    completed = _completed_training_rule_ids(session, match_id, player_id)
+    try:
+        answer = match_qa.ask(record, build_training_plan(record, completed), payload.question)
+    except match_qa.MatchQaError as exc:
+        raise HTTPException(status_code=422, detail=str(exc))
+    return {"answer": answer}
+
+
+@app.post("/api/matches/{match_id}/state-snapshots")
+def api_save_match_state(
+    match_id: str, payload: MatchStateInput,
+    player_id: str = Query("local"), session: Session = Depends(db_session),
+) -> Dict[str, Any]:
+    if match_col.load_match(session, match_id, player_id) is None:
+        raise HTTPException(status_code=404, detail=f"对局 {match_id} 不存在")
+    normalized = match_state.normalize(payload.model_dump())
+    snapshot = MatchStateSnapshot(match_id=match_id, player_id=player_id,
+                                  time_min=normalized["time_min"], confidence=normalized["confidence"])
+    snapshot.set_payload(normalized)
+    session.add(snapshot)
+    session.flush()
+    return {"snapshot_id": snapshot.id, "accepted": normalized["confidence"] >= match_state.ACCEPT}
+
+
+@app.get("/api/matches/{match_id}/state")
+def api_match_state(
+    match_id: str, player_id: str = Query("local"), session: Session = Depends(db_session),
+) -> Dict[str, Any]:
+    if match_col.load_match(session, match_id, player_id) is None:
+        raise HTTPException(status_code=404, detail=f"对局 {match_id} 不存在")
+    from sqlalchemy import select
+    rows = session.execute(select(MatchStateSnapshot).where(
+        MatchStateSnapshot.match_id == match_id, MatchStateSnapshot.player_id == player_id,
+    ).order_by(MatchStateSnapshot.time_min.desc())).scalars()
+    payloads = [row.get_payload() for row in rows]
+    state = match_state.consensus(payloads)
+    # 不能只展示一条“最终状态”：录像复盘要知道第几分钟发生了什么。
+    # 每一节点只融合该时刻及更早的证据，后面的装备/等级不会倒灌回过去。
+    timeline = []
+    for payload in sorted(payloads, key=lambda item: item.get("time_min", 0)):
+        # 时间线每行必须是该分钟的原始状态；若再按全局最高置信度融合，
+        # 早期“陨星”会覆盖后面刚买到的“红玛瑙 / 暗影战斧”，看起来就像
+        # 状态完全没有变化。
+        point = match_state.normalize(payload)
+        point["status"] = "ready"
+        point["samples"] = 1
+        timeline.append({
+            "time_min": payload.get("time_min", 0),
+            "state": point,
+            "recommendation": match_state.recommend(point),
+        })
+    return {"match_id": match_id, "state": state,
+            "recommendation": match_state.recommend(state), "timeline": timeline}
+
+
+@app.get("/api/matches/{match_id}/state/view", response_class=HTMLResponse)
+def api_match_state_page(
+    match_id: str, player_id: str = Query("local"), session: Session = Depends(db_session),
+) -> HTMLResponse:
+    data = api_match_state(match_id, player_id, session)
+    # ``api_match_state`` 已经带回 match_id；重复传给 Jinja 会在 Python
+    # 调用阶段直接报 TypeError，页面就会变成 500。
+    return HTMLResponse(render_page("match_state.html", **data))
+
+
+@app.put("/api/matches/{match_id}/training-plan/{rule_id}")
+def api_update_training_task(
+    match_id: str, rule_id: str, payload: TrainingTaskUpdateInput,
+    player_id: str = Query("local"), session: Session = Depends(db_session),
+) -> Dict[str, Any]:
+    if match_col.load_match(session, match_id, player_id) is None:
+        raise HTTPException(status_code=404, detail=f"对局 {match_id} 不存在")
+    from sqlalchemy import select
+    state = session.execute(select(TrainingTaskState).where(
+        TrainingTaskState.match_id == match_id, TrainingTaskState.player_id == player_id,
+        TrainingTaskState.rule_id == rule_id,
+    )).scalar_one_or_none()
+    if state is None:
+        state = TrainingTaskState(match_id=match_id, player_id=player_id, rule_id=rule_id)
+        session.add(state)
+    state.completed = 1 if payload.completed else 0
+    session.flush()
+    return {"match_id": match_id, "rule_id": rule_id, "completed": bool(state.completed)}
+
+
+def _completed_training_rule_ids(session: Session, match_id: str, player_id: str) -> set[str]:
+    from sqlalchemy import select
+    rows = session.execute(select(TrainingTaskState.rule_id).where(
+        TrainingTaskState.match_id == match_id, TrainingTaskState.player_id == player_id,
+        TrainingTaskState.completed == 1,
+    )).scalars()
+    return set(rows)
 
 
 @app.get("/api/matches/{match_id}/report/export")

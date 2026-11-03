@@ -91,6 +91,9 @@
         </div>
         <div class="item-acts">
           <a class="btn-ghost" href="/api/matches/{{ x.id }}/report">报告</a>
+          <a class="btn-ghost" href="/api/matches/{{ x.id }}/training">训练清单</a>
+          <a class="btn-ghost" href="/api/matches/{{ x.id }}/qa">AI 问答</a>
+          <a class="btn-ghost" href="/api/matches/{{ x.id }}/state/view">状态/出装</a>
           {# BP 在比赛之前，单独一页。录过的对局给「BP 复盘」（看结论）
              和「改 BP」（回去改录入）两个入口；没录过的只给「录 BP」。
              曾经写的是「有 BP 就叫 BP 复盘，但链到录入页」——

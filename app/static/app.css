@@ -130,6 +130,26 @@
   padding: 18px 32px 24px;
 }
 
+/* BP 的录入和复盘都含有多列信息。平板宽度若仍坚持左侧栏，主体会被
+   flex 换到下一行并留下整块空白；统一改成顶栏，保证两个页面同样可读。 */
+@media (max-width: 1024px) {
+  .bp-body { display: block; padding: 10px; }
+  .bp-body .app-header { position: static; margin-bottom: 10px; }
+  .bp-body .app-header-inner {
+    height: auto; padding: 8px 12px; flex-direction: row;
+    align-items: center; gap: 10px;
+  }
+  .bp-body .brand { inline-size: auto; margin: 0; }
+  .bp-body .brand-word { inline-size: 56px; padding: 6px 3px; font-size: 13px; }
+  .bp-body .app-nav { flex-direction: row; inline-size: auto; gap: 3px; }
+  .bp-body .nav-item { flex-direction: row; gap: 4px; padding: 7px 8px; }
+  .bp-body .nav-ico { font-size: 15px; }
+  .bp-body .nav-txt { font-size: 12px; }
+  .bp-body .theme-toggle { margin-left: auto; }
+  .bp-body .app-main.bp-page { min-inline-size: 0; padding: 16px 12px 28px; }
+  .bp-body .bp-hero .duo { display: none; }
+}
+
 /* 标注页的上下文条。它是 app-main 的一部分，不是第三个 flex 子项 ——
    Sidebar 原语只认两个子项，多一个就会算出别的东西。 */
 .annotate-top {

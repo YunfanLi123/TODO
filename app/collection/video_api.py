@@ -35,7 +35,8 @@ from . import realign
 from . import video_upload as vu
 from .video import RecognitionResult, RecognizedRound, to_raw_match
 from ..adapters.base import get_adapter
-from ..db import session_scope
+from ..db import MatchStateSnapshot, session_scope
+from . import match_state
 from ..report.views import render_page
 
 
@@ -100,6 +101,30 @@ def _lane_from_raw_rounds(raw: Dict[str, Any]) -> str:
         return ""
     lane, count = Counter(seen).most_common(1)[0]
     return lane if count / len(seen) >= 0.60 else ""
+
+
+def _save_state_snapshots(session: Session, match_id: str,
+                          rounds: List[RecognizedRound]) -> int:
+    """把窗口 VLM 给出的可靠状态随视频对局一起保存。"""
+    saved = 0
+    for rnd in rounds:
+        raw = dict(rnd.state_snapshot or {})
+        if not raw:
+            continue
+        raw.setdefault("time_min", int(rnd.time_index))
+        normalized = match_state.normalize(raw)
+        if normalized["confidence"] < match_state.ACCEPT:
+            continue
+        snapshot = MatchStateSnapshot(
+            match_id=match_id, time_min=normalized["time_min"],
+            confidence=normalized["confidence"],
+        )
+        snapshot.set_payload(normalized)
+        session.add(snapshot)
+        saved += 1
+    if saved:
+        session.flush()
+    return saved
 
 
 class RoundAnnotation(BaseModel):
@@ -703,6 +728,8 @@ def register_routes(app: FastAPI, base_dir: str) -> None:
             )
         except match_col.MatchValidationError as exc:
             raise HTTPException(status_code=422, detail=str(exc))
+
+        _save_state_snapshots(session, record.id, state["skeleton"].rounds)
 
         report = _analyze(session, record, adapter.game_id)
 

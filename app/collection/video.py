@@ -214,6 +214,9 @@ class RecognizedRound:
     #: （玩家/识别器对着这一段的帧做一次综合分析）。
     #: 段里的判定单元共用这份结论。
     segment_key: str = ""
+    #: VLM 从同一窗 HUD 中读出的玩家 / 对位 / 出装状态。它不参与规则
+    #: 判定，而是作为独立的可回看快照落库；空字典代表没有足够画面证据。
+    state_snapshot: Dict[str, Any] = field(default_factory=dict)
     #: 该回合对应的门控帧置信度；过低表示回合边界没数准
     gate_confidence: float = 1.0
 
@@ -235,6 +238,7 @@ class RecognizedRound:
             "review": list(self.review),
             "slices": list(self.slices),
             "segment_key": self.segment_key,
+            "state_snapshot": dict(self.state_snapshot),
         }
 
 

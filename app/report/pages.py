@@ -79,6 +79,42 @@ def register_pages(app: FastAPI, base_dir: str) -> None:
         """
         return HTMLResponse(render_page("model.html"))
 
+    @app.get("/training", response_class=HTMLResponse)
+    def training_center(request: Request) -> HTMLResponse:
+        """跨对局训练中心：把未完成项聚在一起，避免训练清单散在报告深处。"""
+        from ..report.training import build_training_plan
+
+        with session_scope() as s:
+            records = match_col.list_matches(
+                s, player_id=device.device_id(request), game=GAME, limit=200
+            )
+            tasks: List[Dict[str, Any]] = []
+            completed = 0
+            for record in records:
+                from ..db import TrainingTaskState
+                from sqlalchemy import select
+
+                finished = set(s.execute(select(TrainingTaskState.rule_id).where(
+                    TrainingTaskState.match_id == record.id,
+                    TrainingTaskState.player_id == record.player_id,
+                    TrainingTaskState.completed == 1,
+                )).scalars())
+                plan = build_training_plan(record, finished)
+                identity = organize.match_identity(record.get_payload() or {}, adapter)
+                for task in plan["tasks"]:
+                    task = dict(task)
+                    task["match_id"] = record.id
+                    task["match_name"] = identity["name"]
+                    if task["completed"]:
+                        completed += 1
+                    else:
+                        tasks.append(task)
+        rank = {"high": 0, "medium": 1, "low": 2}
+        tasks.sort(key=lambda task: (rank.get(task["severity"], 1), task["match_name"]))
+        return HTMLResponse(render_page(
+            "training_center.html", tasks=tasks, completed=completed,
+        ))
+
     # ============================================================== 对局记录
     @app.get("/matches", response_class=HTMLResponse)
     def matches_page(

@@ -206,6 +206,15 @@ def build_prompt(inp: WindowInput) -> str:
         + "6. 计时器你读到了吗？读到的数字写在 clock_readings 里（按帧号），"
         "读不出就写空数组。\n"
         + "7. 哪一类动作你**看不出来**？写进 unknown（例如你分不清是在刷野还是在赶路）。\n"
+        + "7b. 读取状态时，只在 HUD / 战绩面板 / 装备栏清晰可见且至少两帧一致时填写 state；"
+        "英雄、等级、金币、装备或对位任何一项看不清就填 unknown / 空数组。"
+        "damage_type 只能是 physical / magic / mixed / unknown；不要凭英雄印象猜。\n"
+        + "7c. 特别检查画面左侧的购买提示：它比装备栏更适合记录出装顺序。"
+        "每次只在能看清物品名称或图标、并说明提示文字/图标依据时写 purchase_events；"
+        "单帧清晰提示可记录，但看不清名称时绝不能按图标猜。每条给 item、frames、evidence、confidence。\n"
+        + "7d. 如果画面是开局选人/BP或完整战绩面板，读取敌方阵容：enemy_roster 每个英雄必须有名字、"
+        "所在帧号和画面依据；读不清就不填。enemy_traits 只能基于已识别阵容或明确面板信息填写，"
+        "可填 healing_heavy、tank_heavy、control_heavy、magic_heavy，其他一律 false；不要按猜测补全阵容。\n"
         + "8. **只列出有充分画面证据的偏离**，不要逐条复述整份清单：\n"
         + "   - premise：这一条的前提，在画面里**看得见成立**吗？"
         "visible / not_visible / unknown（前提根本读不出来就写 unknown）。\n"
@@ -256,6 +265,12 @@ def build_prompt(inp: WindowInput) -> str:
                 "confidence": 0.8,
             }],
             "node_gap": {},
+            "state": {"frames": [1, 2], "confidence": 0.8,
+                      "player": {"hero": "unknown", "level": "unknown", "gold": "unknown", "items": []},
+                      "matchup": {"hero": "unknown", "level": "unknown", "damage_type": "unknown"},
+                      "build": {"enemy_heal_heavy": False, "enemy_tank_heavy": False, "behind": False,
+                                "purchase_events": [{"item": "暗影战斧", "frames": [3],
+                                                     "evidence": "左侧购买提示清晰显示暗影战斧", "confidence": 0.9}]}},
         }, ensure_ascii=False, indent=2)
     )
 
@@ -281,6 +296,7 @@ class ParsedReading:
     review: List[Dict[str, Any]] = field(default_factory=list)
     #: 「这一整段没做这个时段该做的任何一件事」的判断。
     node_gap: Dict[str, Any] = field(default_factory=dict)
+    state: Dict[str, Any] = field(default_factory=dict)
 
 
 def parse_answer(answer: Any, vocab: Dict[str, Dict[str, str]]) -> ParsedReading:
@@ -391,6 +407,72 @@ def parse_answer(answer: Any, vocab: Dict[str, Dict[str, str]]) -> ParsedReading
     node_gap = answer.get("node_gap")
     if isinstance(node_gap, dict) and node_gap:
         out.node_gap = node_gap
+    state = answer.get("state")
+    if isinstance(state, dict):
+        frames = []
+        for frame in state.get("frames") or []:
+            try:
+                frames.append(int(frame))
+            except (TypeError, ValueError):
+                continue
+        try:
+            confidence = float(state.get("confidence", 0.0))
+        except (TypeError, ValueError):
+            confidence = 0.0
+        player = state.get("player") if isinstance(state.get("player"), dict) else {}
+        matchup = state.get("matchup") if isinstance(state.get("matchup"), dict) else {}
+        build = state.get("build") if isinstance(state.get("build"), dict) else {}
+        purchase_events: List[Dict[str, Any]] = []
+        for event in build.get("purchase_events") or []:
+            if not isinstance(event, dict):
+                continue
+            item = str(event.get("item") or "").strip()
+            evidence = str(event.get("evidence") or "").strip()
+            try:
+                event_confidence = float(event.get("confidence", 0.0))
+            except (TypeError, ValueError):
+                event_confidence = 0.0
+            event_frames = []
+            for frame in event.get("frames") or []:
+                try:
+                    event_frames.append(int(frame))
+                except (TypeError, ValueError):
+                    continue
+            # 购买提示可能只停留一帧；因此允许一帧，但必须带客观依据且置信度更高。
+            if (item and item.lower() != "unknown" and evidence and event_frames
+                    and event_confidence >= 0.80):
+                purchase_events.append({"item": item, "frames": sorted(set(event_frames)),
+                                        "evidence": evidence, "confidence": min(1.0, event_confidence)})
+        roster: List[Dict[str, Any]] = []
+        for member in build.get("enemy_roster") or []:
+            if not isinstance(member, dict):
+                continue
+            hero = str(member.get("hero") or "").strip()
+            evidence = str(member.get("evidence") or "").strip()
+            try:
+                member_confidence = float(member.get("confidence", 0.0))
+            except (TypeError, ValueError):
+                member_confidence = 0.0
+            member_frames = []
+            for frame in member.get("frames") or []:
+                try:
+                    member_frames.append(int(frame))
+                except (TypeError, ValueError):
+                    continue
+            if hero and hero.lower() != "unknown" and evidence and member_frames and member_confidence >= 0.70:
+                roster.append({"hero": hero, "frames": sorted(set(member_frames)),
+                               "evidence": evidence, "confidence": min(1.0, member_confidence)})
+        if purchase_events or roster:
+            build = dict(build)
+            build["purchase_events"] = purchase_events
+            build["enemy_roster"] = roster
+            traits = build.get("enemy_traits") if isinstance(build.get("enemy_traits"), dict) else {}
+            build["enemy_traits"] = {key: bool(traits.get(key, False)) for key in
+                                     ("healing_heavy", "tank_heavy", "control_heavy", "magic_heavy")}
+        # 状态会进入出装建议，因此比普通动作更严格：两帧 + 0.70 才可用。
+        if len(set(frames)) >= 2 and confidence >= 0.70:
+            out.state = {"frames": sorted(set(frames)), "confidence": min(1.0, confidence),
+                         "player": player, "matchup": matchup, "build": build}
     return out
 
 
@@ -678,6 +760,9 @@ class VlmRecognizer:
             "absent": [],
             # 模型对攻略清单的裁决（已过硬校验）。
             "review": review,
+            # 上层把它随窗口结果保存；状态模块会再进行跨窗口投票。
+            "state_snapshot": ({"time_min": inp.lo, **parsed.state}
+                               if parsed.state else {}),
         }
 
     def _confidence(self, act: Dict[str, Any], total_frames: int,

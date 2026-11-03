@@ -98,9 +98,30 @@
   .bp-grid { grid-template-columns: 34px 1fr 1fr 40px; }
   .bp-grid > *:nth-child(4) { grid-column: 2 / 4; }
 }
+
+/* BP 表单有五列；平板宽度继续保留左栏时，实际可用内容宽度会比视口
+   小一截，首个概览卡和输入区域很容易被挤到侧栏后面。此处提早折叠
+   外壳，优先保证录入控件完整可见。 */
+@media (max-width: 1024px) {
+  .bp-body { display: block; padding: 10px; }
+  .bp-body .app-header { position: static; margin-bottom: 10px; }
+  .bp-body .app-header-inner {
+    height: auto; padding: 8px 12px; flex-direction: row;
+    align-items: center; gap: 10px;
+  }
+  .bp-body .brand { inline-size: auto; margin: 0; }
+  .bp-body .brand-word { inline-size: 56px; padding: 6px 3px; font-size: 13px; }
+  .bp-body .app-nav { flex-direction: row; inline-size: auto; gap: 3px; }
+  .bp-body .nav-item { flex-direction: row; gap: 4px; padding: 7px 8px; }
+  .bp-body .nav-ico { font-size: 15px; }
+  .bp-body .nav-txt { font-size: 12px; }
+  .bp-body .theme-toggle { margin-left: auto; }
+  .bp-body .app-main.bp-page { min-inline-size: 0; padding: 16px 12px 28px; }
+  .bp-body .bp-hero .duo { display: none; }
+}
 </style>
 </head>
-<body class="app-body">
+<body class="app-body bp-body">
 {% set nav_active = "matches" %}
 {% include "_header.html" %}
 
