@@ -183,7 +183,7 @@ def infer_lane_from_track(rows: Sequence[Dict[str, Any]], start_t: float,
 
 def read_lane_and_result(video, base_dir: str, start_t: Optional[float] = None,
                           duration_sec: float = 0.0,
-                          position_hint: str = "") -> Dict[str, Any]:
+                          position_hint: str = "", creds=None) -> Dict[str, Any]:
     """读出「玩家打什么位置」「这局赢没赢」「玩家自己玩的是哪个英雄」。
 
     读不出来就是 ``unknown`` / 空串 —— **不猜**。
@@ -203,11 +203,11 @@ def read_lane_and_result(video, base_dir: str, start_t: Optional[float] = None,
     from . import settings
     from ..adapters.honor_of_kings import HEROES_BY_LANE
 
-    creds = settings.credentials_for("vlm")
+    creds = creds or settings.credentials_for("vlm")
     if creds is None:
         return {"position": "unknown", "result": "unknown", "hero": "",
                 "reason": "没有配置「看画面」的模型"}
-    model = settings.model_name("vlm") or creds.model
+    model = creds.model or settings.model_name("vlm")
 
     # 英雄白名单：从适配器的分路英雄表汇总，和规则库 / BP 识别用**同一份**，
     # 不另编一套。模型答的英雄不在表里就当认错丢弃 ——
@@ -289,7 +289,7 @@ def read_lane_and_result(video, base_dir: str, start_t: Optional[float] = None,
             "position_source": "track" if position_hint in position_values() else "vlm"}
 
 
-def read_bp_steps(video, base_dir: str) -> Dict[str, Any]:
+def read_bp_steps(video, base_dir: str, creds=None) -> Dict[str, Any]:
     """从 BP 阶段的画面读出「谁禁了谁、谁选了谁」+ 阵容缺了什么。
 
     BP 帧在抽帧那一步已经抽好了（``<video_id>_frames/bp-*.jpg``）。
@@ -300,10 +300,10 @@ def read_bp_steps(video, base_dir: str) -> Dict[str, Any]:
     from . import settings
     from ..adapters.honor_of_kings import HEROES_BY_LANE
 
-    creds = settings.credentials_for("vlm")
+    creds = creds or settings.credentials_for("vlm")
     if creds is None:
         return {}
-    model = settings.model_name("vlm") or creds.model
+    model = creds.model or settings.model_name("vlm")
     frames_dir = os.path.join(
         __import__("app.collection.video_upload", fromlist=["x"]).video_store_dir(base_dir),
         video.video_id + "_frames")

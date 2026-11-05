@@ -1768,6 +1768,7 @@ def moba_slice_product(
     game: str = "",
     lane: str = "",
     hero: str = "",
+    creds=None,
 ) -> Optional[Dict[str, Any]]:
     """MOBA 的产物：**按信息密度切时间片**。
 
@@ -1891,7 +1892,7 @@ def moba_slice_product(
         window_bundles = _read_window_bundles(
             video, base_dir, pending, hud_regions, hero_track,
             float(game_start_t or 0.0), progress, game=game, lane=lane,
-            hero=hero)
+            hero=hero, creds=creds)
 
     return {
         "rounds": rounds,
@@ -2023,7 +2024,7 @@ def _read_window_bundles(video: "UploadedVideo", base_dir: str,
                          progress=None,
                          game: str = "",
                          lane: str = "",
-                         hero: str = "") -> List[Dict[str, Any]]:
+                         hero: str = "", creds=None) -> List[Dict[str, Any]]:
     """并行地把每个分析窗交给识别器，返回填好 ``facts`` 的窗列表。
 
     ``pending`` 是 ``[(bundle, dict), ...]``：bundle 是窗口对象，
@@ -2075,7 +2076,7 @@ def _read_window_bundles(video: "UploadedVideo", base_dir: str,
                 # 不然轨迹上的点不够，探测器算不出运动特征。
                 t0=gs + window.lo * 60.0,
                 t1=gs + (window.hi + 1) * 60.0,
-                game=game, lane=lane, hero=hero,
+                game=game, lane=lane, hero=hero, creds=creds,
             )
         except Exception as exc:                   # noqa: BLE001
             facts = {
@@ -2105,7 +2106,7 @@ def _recognize_window(video: "UploadedVideo", base_dir: str, bundle,
                        t1: Optional[float] = None,
                        game: str = "",
                        lane: str = "",
-                       hero: str = "") -> Dict[str, Any]:
+                       hero: str = "", creds=None) -> Dict[str, Any]:
     """对**一窗的若干帧**做一次综合分析，返回这一窗识别出来的事实。
 
     识别器有**两套**（见 :mod:`app.collection.settings`）：
@@ -2133,7 +2134,7 @@ def _recognize_window(video: "UploadedVideo", base_dir: str, bundle,
         return _recognize_window_cv(video, base_dir, bundle, segment_key,
                                      regions, hero_track, t0, t1)
     out = _recognize_window_vlm(video, base_dir, bundle, segment_key,
-                                 regions, t0, t1, game=game, lane=lane, hero=hero)
+                                 regions, t0, t1, game=game, lane=lane, hero=hero, creds=creds)
     out["segment_key"] = segment_key
     return out
 
@@ -2212,7 +2213,7 @@ def _recognize_window_vlm(video: "UploadedVideo", base_dir: str, bundle,
                            t1: Optional[float] = None,
                            game: str = "",
                            lane: str = "",
-                           hero: str = "") -> Dict[str, Any]:
+                           hero: str = "", creds=None) -> Dict[str, Any]:
     """按窗重抽帧 → 合成 HUD 面板 → 交给模型读。"""
     from .hud_panel import build_panel
     from .vlm_recognizer import FrameInput, VlmRecognizer, WindowInput
@@ -2291,6 +2292,7 @@ def _recognize_window_vlm(video: "UploadedVideo", base_dir: str, bundle,
     from . import settings
 
     recognizer = VlmRecognizer(
+        creds=creds,
         data_dir=settings.data_dir(),
         cache_dir=os.path.join(settings.data_dir(), "vlm_cache"))
     return recognizer.analyze(inp)
@@ -2608,6 +2610,7 @@ def sample_by_phase(
     game: str = "",
     lane: str = "",
     hero: str = "",
+    creds=None,
 ) -> Optional[Dict[str, Any]]:
     """产出 MOBA 的扫描产物：**BP 帧序列 + 按阶段均匀抽帧**。
 
@@ -2735,7 +2738,7 @@ def sample_by_phase(
         window_bundles = _read_window_bundles(
             video, base_dir, pending, hud_regions, hero_track,
             float(clock_info.get("game_start_t") or 0.0), progress,
-            game=game, lane=lane, hero=hero)
+            game=game, lane=lane, hero=hero, creds=creds)
 
     return {
         "rounds": rounds,

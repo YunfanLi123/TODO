@@ -631,7 +631,9 @@ document.getElementById('cancel').onclick = () => {
   if (!box) return;
   fetch('/api/model/config').then(r => r.json()).then(cfg => {
     if (cfg.public_anonymous) {
-      box.textContent = '公开体验版不会使用平台模型 Key；自动 AI 识别需由体验者自行配置。';
+      box.textContent = '';
+      box.appendChild(document.createTextNode('公开体验版只使用你自己的临时 Key · '));
+      const a = document.createElement('a'); a.href = '/model'; a.textContent = '导入模型'; box.appendChild(a);
       return;
     }
     const s = (cfg.slots || {}).vlm || {};

@@ -25,7 +25,7 @@ from collections import Counter
 from datetime import datetime
 from typing import Any, Dict, List, Optional
 
-from fastapi import Depends, FastAPI, File, Form, HTTPException, Query, UploadFile
+from fastapi import Depends, FastAPI, File, Form, HTTPException, Query, Request, UploadFile
 from fastapi.responses import FileResponse, HTMLResponse
 from pydantic import BaseModel, Field
 from sqlalchemy.orm import Session
@@ -414,7 +414,7 @@ def register_routes(app: FastAPI, base_dir: str) -> None:
 
     # ------------------------------------------------------------ 模型配置
     @app.get("/api/model/config")
-    def model_config() -> Dict[str, Any]:
+    def model_config(request: Request) -> Dict[str, Any]:
         """当前的模型配置（**密钥已掩码**）+ 供应方清单 + 限额。"""
         from . import model_presets, settings
         from .. import beta_auth
@@ -424,8 +424,10 @@ def register_routes(app: FastAPI, base_dir: str) -> None:
         # 在 REQUIRE_USER_MODEL 模式下硬性拦截。
         public_anonymous = os.environ.get("PUBLIC_ANONYMOUS", "").strip().lower() in {"1", "true", "yes"}
         if public_anonymous:
+            from . import temporary_models
+            from ..core import device
             return {
-                "slots": {"vlm": {"has_key": False, "model": ""}},
+                "slots": temporary_models.STORE.display(device.device_id(request)),
                 "providers": model_presets.catalog(),
                 "slot_labels": model_presets.SLOT_LABELS,
                 "slot_hints": model_presets.SLOT_HINTS,
@@ -449,7 +451,7 @@ def register_routes(app: FastAPI, base_dir: str) -> None:
         }
 
     @app.post("/api/model/config")
-    def save_model_config(payload: Dict[str, Any]) -> Dict[str, Any]:
+    def save_model_config(payload: Dict[str, Any], request: Request) -> Dict[str, Any]:
         """保存模型配置。
 
         **只填 API Key 就能配好**：供应方、端点、协议、关思考的字段名
@@ -458,7 +460,14 @@ def register_routes(app: FastAPI, base_dir: str) -> None:
         """
         from . import settings
         if os.environ.get("PUBLIC_ANONYMOUS", "").strip().lower() in {"1", "true", "yes"}:
-            raise HTTPException(status_code=403, detail="公开体验版不保存平台模型 Key。")
+            from . import temporary_models
+            from ..core import device
+            try:
+                slot = str((payload or {}).get("slot") or "vlm")
+                saved = temporary_models.STORE.save(device.device_id(request), slot, payload or {})
+            except ValueError as exc:
+                raise HTTPException(status_code=422, detail=str(exc))
+            return {"ok": True, "temporary": True, "slots": temporary_models.STORE.display(device.device_id(request)), "saved": saved}
 
         body = payload or {}
         slot = str(body.get("slot") or "vlm")
@@ -559,6 +568,7 @@ def register_routes(app: FastAPI, base_dir: str) -> None:
     async def upload_video(
         file: UploadFile = File(...),
         game: str = Form("hok"),
+        request: Request = None,
         session: Session = Depends(db_session),
     ) -> Dict[str, Any]:
         """上传视频并**立即返回**，扫描在后台跑。
@@ -576,6 +586,14 @@ def register_routes(app: FastAPI, base_dir: str) -> None:
                 status_code=422,
                 detail="目前只支持王者荣耀的对局录屏。",
             )
+
+        user_creds = None
+        if os.environ.get("REQUIRE_USER_MODEL", "").strip().lower() in {"1", "true", "yes"}:
+            from . import temporary_models
+            from ..core import device
+            user_creds = temporary_models.STORE.get(device.device_id(request), "vlm")
+            if user_creds is None:
+                raise HTTPException(status_code=422, detail="请先到「模型」页面导入你自己的视觉模型 API Key。")
 
         # 版本取该游戏规则库里**最新**的那一个，不接受前端传值。
         #
@@ -610,7 +628,7 @@ def register_routes(app: FastAPI, base_dir: str) -> None:
         # 只会让后面所有模式的判定都建立在错误的回合切分上。
         cfg = vu.ScanConfig()
         job = scan_jobs.RUNNER.create(
-            uuid.uuid4().hex[:12], match_id, video, game, version
+            uuid.uuid4().hex[:12], match_id, video, game, version, creds=user_creds
         )
         scan_jobs.RUNNER.run_async(
             job, base_dir, cfg,

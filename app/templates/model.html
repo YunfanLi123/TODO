@@ -17,6 +17,7 @@
   <div class="page-head">
     <div>
       <h1>模型</h1>
+      <p id="temporaryNotice" class="muted" hidden></p>
     </div>
   </div>
 
@@ -47,6 +48,7 @@ const SLOTS = [
 ];
 
 let PROVIDERS = [];
+let PUBLIC_ANONYMOUS = false;
 
 function el(id) { return document.getElementById(id); }
 
@@ -91,7 +93,7 @@ function buildCard(slot) {
       </label>
     </div>
     <div class="model-actions">
-      <button class="btn-primary sm" data-role="save">保存</button>
+      <button class="btn-primary sm" data-role="save">${PUBLIC_ANONYMOUS ? '导入到本次体验' : '保存'}</button>
       <button class="btn-ghost sm" data-role="test">测试连接</button>
       <a class="model-keylink" data-role="keyurl" href="#" target="_blank"
          rel="noopener" style="display:none">拿 API Key</a>
@@ -184,7 +186,7 @@ async function saveSlot(slot, card) {
     q('key').value = '';
     const saved = (d.slots || {})[slot.id] || {};
     fillSlot(slot, card, saved);
-    q('note').textContent = '已保存。';
+    q('note').textContent = d.temporary ? '已导入到本次体验。' : '已保存。';
   } catch (e) {
     q('note').textContent = '保存失败：' + e.message;
   } finally {
@@ -238,6 +240,12 @@ async function testSlot(slot, card) {
   try {
     const r = await fetch('/api/model/config');
     const cfg = await r.json();
+    if (cfg.public_anonymous) {
+      PUBLIC_ANONYMOUS = true;
+      const notice = el('temporaryNotice');
+      notice.textContent = '你的 Key 仅临时保存在本次服务内存中，按浏览器隔离；不写入平台配置，服务重启后自动清除。';
+      notice.hidden = false;
+    }
     PROVIDERS = cfg.providers || [];
     for (const slot of SLOTS) {
       const card = buildCard(slot);

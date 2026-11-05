@@ -52,6 +52,8 @@ class ScanJob:
     video: vu.UploadedVideo
     game: str
     game_version: str
+    #: 公网匿名版由当前浏览器临时导入的凭据；只在内存任务生命周期使用。
+    creds: Any = field(default=None, repr=False)
     status: str = PENDING
     progress: float = 0.0
     error: str = ""
@@ -101,8 +103,8 @@ class JobRunner:
         self._lock = threading.Lock()
 
     def create(self, job_id: str, match_id: str, video: vu.UploadedVideo,
-               game: str, game_version: str) -> ScanJob:
-        job = ScanJob(job_id, match_id, video, game, game_version)
+               game: str, game_version: str, creds: Any = None) -> ScanJob:
+        job = ScanJob(job_id, match_id, video, game, game_version, creds=creds)
         with self._lock:
             self._jobs[job_id] = job
         return job
@@ -175,8 +177,7 @@ class JobRunner:
                     job, base_dir, clock_track.get("game_start_t"), scan)
                 product = self._phase_product(
                     job, base_dir, clock_track, scan, on_ex,
-                    lane=(identity.get("position") or ""),
-                    hero=(identity.get("hero") or ""),
+                    lane=(identity.get("position") or ""), hero=(identity.get("hero") or ""),
                 )
             else:
                 # 读不到时钟（机型没标定、录屏是竖屏带黑边…）。
@@ -197,8 +198,7 @@ class JobRunner:
                     job, base_dir, self._guess_start_t(points, scan), scan)
                 product = self._moba_product(
                     job, base_dir, points, scan, on_ex,
-                    lane=(identity.get("position") or ""),
-                    hero=(identity.get("hero") or ""),
+                    lane=(identity.get("position") or ""), hero=(identity.get("hero") or ""),
                 )
 
             shots = product["rounds"]
@@ -310,7 +310,7 @@ class JobRunner:
             hero_track=self._hero_track(scan),
             # 分路：清单按它裁剪。模型要拿画面去对攻略，
             # 得先知道「玩家打的是哪条线」。
-            game=job.game, lane=lane, hero=hero,
+            game=job.game, lane=lane, hero=hero, creds=job.creds,
         )
         if not result or not result.get("rounds"):
             raise RuntimeError("按阶段抽帧没有产出任何帧")
@@ -347,7 +347,7 @@ class JobRunner:
             analysis_windows=self._analysis_windows(job.game),
             # 英雄轨迹（时钟探测那一趟顺带采的）
             hero_track=self._hero_track(scan),
-            game=job.game, lane=lane, hero=hero,
+            game=job.game, lane=lane, hero=hero, creds=job.creds,
         )
         if not result or not result.get("rounds"):
             raise RuntimeError("按信息密度切时间片没有产出任何帧")
@@ -389,7 +389,7 @@ class JobRunner:
 
         if settings.recognizer_kind() != "vlm":
             return {}
-        if settings.credentials_for("vlm") is None:
+        if job.creds is None and settings.credentials_for("vlm") is None:
             return {}
         if start_t is None:
             return {}
@@ -400,7 +400,7 @@ class JobRunner:
             return read_lane_and_result(
                 job.video, vu.video_store_dir(base_dir), float(start_t),
                 float(getattr(job.video, "duration_sec", 0.0) or 0.0),
-                position_hint=str(lane_track.get("position") or "")) | {
+                position_hint=str(lane_track.get("position") or ""), creds=job.creds) | {
                     "lane_track": lane_track
                 }
         except Exception:                          # noqa: BLE001
@@ -423,7 +423,7 @@ class JobRunner:
 
         if settings.recognizer_kind() != "vlm":
             return {}
-        if settings.credentials_for("vlm") is None:
+        if job.creds is None and settings.credentials_for("vlm") is None:
             return {}
         video = job.video
         store = vu.video_store_dir(base_dir)
@@ -434,8 +434,8 @@ class JobRunner:
             f_lane = None
             if not lane_info:
                 f_lane = pool.submit(read_lane_and_result, video, store,
-                                     start_t, duration)
-            f_bp = pool.submit(read_bp_steps, video, store)
+                                     start_t, duration, creds=job.creds)
+            f_bp = pool.submit(read_bp_steps, video, store, creds=job.creds)
             lane = lane_info or {}
             if f_lane is not None:
                 try:
