@@ -237,6 +237,14 @@ async def _device_scope(request: Request, call_next):
                 return RedirectResponse("/auth/login", status_code=303)
             return JSONResponse({"detail": "请先登录内测账号。"}, status_code=401)
         if identity:
+            # 模型密钥、全局规则库和规则编辑只属于平台管理员。普通内测用户
+            # 只能操作自己的录像；否则一次表单提交就可能影响所有人的分析。
+            protected = path.startswith("/api/model") or path.startswith("/model") or \
+                path.startswith("/api/guides") or (path.startswith("/api/games") and request.method != "GET")
+            if protected and not beta_auth.is_admin(identity):
+                if request.method == "GET" and "text/html" in request.headers.get("accept", ""):
+                    return RedirectResponse("/account", status_code=303)
+                return JSONResponse({"detail": "该内测账号没有平台配置权限。"}, status_code=403)
             raw = request.scope.get("query_string", b"").decode("latin-1")
             params = [(key, value) for key, value in parse_qsl(raw, keep_blank_values=True)
                       if key != "player_id"]

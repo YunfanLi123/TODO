@@ -102,6 +102,11 @@ def render_page(template_name: str, context: Dict[str, Any] = None,
     if context:
         merged.update(context)
     merged.update(extra)
+    try:
+        from .. import beta_auth
+        merged.setdefault("beta_auth_enabled", beta_auth.enabled())
+    except Exception:  # noqa: BLE001
+        merged.setdefault("beta_auth_enabled", False)
     return _env.get_template(template_name).render(**merged)
 
 

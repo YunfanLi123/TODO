@@ -35,6 +35,15 @@ def player_id(user_id: str) -> str:
     return f"user-{user_id}"
 
 
+def is_admin(identity: object) -> bool:
+    """管理员名单放环境变量，避免注册邀请码就获得全站配置权限。"""
+    if not isinstance(identity, dict):
+        return False
+    allowed = {item.strip().lower() for item in
+               os.environ.get("BETA_ADMIN_EMAILS", "").split(",") if item.strip()}
+    return str(identity.get("email") or "").lower() in allowed
+
+
 def normalize_email(value: str) -> str:
     return value.strip().lower()
 
