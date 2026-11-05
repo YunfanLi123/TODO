@@ -19,10 +19,12 @@ from contextlib import asynccontextmanager
 from typing import Any, Dict, List, Optional, Union
 
 
-from fastapi import Depends, FastAPI, HTTPException, Query, Request
-from fastapi.responses import HTMLResponse, JSONResponse, PlainTextResponse, Response
+from fastapi import Depends, FastAPI, Form, HTTPException, Query, Request
+from fastapi.responses import HTMLResponse, JSONResponse, PlainTextResponse, RedirectResponse, Response
 from fastapi.staticfiles import StaticFiles
+from starlette.middleware.sessions import SessionMiddleware
 from pydantic import BaseModel, Field
+from sqlalchemy import select
 from sqlalchemy.orm import Session
 
 from . import adapters  # noqa: F401  确保适配器完成注册
@@ -59,7 +61,8 @@ from .core.curve import build_curve
 from .core.dsl import Rule
 from .core import device as device_mod
 from .core import session as session_mod
-from .db import Base, MatchStateSnapshot, TrainingTaskState, get_engine, session_scope
+from .db import Base, MatchStateSnapshot, TrainingTaskState, User, get_engine, session_scope
+from . import beta_auth
 from .collection import match_state
 from .report.builder import (
     build_bp_report,
@@ -222,6 +225,24 @@ if os.path.isdir(STATIC_DIR):
 async def _device_scope(request: Request, call_next):
     from urllib.parse import parse_qsl, urlencode
 
+    # 内测模式：不信任浏览器传进来的 player_id，而是从已签名会话强制注入。
+    # 否则用户只改一下 URL 就能看到别人的对局。
+    if beta_auth.enabled():
+        path = request.url.path
+        public = path.startswith("/auth/") or path.startswith("/static/") or path == "/favicon.ico"
+        identity = request.session.get("user")
+        if not identity and not public:
+            accepts_html = "text/html" in request.headers.get("accept", "")
+            if request.method == "GET" and accepts_html:
+                return RedirectResponse("/auth/login", status_code=303)
+            return JSONResponse({"detail": "请先登录内测账号。"}, status_code=401)
+        if identity:
+            raw = request.scope.get("query_string", b"").decode("latin-1")
+            params = [(key, value) for key, value in parse_qsl(raw, keep_blank_values=True)
+                      if key != "player_id"]
+            params.append(("player_id", beta_auth.player_id(str(identity["id"]))))
+            request.scope["query_string"] = urlencode(params).encode("latin-1")
+
     if not device_mod.isolation_enabled():
         return await call_next(request)
 
@@ -242,6 +263,12 @@ async def _device_scope(request: Request, call_next):
     response = await call_next(request)
     device_mod.ensure_device_cookie(request, response, device_id)
     return response
+
+
+# 必须放在函数中间件之后注册，确保会话中间件先验证 Cookie，
+# ``_device_scope`` 才能安全读取 request.session。
+app.add_middleware(SessionMiddleware, secret_key=beta_auth.session_secret(),
+                   same_site="lax", https_only=os.environ.get("BETA_HTTPS", "").lower() in {"1", "true"})
 
 
 # ==========================================================================
@@ -326,6 +353,70 @@ def db_session():
     """FastAPI 依赖：每个请求一个会话，结束自动提交/回滚。"""
     with session_scope() as session:
         yield session
+
+
+# ==========================================================================
+# 内测账号
+
+
+def _auth_page(template: str, error: str = "") -> HTMLResponse:
+    return HTMLResponse(render_page(template, error=error, beta_enabled=beta_auth.enabled()))
+
+
+@app.get("/auth/login", response_class=HTMLResponse)
+def login_page(request: Request) -> HTMLResponse:
+    if request.session.get("user"):
+        return RedirectResponse("/upload", status_code=303)
+    return _auth_page("login.html")
+
+
+@app.post("/auth/login", response_class=HTMLResponse)
+def login(request: Request, email: str = Form(...), password: str = Form(...),
+          session: Session = Depends(db_session)) -> HTMLResponse:
+    user = session.execute(select(User).where(User.email == beta_auth.normalize_email(email))).scalar_one_or_none()
+    if user is None or not user.is_active or not beta_auth.verify_password(password, user.password_hash):
+        return _auth_page("login.html", "邮箱或密码不正确。")
+    request.session["user"] = {"id": user.id, "email": user.email,
+                                "name": user.display_name or user.email.split("@", 1)[0]}
+    return RedirectResponse("/upload", status_code=303)
+
+
+@app.get("/auth/register", response_class=HTMLResponse)
+def register_page(request: Request) -> HTMLResponse:
+    if request.session.get("user"):
+        return RedirectResponse("/upload", status_code=303)
+    return _auth_page("register.html")
+
+
+@app.post("/auth/register", response_class=HTMLResponse)
+def register(request: Request, email: str = Form(...), password: str = Form(...), invite_code: str = Form(...),
+             display_name: str = Form(""), session: Session = Depends(db_session)) -> HTMLResponse:
+    email = beta_auth.normalize_email(email)
+    error = beta_auth.validate_registration(email, password, invite_code)
+    if error:
+        return _auth_page("register.html", error)
+    if session.execute(select(User).where(User.email == email)).scalar_one_or_none() is not None:
+        return _auth_page("register.html", "这个邮箱已注册，请直接登录。")
+    user = beta_auth.make_user(email, password, display_name)
+    session.add(user)
+    session.flush()
+    request.session["user"] = {"id": user.id, "email": user.email,
+                                "name": user.display_name or user.email.split("@", 1)[0]}
+    return RedirectResponse("/upload", status_code=303)
+
+
+@app.post("/auth/logout")
+def logout(request: Request) -> RedirectResponse:
+    request.session.clear()
+    return RedirectResponse("/auth/login", status_code=303)
+
+
+@app.get("/account", response_class=HTMLResponse)
+def account(request: Request, session: Session = Depends(db_session)) -> HTMLResponse:
+    identity = request.session.get("user") or {}
+    player = beta_auth.player_id(str(identity.get("id") or ""))
+    match_count = len(match_col.list_matches(session, player_id=player, limit=1000))
+    return HTMLResponse(render_page("account.html", user=identity, match_count=match_count))
 
 
 # ==========================================================================

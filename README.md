@@ -19,6 +19,16 @@
 
 > 标注原则：所有自动识别结论必须保留画面依据与置信度；无法读清的字段显示“未识别”，不进行猜测。
 
+## 内测多人版
+
+设置 `BETA_AUTH=1` 后，系统启用邀请码注册、签名登录会话，并强制以登录用户的
+身份隔离 `player_id`；用户不能通过修改链接访问别人的对局。部署前复制
+`.env.example` 中的变量到云平台环境变量，至少设置随机的
+`BETA_SESSION_SECRET`、私有 `BETA_INVITE_CODE` 与 PostgreSQL `DATABASE_URL`。
+
+项目附带 `Dockerfile`，可由 CloudBase 云托管等容器平台从 GitHub 构建。云端实例
+本地磁盘不可用作长期录像或数据库存储：数据库必须使用 PostgreSQL，录像应接入对象存储。
+
 ## 快速开始
 
 ```powershell

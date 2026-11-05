@@ -52,6 +52,19 @@ class Base(DeclarativeBase):
     pass
 
 
+class User(Base):
+    """内测用户。对局表已用 ``player_id`` 隔离数据，这张表只负责身份。"""
+    __tablename__ = "users"
+
+    id = Column(String(64), primary_key=True)
+    email = Column(String(255), nullable=False, unique=True, index=True)
+    password_hash = Column(String(255), nullable=False)
+    display_name = Column(String(80), nullable=False, default="")
+    role = Column(String(16), nullable=False, default="member")
+    is_active = Column(Integer, nullable=False, default=1)
+    created_at = Column(DateTime, default=utcnow, nullable=False)
+
+
 class Match(Base):
     __tablename__ = "matches"
 
