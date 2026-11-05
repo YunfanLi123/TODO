@@ -239,7 +239,7 @@ async def _device_scope(request: Request, call_next):
         if identity:
             # 模型密钥、全局规则库和规则编辑只属于平台管理员。普通内测用户
             # 只能操作自己的录像；否则一次表单提交就可能影响所有人的分析。
-            protected = path.startswith("/api/model") or path.startswith("/model") or \
+            protected = (path.startswith("/api/model") and request.method != "GET") or path.startswith("/model") or \
                 path.startswith("/api/guides") or (path.startswith("/api/games") and request.method != "GET")
             if protected and not beta_auth.is_admin(identity):
                 if request.method == "GET" and "text/html" in request.headers.get("accept", ""):

@@ -637,10 +637,14 @@ document.getElementById('cancel').onclick = () => {
     } else {
       box.appendChild(document.createTextNode('模型未配置 · '));
     }
-    const a = document.createElement('a');
-    a.href = '/model';
-    a.textContent = s.has_key ? '改设置' : '去设置';
-    box.appendChild(a);
+    if (cfg.beta_mode) {
+      box.appendChild(document.createTextNode('平台模型已配置'));
+    } else {
+      const a = document.createElement('a');
+      a.href = '/model';
+      a.textContent = s.has_key ? '改设置' : '去设置';
+      box.appendChild(a);
+    }
   }).catch(() => { box.textContent = ''; });
 })();
 </script>

@@ -402,12 +402,14 @@ def register_routes(app: FastAPI, base_dir: str) -> None:
         提到 4GB 时文案忘了改，页面还写着「最大 500 MB」，用户据此
         判断自己传不上去 —— 文案与实现不一致比没有文案更糟。
         """
+        from .. import beta_auth
         return {
             "max_upload_bytes": vu.MAX_UPLOAD_BYTES,
             "max_upload_mb": round(vu.MAX_UPLOAD_BYTES / 1024 ** 2),
             "allowed_suffixes": sorted(vu.ALLOWED_SUFFIXES),
             "temp_dir": vu.temp_dir_hint(base_dir),
             "sample_sec_default": vu.GATE_SAMPLE_SEC,
+            "beta_mode": beta_auth.enabled(),
         }
 
     # ------------------------------------------------------------ 模型配置
@@ -415,6 +417,7 @@ def register_routes(app: FastAPI, base_dir: str) -> None:
     def model_config() -> Dict[str, Any]:
         """当前的模型配置（**密钥已掩码**）+ 供应方清单 + 限额。"""
         from . import model_presets, settings
+        from .. import beta_auth
 
         return {
             "slots": settings.display_slots(),
@@ -424,6 +427,7 @@ def register_routes(app: FastAPI, base_dir: str) -> None:
             "recognizer": settings.recognizer_kind(),
             "limits": settings.limits(),
             "status": settings.status(),
+            "beta_mode": beta_auth.enabled(),
         }
 
     @app.post("/api/model/config")
