@@ -20,7 +20,8 @@
       {{ item('⬆', '上传', '/upload', 'index') }}
       {{ item('☰', '对局', '/matches', 'matches') }}
       {{ item('✓', '训练', '/training', 'training') }}
-      {{ item('◎', '账号', '/account', 'account') }}
+      {# 匿名公开版没有登录态；保留「账号」会让人误以为还需要注册或登录。 #}
+      {% if not public_anonymous %}{{ item('◎', '账号', '/account', 'account') }}{% endif %}
       {# 模型：填一个 API Key 就够了 —— 供应方、端点、协议都由预设带出来。
          摆在侧边栏是因为它是个**配置**，不是一个流程里的某一步：
          上传页塞一个输入框会让人以为「不填就走不下去」，
