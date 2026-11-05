@@ -419,6 +419,23 @@ def register_routes(app: FastAPI, base_dir: str) -> None:
         from . import model_presets, settings
         from .. import beta_auth
 
+        # 公网匿名页不应泄露本机是否配过模型，更不能让前端误以为
+        # 上传会使用管理员的 Key。实际调用也由 settings.credentials_for
+        # 在 REQUIRE_USER_MODEL 模式下硬性拦截。
+        public_anonymous = os.environ.get("PUBLIC_ANONYMOUS", "").strip().lower() in {"1", "true", "yes"}
+        if public_anonymous:
+            return {
+                "slots": {"vlm": {"has_key": False, "model": ""}},
+                "providers": model_presets.catalog(),
+                "slot_labels": model_presets.SLOT_LABELS,
+                "slot_hints": model_presets.SLOT_HINTS,
+                "recognizer": settings.recognizer_kind(),
+                "limits": settings.limits(),
+                "status": {"has_key": False},
+                "beta_mode": False,
+                "public_anonymous": True,
+            }
+
         return {
             "slots": settings.display_slots(),
             "providers": model_presets.catalog(),
@@ -428,6 +445,7 @@ def register_routes(app: FastAPI, base_dir: str) -> None:
             "limits": settings.limits(),
             "status": settings.status(),
             "beta_mode": beta_auth.enabled(),
+            "public_anonymous": False,
         }
 
     @app.post("/api/model/config")
@@ -439,6 +457,8 @@ def register_routes(app: FastAPI, base_dir: str) -> None:
         密钥留空 = 不改动已存的那个（界面不回显明文，只能这样改）。
         """
         from . import settings
+        if os.environ.get("PUBLIC_ANONYMOUS", "").strip().lower() in {"1", "true", "yes"}:
+            raise HTTPException(status_code=403, detail="公开体验版不保存平台模型 Key。")
 
         body = payload or {}
         slot = str(body.get("slot") or "vlm")

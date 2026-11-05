@@ -195,6 +195,11 @@ def credentials_for(slot: str):
     """某个槽位的调用凭据。没有配就返回 None（**不猜、不编**）。"""
     from . import vlm_client
 
+    # 公开匿名体验版绝不回退到机器管理员的 config.yaml / 环境变量。
+    # 这样即使电脑上留有开发者 Key，公网访客也无法用它发起模型调用。
+    if os.environ.get("REQUIRE_USER_MODEL", "").strip().lower() in {"1", "true", "yes"}:
+        return None
+
     raw = slot_config(slot)
     env = env_override(slot)
     key = env["api_key"] or str(raw.get("api_key") or "").strip()

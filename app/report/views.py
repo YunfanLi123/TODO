@@ -105,6 +105,7 @@ def render_page(template_name: str, context: Dict[str, Any] = None,
     try:
         from .. import beta_auth
         merged.setdefault("beta_auth_enabled", beta_auth.enabled())
+        merged.setdefault("public_anonymous", os.environ.get("PUBLIC_ANONYMOUS", "").lower() in {"1", "true", "yes"})
     except Exception:  # noqa: BLE001
         merged.setdefault("beta_auth_enabled", False)
     return _env.get_template(template_name).render(**merged)
