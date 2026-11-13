@@ -160,6 +160,30 @@ def test_finalize_is_idempotent(client):
     assert first.json()["report_url"] == second.json()["report_url"]
 
 
+def test_finalize_keeps_an_anonymous_browser_in_its_own_match_space(client, monkeypatch):
+    """公网匿名版落库与打开报告必须使用同一个设备 ID。"""
+    from app.collection import video_api
+
+    monkeypatch.setenv("MULTI_TENANT", "1")
+    # 这里验证的是 ID 归属；规则库的全量报告构建另有覆盖，避免为了这条
+    # 路由断言重复跑数千条规则。
+    monkeypatch.setattr(video_api, "_analyze", lambda *_args: {
+        "stats": {}, "gaps": [], "lanes": [],
+    })
+    match_id = "hok-video-device-finalize"
+    _fake_session(match_id)
+    try:
+        created = client.post("/api/videos/finalize", json={"match_id": match_id})
+        assert created.status_code == 200, created.text[:400]
+        # 首次 POST 设置设备 Cookie；随后仍以同一设备身份列出刚落库的对局。
+        matches = client.get("/matches")
+    finally:
+        video_api._SESSIONS.pop(match_id, None)
+
+    assert matches.status_code == 200, matches.text[:400]
+    assert match_id in matches.text
+
+
 def test_finalize_on_an_expired_session_says_so(client):
     """会话没了要明确说「重新上传」，而不是 404 掉在门口。"""
     r = client.post("/api/videos/finalize", json={"match_id": "nope"})

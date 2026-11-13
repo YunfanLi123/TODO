@@ -103,7 +103,7 @@ def _lane_from_raw_rounds(raw: Dict[str, Any]) -> str:
     return lane if count / len(seen) >= 0.60 else ""
 
 
-def _save_state_snapshots(session: Session, match_id: str,
+def _save_state_snapshots(session: Session, match_id: str, player_id: str,
                           rounds: List[RecognizedRound]) -> int:
     """把窗口 VLM 给出的可靠状态随视频对局一起保存。"""
     saved = 0
@@ -116,7 +116,7 @@ def _save_state_snapshots(session: Session, match_id: str,
         if normalized["confidence"] < match_state.ACCEPT:
             continue
         snapshot = MatchStateSnapshot(
-            match_id=match_id, time_min=normalized["time_min"],
+            match_id=match_id, player_id=player_id, time_min=normalized["time_min"],
             confidence=normalized["confidence"],
         )
         snapshot.set_payload(normalized)
@@ -364,7 +364,7 @@ def _looks_like_color(answer: str) -> bool:
     return any(w in text for w in _COLOR_WORDS)
 
 
-def _find_video_match(session: Session, video_id: str):
+def _find_video_match(session: Session, video_id: str, player_id: str = "local"):
     """按视频 id 找已经建好的对局（幂等用）。
 
     同一个视频只该有一局对局：用户刷新页面、重试提交都走这里，
@@ -374,7 +374,7 @@ def _find_video_match(session: Session, video_id: str):
         return None
     from ..collection import match as match_col
 
-    for record in match_col.list_matches(session, player_id="local", limit=200):
+    for record in match_col.list_matches(session, player_id=player_id, limit=200):
         payload = record.get_payload() or {}
         rec = payload.get("recognition") or {}
         source = str((rec.get("stats") or {}).get("source") or "")
@@ -690,7 +690,8 @@ def register_routes(app: FastAPI, base_dir: str) -> None:
 
     # --------------------------------------- 扫描完 → 直接建对局、出报告
     @app.post("/api/videos/finalize")
-    def finalize(payload: Dict[str, Any], session: Session = Depends(db_session)
+    def finalize(payload: Dict[str, Any], player_id: str = Query("local"),
+                 session: Session = Depends(db_session)
                  ) -> Dict[str, Any]:
         """模型读完了 → 落库 → 分析 → 返回报告地址。
 
@@ -712,7 +713,7 @@ def register_routes(app: FastAPI, base_dir: str) -> None:
         video_id = str(video.get("video_id") or "")
 
         # 幂等：这一局建过了就直接给地址（用户刷新/重试都走这里）。
-        existing = _find_video_match(session, video_id)
+        existing = _find_video_match(session, video_id, player_id)
         if existing is not None:
             report = _analyze(session, existing, adapter.game_id)
             return {
@@ -766,12 +767,12 @@ def register_routes(app: FastAPI, base_dir: str) -> None:
 
         try:
             record, issues = match_col.save_match(
-                session, adapter, raw, source_kind="video"
+                session, adapter, raw, player_id=player_id, source_kind="video"
             )
         except match_col.MatchValidationError as exc:
             raise HTTPException(status_code=422, detail=str(exc))
 
-        _save_state_snapshots(session, record.id, state["skeleton"].rounds)
+        _save_state_snapshots(session, record.id, player_id, state["skeleton"].rounds)
 
         report = _analyze(session, record, adapter.game_id)
 
