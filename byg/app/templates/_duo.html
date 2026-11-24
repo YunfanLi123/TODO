@@ -1,0 +1,81 @@
+{# 狄仁杰与诸葛亮。两个人站在页面右上角，盯着屏幕里的人看。
+   形象是本项目手画的（照着「官袍束发的判官」与「纶巾羽扇的书生」
+   自己画），不是任何现成美术资源的复制品。
+   样式在 app/static/nav.css 里，视线跟着光标走。 #}
+    <div class="duo" id="duo" aria-hidden="true">
+      <svg viewBox="0 0 268 160" role="img" aria-label="狄仁杰与诸葛亮">
+        <!-- ============ 狄仁杰：官袍、束发、络腮胡，手里一支判官笔 ============ -->
+        <g class="fg-drj">
+          <path d="M6,160 C8,124 30,108 68,108 C106,108 128,124 130,160 Z" fill="#8E2F3C"/>
+          <path d="M46,108 L68,134 L90,108 L78,103 L68,120 L58,103 Z" fill="#5E1F29"/>
+          <path d="M118,160 L124,66" stroke="#3B2A22" stroke-width="5" stroke-linecap="round"/>
+          <path d="M124,66 L124,42" stroke="#1F1712" stroke-width="7" stroke-linecap="round"/>
+          <ellipse cx="68" cy="72" rx="25" ry="28" fill="#F1CBA6"/>
+          <path d="M43,68 C43,44 54,34 68,34 C82,34 93,44 93,68 C86,56 78,50 68,50 C58,50 50,56 43,68 Z" fill="#2A2230"/>
+          <path d="M55,36 C59,25 77,25 81,36 Z" fill="#2A2230"/>
+          <path d="M53,50 C61,43 75,43 83,50 L83,57 C75,50 61,50 53,57 Z" fill="#8E2F3C"/>
+          <path d="M46,88 C50,102 86,102 90,88 C90,103 77,108 68,108 C59,108 46,103 46,88 Z" fill="#2A2230"/>
+          <path d="M63,82 L73,82" stroke="#B5765A" stroke-width="2" stroke-linecap="round"/>
+          <path d="M50,64 L61,62" stroke="#2A2230" stroke-width="3" stroke-linecap="round"/>
+          <path d="M75,62 L86,64" stroke="#2A2230" stroke-width="3" stroke-linecap="round"/>
+          <ellipse cx="56" cy="73" rx="6.5" ry="5" fill="#FFFFFF"/>
+          <circle class="pupil" cx="56" cy="73" r="2.8" fill="#2A2230"/>
+          <ellipse cx="80" cy="73" rx="6.5" ry="5" fill="#FFFFFF"/>
+          <circle class="pupil" cx="80" cy="73" r="2.8" fill="#2A2230"/>
+          <path d="M68,77 L66,85 L70,85" stroke="#C99A72" stroke-width="2" fill="none" stroke-linecap="round"/>
+        </g>
+
+        <!-- ============ 诸葛亮：纶巾、白袍、长须，手里一把羽扇 ============ -->
+        <g class="fg-zgl">
+          <path d="M138,160 C140,126 162,110 200,110 C238,110 260,126 262,160 Z" fill="#EDF2F6"/>
+          <path d="M138,160 C140,126 162,110 200,110 C238,110 260,126 262,160 Z" fill="none" stroke="#9FB6C6" stroke-width="2"/>
+          <path d="M182,110 L200,134 L218,110 L208,106 L200,120 L192,106 Z" fill="#C8DAE6"/>
+          <ellipse cx="200" cy="74" rx="24" ry="27" fill="#F1CBA6"/>
+          <path d="M176,68 C176,42 186,32 200,32 C214,32 224,42 224,68 C217,56 210,50 200,50 C190,50 183,56 176,68 Z" fill="#F7FAFC"/>
+          <path d="M176,68 C176,42 186,32 200,32 C214,32 224,42 224,68 L218,68 C218,47 210,38 200,38 C190,38 182,47 182,68 Z" fill="#C8DAE6"/>
+          <path d="M224,60 C236,64 240,80 236,96 C232,84 228,72 220,66 Z" fill="#E6EEF4"/>
+          <path d="M184,86 C186,104 192,120 200,124 C208,120 214,104 216,86 C212,102 206,110 200,111 C194,110 188,102 184,86 Z" fill="#D9DEE4"/>
+          {# 眉：平着走，微微上挑 —— 倒八字会让他看起来在发火，
+             压得太低又像没睡醒。军师该是「醒着」的样子。 #}
+          <path d="M184,65 C188,62 194,62 197,64" stroke="#9AA3AC" stroke-width="2.5"
+                fill="none" stroke-linecap="round"/>
+          <path d="M203,64 C206,62 212,62 216,65" stroke="#9AA3AC" stroke-width="2.5"
+                fill="none" stroke-linecap="round"/>
+          {# 眼：睁圆一点。扁成一条缝就成了「没睡醒 / 喝多了」，
+             而他是全场最该清醒的那个。 #}
+          <ellipse cx="190" cy="74" rx="6.2" ry="5.7" fill="#FFFFFF"/>
+          <circle class="pupil" cx="190" cy="74" r="2.7" fill="#3A3F46"/>
+          <ellipse cx="210" cy="74" rx="6.2" ry="5.7" fill="#FFFFFF"/>
+          <circle class="pupil" cx="210" cy="74" r="2.7" fill="#3A3F46"/>
+          {# 鼻：胡子上方还留着一段脸，没鼻子就只剩两块眼白。 #}
+          <path d="M200,77 L198,85 L202,85" stroke="#D9A87E" stroke-width="2"
+                fill="none" stroke-linecap="round"/>
+          <path d="M236,152 C224,140 218,118 228,102 C240,90 258,96 262,116 C265,132 254,146 240,152 Z"
+                fill="#EFF5F9" stroke="#9FB8C9" stroke-width="2"/>
+          <path d="M240,151 C232,136 228,120 230,104" stroke="#B7CBD8" stroke-width="1.6" fill="none"/>
+          <path d="M240,151 C238,134 242,116 248,100" stroke="#B7CBD8" stroke-width="1.6" fill="none"/>
+          <path d="M240,151 C246,136 252,124 258,116" stroke="#B7CBD8" stroke-width="1.6" fill="none"/>
+          <path d="M240,151 L233,160" stroke="#B08A5A" stroke-width="4" stroke-linecap="round"/>
+        </g>
+      </svg>
+    </div>
+
+<script>
+// 包一层 IIFE：这一段可能被多个页面各带一次，
+// 而 const 重复声明会直接抛错。
+(function () {
+// ---------- 他们的视线 ----------
+// 狄仁杰与诸葛亮看着屏幕里的人。视线向量写进 --lx / --ly，
+// 整幅画只靠两个变量驱动，改一次就够。
+var duo = document.getElementById('duo');
+if (duo) {
+  const cl = v => Math.max(-1, Math.min(1, v)).toFixed(3);
+  window.addEventListener('mousemove', e => {
+    const r = duo.getBoundingClientRect();
+    if (!r.width || !r.height) return;
+    duo.style.setProperty('--lx', cl((e.clientX - (r.left + r.width / 2)) / (r.width / 2)));
+    duo.style.setProperty('--ly', cl((e.clientY - (r.top + r.height / 2)) / (r.height / 2)));
+  });
+}
+})();
+</script>

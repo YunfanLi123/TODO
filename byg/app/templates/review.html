@@ -1,0 +1,437 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>{{ data.game_display }} · 操作模式库审核</title>
+<link rel="stylesheet" href="{{ asset('report.css') }}">
+<style>
+/* 审核工作台专用样式。变量沿用 report.css 的深色主题 ——
+   这两个页面本来就是同一件事的两面。 */
+.rv-wrap { max-width: 1180px; margin: 0 auto; padding: 0 24px 80px; }
+.rv-head { display: flex; align-items: baseline; gap: 14px; flex-wrap: wrap; margin: 28px 0 18px; }
+.rv-head h1 { font-size: 26px; margin: 0; font-weight: 700; }
+.rv-ver { font-family: Arial, sans-serif; color: var(--accent); font-size: 15px; font-weight: 700; }
+
+.rv-stats { display: flex; gap: 26px; flex-wrap: wrap; padding: 16px 20px;
+  background: var(--panel); border: 1px solid var(--line); border-radius: var(--radius);
+  margin-bottom: 16px; }
+.rv-stat { text-align: center; }
+.rv-stat .n { font-size: 24px; font-weight: 700; line-height: 1.2; font-family: Arial, sans-serif; }
+.rv-stat .k { font-size: 12px; color: var(--muted); margin-top: 2px; }
+.rv-stat.alert .n { color: var(--sev-medium); }
+.rv-stat.danger .n { color: var(--sev-high); }
+
+/* 「从未触发」是审核最该先看的信号，视觉权重给足 */
+.rv-alert { padding: 14px 20px; margin-bottom: 18px;
+  border: 1px solid color-mix(in srgb, var(--accent) 35%, transparent); border-left: 3px solid var(--sev-medium);
+  background: color-mix(in srgb, var(--accent) 6%, transparent); }
+.rv-alert-title { font-weight: 700; color: var(--sev-medium); margin-bottom: 8px; font-size: 13.5px; }
+.rv-alert-ids { display: flex; gap: 8px; flex-wrap: wrap; }
+.rv-alert-ids code { padding: 2px 8px; border-radius: 4px; background: color-mix(in srgb, var(--muted) 14%, transparent);
+  font-size: 12px; font-family: Arial, sans-serif; cursor: pointer; }
+.rv-alert-ids code:hover { background: color-mix(in srgb, var(--accent) 24%, transparent); color: var(--accent); }
+
+.rv-filters { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 16px; }
+.rv-chip { padding: 5px 13px; border-radius: 999px; font-size: 13px; cursor: pointer;
+  border: 1px solid var(--line); background: var(--panel); color: var(--muted);
+  user-select: none; transition: all .12s; }
+.rv-chip:hover { border-color: var(--accent); color: var(--accent); }
+.rv-chip.on { background: color-mix(in srgb, var(--accent) 14%, transparent); border-color: var(--accent); color: var(--accent); }
+
+.rv-rule { background: var(--panel); border: 1px solid var(--line);
+  border-radius: var(--radius); margin-bottom: 12px; overflow: hidden; }
+.rv-rule.deprecated { opacity: .55; }
+.rv-rule.never { border-left: 3px solid var(--sev-medium); }
+.rv-rule-head { display: flex; align-items: center; gap: 12px; padding: 14px 18px; cursor: pointer; }
+.rv-rule-head:hover { background: var(--overlay); }
+.rv-id { font-family: Arial, sans-serif; font-size: 12.5px; color: var(--muted); min-width: 168px; }
+.rv-title { flex: 1; font-weight: 700; font-size: 15px; }
+.rv-cat { font-size: 12px; color: var(--muted); background: color-mix(in srgb, var(--muted) 12%, transparent);
+  padding: 2px 9px; border-radius: 4px; }
+.rv-badge { font-size: 11.5px; padding: 2px 9px; border-radius: 999px; white-space: nowrap; }
+.b-never { background: color-mix(in srgb, var(--accent) 16%, transparent); color: var(--sev-medium); }
+.b-thin { background: color-mix(in srgb, var(--sev-low) 14%, transparent); color: #5CB4E0; }
+.b-ok { background: color-mix(in srgb, var(--ok) 14%, transparent); color: #78C88C; }
+.b-edited { background: color-mix(in srgb, var(--purple) 16%, transparent); color: #9B89DB; }
+.b-off { background: color-mix(in srgb, var(--muted) 14%, transparent); color: var(--muted); }
+
+.rv-rule-body { padding: 0 18px 18px; border-top: 1px solid var(--line); }
+.rv-sec { margin-top: 16px; }
+.rv-sec-h { font-size: 11.5px; letter-spacing: .1em; color: var(--muted);
+  margin-bottom: 8px; font-weight: 700; }
+
+.rv-cond { display: flex; align-items: center; gap: 10px; padding: 6px 0; font-size: 13.5px; }
+.rv-cond-join { color: var(--muted); font-size: 11.5px; min-width: 44px; font-family: Arial, sans-serif; }
+.rv-fact { color: var(--text); font-weight: 700; }
+.rv-op { color: var(--accent); font-family: Arial, sans-serif; font-weight: 700; }
+.rv-val { color: #5CB4E0; font-family: Arial, sans-serif; font-weight: 700; }
+.rv-arrow { color: var(--muted); margin: 0 6px; }
+.rv-hint { color: var(--muted); font-size: 13px; line-height: 1.7; }
+
+.rv-src { font-size: 12.5px; color: var(--muted); }
+.rv-src a { color: var(--accent); }
+.rv-quote { border-left: 2px solid var(--line); padding: 4px 0 4px 12px;
+  margin-top: 6px; color: var(--muted); font-size: 12.5px; line-height: 1.7; }
+
+.rv-diff { background: color-mix(in srgb, var(--purple) 7%, transparent); border: 1px solid color-mix(in srgb, var(--purple) 24%, transparent);
+  border-radius: 6px; padding: 10px 14px; margin-top: 10px; font-size: 12.5px; }
+.rv-diff-h { color: #9B89DB; font-weight: 700; margin-bottom: 6px; }
+.rv-diff-row { display: flex; gap: 8px; flex-wrap: wrap; padding: 3px 0; }
+.rv-diff-before { color: var(--sev-high); text-decoration: line-through; font-family: Arial, sans-serif; }
+.rv-diff-after { color: #78C88C; font-family: Arial, sans-serif; }
+
+.rv-cov { display: flex; gap: 18px; flex-wrap: wrap; align-items: center; margin-top: 10px; }
+.rv-bar { width: 150px; height: 7px; border-radius: 4px; background: color-mix(in srgb, var(--muted) 16%, transparent); overflow: hidden; }
+.rv-bar i { display: block; height: 100%; background: var(--sev-high); }
+.rv-num { font-family: Arial, sans-serif; font-size: 13px; }
+
+.rv-acts { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 16px;
+  padding-top: 14px; border-top: 1px solid var(--line); }
+.rv-btn { padding: 6px 15px; border-radius: 6px; font-size: 13px; cursor: pointer;
+  border: 1px solid var(--line); background: transparent; color: var(--muted);
+  font-family: inherit; }
+.rv-btn:hover { border-color: var(--accent); color: var(--accent); }
+.rv-btn.danger:hover { border-color: var(--sev-high); color: var(--sev-high); }
+.rv-btn.primary { border-color: var(--accent); color: var(--accent);
+  background: color-mix(in srgb, var(--accent) 10%, transparent); }
+
+.rv-editor { margin-top: 14px; padding: 14px; background: var(--overlay);
+  border-radius: 6px; border: 1px solid var(--line); }
+.rv-editor label { display: block; font-size: 12px; color: var(--muted); margin: 10px 0 4px; }
+.rv-editor input, .rv-editor textarea, .rv-editor select {
+  width: 100%; padding: 7px 10px; border-radius: 5px; border: 1px solid var(--line);
+  background: var(--bg); color: var(--text); font-family: Arial, "Microsoft YaHei", sans-serif;
+  font-size: 13.5px; }
+.rv-editor textarea { min-height: 62px; resize: vertical; font-family: inherit; }
+.rv-grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.rv-editor .row { display: flex; gap: 10px; margin-top: 14px; }
+.rv-editor .row .rv-btn { flex: 1; text-align: center; }
+
+.rv-empty { padding: 40px; text-align: center; color: var(--muted); }
+.rv-msg { padding: 9px 16px; border-radius: 6px; margin-bottom: 14px; font-size: 13.5px; }
+.rv-msg.ok { background: color-mix(in srgb, var(--ok) 12%, transparent); color: #78C88C; border: 1px solid color-mix(in srgb, var(--ok) 30%, transparent); }
+.rv-msg.err { background: color-mix(in srgb, var(--sev-high) 12%, transparent); color: var(--sev-high); border: 1px solid color-mix(in srgb, var(--sev-high) 30%, transparent); }
+</style>
+</head>
+<body>
+<div class="rv-wrap">
+
+  <div class="rv-head">
+    <h1>{{ data.game_display }} · 操作模式库审核</h1>
+    <span class="rv-ver">版本 {{ data.version or '—' }}</span>
+  </div>
+
+  <div id="msg"></div>
+
+  <div class="rv-stats">
+    <div class="rv-stat"><div class="n">{{ data.summary.total }}</div><div class="k">规则总数</div></div>
+    <div class="rv-stat"><div class="n">{{ data.summary.active }}</div><div class="k">生效中</div></div>
+    <div class="rv-stat"><div class="n">{{ data.summary.deprecated }}</div><div class="k">已停用</div></div>
+    <div class="rv-stat"><div class="n">{{ data.summary.edited }}</div><div class="k">人工改过</div></div>
+    <div class="rv-stat alert"><div class="n">{{ data.summary.never_count }}</div><div class="k">从未触发</div></div>
+    <div class="rv-stat"><div class="n">{{ data.summary.matched_matches }}</div><div class="k">样本对局</div></div>
+  </div>
+
+  {% if data.summary.never_count %}
+  <div class="rv-alert">
+    <div class="rv-alert-title">
+      有 {{ data.summary.never_count }} 条规则在真实对局里从未被触发过
+    </div>
+    <div class="rv-hint" style="margin-bottom:8px;">
+      要么阈值写错了，要么描述的情形在实际对局里压根不出现 —— 两种都意味着它在悄悄占位。
+      点下面任一条可以直接跳过去。
+    </div>
+    <div class="rv-alert-ids">
+      {% for item in data.summary.never_triggered %}
+      <code onclick="jumpTo('{{ item.rule_id }}')">{{ item.rule_id }}</code>
+      {% endfor %}
+    </div>
+  </div>
+  {% endif %}
+
+  <div class="rv-filters" id="filters">
+    <span class="rv-chip on" data-f="all">全部 {{ data.summary.total }}</span>
+    <span class="rv-chip" data-f="active">生效中 {{ data.summary.active }}</span>
+    <span class="rv-chip" data-f="never">从未触发 {{ data.summary.never_count }}</span>
+    <span class="rv-chip" data-f="edited">人工改过 {{ data.summary.edited }}</span>
+    <span class="rv-chip" data-f="off">已停用 {{ data.summary.deprecated }}</span>
+  </div>
+
+  <div id="list">
+    {% for r in data.rules %}
+    <div class="rv-rule {{ 'deprecated' if r.status != 'active' else '' }}
+                {{ 'never' if r.coverage and r.coverage.verdict == 'never' else '' }}"
+         id="rule-{{ r.rule_id }}">
+      <div class="rv-rule-head" onclick="toggle('{{ r.rule_id }}')">
+        <span class="rv-id">{{ r.rule_id }}</span>
+        <span class="rv-title">{{ r.title }}</span>
+        {% if r.coverage and r.coverage.verdict == 'never' %}
+          <span class="rv-badge b-never">从未触发</span>
+        {% elif r.coverage and r.coverage.verdict == 'thin' %}
+          <span class="rv-badge b-thin">样本 {{ r.coverage.checked }}</span>
+        {% endif %}
+        {% if r.edited %}<span class="rv-badge b-edited">人工改过</span>{% endif %}
+        {% if r.status != 'active' %}<span class="rv-badge b-off">已停用</span>{% endif %}
+        <span class="rv-cat">{{ r.category }}</span>
+      </div>
+
+      <div class="rv-rule-body" id="body-{{ r.rule_id }}" style="display:none;">
+        <div class="rv-sec">
+          <div class="rv-sec-h">触发条件</div>
+          {% for c in r.payload.trigger.all %}
+          <div class="rv-cond">
+            <span class="rv-cond-join">{{ '全部满足' if loop.first else '且' }}</span>
+            <span class="rv-fact">{{ data.fact_labels.get(c.fact, c.fact) }}</span>
+            <span class="rv-op">{{ c.op }}</span>
+            <span class="rv-val">{{ c.value if c.value is not none else '—' }}</span>
+          </div>
+          {% else %}
+          <div class="rv-hint">（无显式触发条件）</div>
+          {% endfor %}
+        </div>
+
+        <div class="rv-sec">
+          <div class="rv-sec-h">期望动作</div>
+          <div class="rv-cond">
+            <span class="rv-fact">{{ data.fact_labels.get(r.payload.expect.fact, r.payload.expect.fact) }}</span>
+            <span class="rv-op">{{ r.payload.expect.op }}</span>
+            <span class="rv-val">
+              {% if r.payload.expect.value is iterable and r.payload.expect.value is not string %}
+                {{ r.payload.expect.value | join(' / ') }}
+              {% else %}{{ r.payload.expect.value }}{% endif %}
+            </span>
+          </div>
+        </div>
+
+        {% if r.payload.rationale %}
+        <div class="rv-sec">
+          <div class="rv-sec-h">判定依据</div>
+          <div class="rv-hint">{{ r.payload.rationale }}</div>
+        </div>
+        {% endif %}
+
+        {% if r.coverage %}
+        <div class="rv-sec">
+          <div class="rv-sec-h">历史覆盖（基于 {{ r.coverage.matches }} 局）</div>
+          <div class="rv-cov">
+            <span class="rv-num">被检验 {{ r.coverage.checked }} {{ unit }}</span>
+            <div class="rv-bar">
+              <i style="width: {{ (r.coverage.rate or 0) * 100 }}%"></i>
+            </div>
+            <span class="rv-num">偏离 {{ r.coverage.deviated }}</span>
+          </div>
+        </div>
+        {% endif %}
+
+        <div class="rv-sec">
+          <div class="rv-sec-h">规则溯源</div>
+          <div class="rv-src">
+            {{ r.payload.source.guide if r.payload.source else '未标注' }}
+            {% if r.payload.source and r.payload.source.locator %} · {{ r.payload.source.locator }}{% endif %}
+            {% if r.payload.source and r.payload.source.url %}
+              · <a href="{{ r.payload.source.url }}" target="_blank" rel="noopener">原文链接</a>
+            {% endif %}
+          </div>
+          {% if r.payload.source and r.payload.source.quoted %}
+          <div class="rv-quote">{{ r.payload.source.quoted }}</div>
+          {% endif %}
+        </div>
+
+        {% if r.edited_fields %}
+        <div class="rv-diff">
+          <div class="rv-diff-h">人工修改了这些字段：{{ r.edited_fields | join('、') }}</div>
+          {% for f in r.edited_fields %}
+          <div class="rv-diff-row">
+            <span class="rv-diff-before">{{ (r.original_payload or {})[f] | tojson }}</span>
+            <span class="rv-arrow">→</span>
+            <span class="rv-diff-after">{{ r.payload[f] | tojson }}</span>
+          </div>
+          {% endfor %}
+          {% if r.review_note %}
+          <div class="rv-hint" style="margin-top:8px;">备注：{{ r.review_note }}（{{ r.reviewed_by or '未署名' }}）</div>
+          {% endif %}
+        </div>
+        {% endif %}
+
+        {% if r.history %}
+        <div class="rv-sec">
+          <div class="rv-sec-h">修改历史（{{ r.history | length }} 次）</div>
+          {% for h in r.history %}
+          <div class="rv-hint">
+            {{ h.created_at[:16] }} · {{ h.field }} ·
+            <span class="rv-diff-before">{{ h.before | tojson }}</span>
+            <span class="rv-arrow">→</span>
+            <span class="rv-diff-after">{{ h.after | tojson }}</span>
+            {% if h.note %} · {{ h.note }}{% endif %}
+          </div>
+          {% endfor %}
+        </div>
+        {% endif %}
+
+        <div class="rv-acts">
+          <button class="rv-btn" onclick="openEditor('{{ r.rule_id }}')">修改阈值</button>
+          {% if r.status == 'active' %}
+          <button class="rv-btn danger" onclick="setStatus('{{ r.rule_id }}','deprecated')">停用</button>
+          {% else %}
+          <button class="rv-btn" onclick="setStatus('{{ r.rule_id }}','active')">恢复启用</button>
+          {% endif %}
+        </div>
+        <div id="editor-{{ r.rule_id }}"></div>
+      </div>
+    </div>
+    {% else %}
+    <div class="rv-empty">
+      这个版本还没有操作模式。<br>
+      先载入操作模式库，或从攻略采集候选。
+    </div>
+    {% endfor %}
+  </div>
+
+</div>
+
+<script>
+const RULES = {{ rules_json | safe }};
+const SUMMARY = {{ summary_json | safe }};
+const LABELS = {{ labels_json | safe }};
+const GAME = {{ data.game | tojson }};
+const VERSION = {{ data.version | tojson }};
+const API = `/api/games/${GAME}/rules/${VERSION}`;
+
+const OP_TEXT = {
+  "==": "=", "!=": "≠", ">": ">", ">=": "≥", "<": "<", "<=": "≤",
+  "in": "属于", "not_in": "不属于", "between": "介于"
+};
+
+function msg(text, kind) {
+  const el = document.getElementById("msg");
+  el.innerHTML = text ? `<div class="rv-msg ${kind}">${text}</div>` : "";
+  if (kind === "ok") setTimeout(() => { el.innerHTML = ""; }, 3000);
+}
+
+function toggle(id) {
+  const b = document.getElementById("body-" + id);
+  b.style.display = b.style.display === "none" ? "" : "none";
+}
+
+function jumpTo(id) {
+  const card = document.getElementById("rule-" + id);
+  if (card) {
+    card.scrollIntoView({ behavior: "smooth", block: "center" });
+    document.getElementById("body-" + id).style.display = "";
+    card.style.borderColor = "var(--accent)";
+    setTimeout(() => { card.style.borderColor = ""; }, 1600);
+  }
+}
+
+function esc(s) {
+  return String(s).replace(/[&<>"]/g, c =>
+    ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+}
+
+function openEditor(id) {
+  const r = RULES.find(x => x.rule_id === id);
+  const c = (r.payload.trigger.all || [])[0] || {};
+  const el = document.getElementById("editor-" + id);
+  if (el.innerHTML) { el.innerHTML = ""; return; }
+
+  el.innerHTML = `
+    <div class="rv-editor">
+      <label>主触发事实（改错事实等于换了一条规则）</label>
+      <input id="e_fact_${id}" value="${esc(c.fact || "")}">
+      <div class="rv-grid2">
+        <div>
+          <label>比较符</label>
+          <select id="e_op_${id}">
+            ${Object.keys(OP_TEXT).map(o =>
+              `<option value="${o}" ${o === c.op ? "selected" : ""}>${o} ${OP_TEXT[o]}</option>`
+            ).join("")}
+          </select>
+        </div>
+        <div>
+          <label>阈值</label>
+          <input id="e_val_${id}" value="${esc(c.value !== undefined ? c.value : "")}">
+        </div>
+      </div>
+      <label>备注（会留进修改历史）</label>
+      <input id="e_note_${id}" placeholder="例如：攻略原文是「不低于 50」，抽取时方向反了">
+      <div class="row">
+        <button class="rv-btn" onclick="closeEditor('${id}')">取消</button>
+        <button class="rv-btn primary" onclick="save('${id}')">保存修改</button>
+      </div>
+    </div>`;
+  el.innerHTML = el.innerHTML;   // 重绘让内联事件生效
+}
+
+// 直接改 DOM 会丢失事件绑定，所以编辑器用一次性插入 + 全局委托
+document.addEventListener("click", function (e) {
+  const act = e.target.getAttribute && e.target.getAttribute("data-act");
+  if (act === "edit") openEditor(act);
+});
+
+function closeEditor(id) { document.getElementById("editor-" + id).innerHTML = ""; }
+
+async function save(id) {
+  const fact = document.getElementById("e_fact_" + id).value.trim();
+  const op = document.getElementById("e_op_" + id).value;
+  const raw = document.getElementById("e_val_" + id).value.trim();
+  const note = document.getElementById("e_note_" + id).value.trim();
+  if (!fact) { msg("事实名不能为空", "err"); return; }
+
+  const value = (raw !== "" && !isNaN(Number(raw))) ? Number(raw) : raw;
+  const r = RULES.find(x => x.rule_id === id);
+  const conditions = (r.payload.trigger.all || []).map((c, i) =>
+    i === 0 ? { fact, op, value } : c
+  );
+
+  await patch({ trigger: { all: conditions, any: [], none: [] } }, note, id);
+}
+
+async function setStatus(id, status) {
+  await fetch(`${API}/${id}/status`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ status, note: status === "deprecated" ? "人工停用" : "人工恢复" })
+  }).then(r => r.json());
+  msg(status === "deprecated" ? `${id} 已停用` : `${id} 已恢复`, "ok");
+  setTimeout(() => location.reload(), 900);
+}
+
+async function patch(changes, note, id) {
+  try {
+    const res = await fetch(API + "/" + id, {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ changes, note, reviewer: "local" })
+    });
+    const data = await res.json();
+    if (!res.ok) { msg("修改被拒：" + (data.detail || "未知错误"), "err"); return; }
+    msg(`${id} ${data.message}`, "ok");
+    setTimeout(() => location.reload(), 900);
+  } catch (err) {
+    msg("请求失败：" + err, "err");
+  }
+}
+
+// 筛选
+document.getElementById("filters").addEventListener("click", function (e) {
+  const chip = e.target.closest(".rv-chip");
+  if (!chip) return;
+  document.querySelectorAll(".rv-chip").forEach(c => c.classList.remove("on"));
+  chip.classList.add("on");
+  const f = chip.dataset.f;
+
+  document.querySelectorAll(".rv-rule").forEach(card => {
+    const id = card.id.replace("rule-", "");
+    const r = RULES.find(x => x.rule_id === id);
+    let show = true;
+    if (f === "active") show = r.status === "active";
+    else if (f === "off") show = r.status !== "active";
+    else if (f === "never") show = r.coverage && r.coverage.verdict === "never";
+    else if (f === "edited") show = r.edited;
+    card.style.display = show ? "" : "none";
+  });
+});
+</script>
+</body>
+</html>

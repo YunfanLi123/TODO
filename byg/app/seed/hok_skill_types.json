@@ -1,0 +1,1765 @@
+{
+  "schema_version": 1,
+  "kind": "hok_skill_types",
+  "built_at": "2026-10-30T04:34:00+00:00",
+  "source": {
+    "kind": "模型生成 + 人工核对",
+    "model": "未记录",
+    "prompt_version": "skill-types-v1",
+    "hero_list": "app/seed/sources/hok_hero_tags/herolist.json",
+    "manual_overrides": [
+      "赵云",
+      "敖隐"
+    ],
+    "manual_file": "app/seed/sources/hok_hero_tags/skill_types_manual.json",
+    "note": "赵云=位移/伤害/控制 已人工核对",
+    "resealed_from": "app/seed/sources/hok_hero_tags/skill_types.json"
+  },
+  "quality_flags": [
+    "has_manual_overrides"
+  ],
+  "failures": [],
+  "manual_overrides": [
+    "赵云",
+    "敖隐"
+  ],
+  "_说明": "每个英雄三个主动技能在局内按钮上印的类型标签。由 tools/build_hok_skill_types.py 用配置的看画面模型（纯文本调用）生成，经人工核对赵云=位移/伤害/控制。",
+  "_来源": "王者荣耀技能类型（模型知识 + 人工核对）",
+  "heroes": {
+    "廉颇": {
+      "types": [
+        "伤害",
+        "击飞",
+        "伤害"
+      ],
+      "cats": [
+        "damage",
+        "control",
+        "damage"
+      ],
+      "title": "正义爆轰"
+    },
+    "小乔": {
+      "types": [
+        "位移",
+        "伤害",
+        "击退"
+      ],
+      "cats": [
+        "dash",
+        "damage",
+        "control"
+      ],
+      "title": "恋之微风"
+    },
+    "赵云": {
+      "types": [
+        "位移",
+        "伤害",
+        "击退"
+      ],
+      "cats": [
+        "dash",
+        "damage",
+        "control"
+      ],
+      "title": "苍天翔龙",
+      "manual": true,
+      "note": "2026-10-29 人工核对：一技能「惊雷之龙」位移、二技能「破云之龙」伤害+击退、三技能「天翔之龙」大幅位移+击飞"
+    },
+    "墨子": {
+      "types": [
+        "控制",
+        "伤害",
+        "护盾"
+      ],
+      "cats": [
+        "control",
+        "damage",
+        "shield"
+      ],
+      "title": "和平守望"
+    },
+    "妲己": {
+      "types": [
+        "眩晕",
+        "伤害",
+        "治疗"
+      ],
+      "cats": [
+        "control",
+        "damage",
+        "heal"
+      ],
+      "title": "魅力之狐"
+    },
+    "嬴政": {
+      "types": [
+        "伤害",
+        "击退",
+        "护盾"
+      ],
+      "cats": [
+        "damage",
+        "control",
+        "shield"
+      ],
+      "title": "王者独尊"
+    },
+    "孙尚香": {
+      "types": [
+        "位移",
+        "伤害",
+        "击退"
+      ],
+      "cats": [
+        "dash",
+        "damage",
+        "control"
+      ],
+      "title": "千金重弩"
+    },
+    "鲁班七号": {
+      "types": [
+        "伤害",
+        "控制",
+        "伤害"
+      ],
+      "cats": [
+        "damage",
+        "control",
+        "damage"
+      ],
+      "title": "机关造物"
+    },
+    "庄周": {
+      "types": [
+        "伤害",
+        "减速",
+        "召唤"
+      ],
+      "cats": [
+        "damage",
+        "control",
+        "summon"
+      ],
+      "title": "逍遥梦幻"
+    },
+    "刘禅": {
+      "types": [
+        "伤害",
+        "击退",
+        "嘲讽"
+      ],
+      "cats": [
+        "damage",
+        "control",
+        "control"
+      ],
+      "title": "暴走机关"
+    },
+    "高渐离": {
+      "types": [
+        "伤害",
+        "加速",
+        "伤害"
+      ],
+      "cats": [
+        "damage",
+        "utility",
+        "damage"
+      ],
+      "title": "叛逆吟游"
+    },
+    "阿轲": {
+      "types": [
+        "位移",
+        "伤害",
+        "隐匿"
+      ],
+      "cats": [
+        "dash",
+        "damage",
+        "utility"
+      ],
+      "title": "信念之刃"
+    },
+    "钟无艳": {
+      "types": [
+        "控制",
+        "伤害",
+        "眩晕"
+      ],
+      "cats": [
+        "control",
+        "damage",
+        "control"
+      ],
+      "title": "野蛮之锤"
+    },
+    "孙膑": {
+      "types": [
+        "伤害",
+        "控制",
+        "加速"
+      ],
+      "cats": [
+        "damage",
+        "control",
+        "utility"
+      ],
+      "title": "逆流之时"
+    },
+    "扁鹊": {
+      "types": [
+        "伤害",
+        "伤害",
+        "伤害"
+      ],
+      "cats": [
+        "damage",
+        "damage",
+        "damage"
+      ],
+      "title": "善恶怪医"
+    },
+    "孙悟空": {
+      "types": [
+        "位移",
+        "伤害",
+        "控制"
+      ],
+      "cats": [
+        "dash",
+        "damage",
+        "control"
+      ],
+      "title": "齐天大圣"
+    },
+    "心魔六耳": {
+      "types": [
+        "位移",
+        "伤害",
+        "控制"
+      ],
+      "cats": [
+        "dash",
+        "damage",
+        "control"
+      ],
+      "title": "孙悟空命格"
+    },
+    "白起": {
+      "types": [
+        "伤害",
+        "控制",
+        "控制"
+      ],
+      "cats": [
+        "damage",
+        "control",
+        "control"
+      ],
+      "title": "最终兵器"
+    },
+    "芈月": {
+      "types": [
+        "伤害",
+        "伤害",
+        "伤害"
+      ],
+      "cats": [
+        "damage",
+        "damage",
+        "damage"
+      ],
+      "title": "永恒之月"
+    },
+    "吕布": {
+      "types": [
+        "伤害",
+        "位移",
+        "控制"
+      ],
+      "cats": [
+        "damage",
+        "dash",
+        "control"
+      ],
+      "title": "无双之魔"
+    },
+    "周瑜": {
+      "types": [
+        "伤害",
+        "伤害",
+        "控制"
+      ],
+      "cats": [
+        "damage",
+        "damage",
+        "control"
+      ],
+      "title": "铁血都督"
+    },
+    "夏侯惇": {
+      "types": [
+        "伤害",
+        "控制",
+        "控制"
+      ],
+      "cats": [
+        "damage",
+        "control",
+        "control"
+      ],
+      "title": "不羁之风"
+    },
+    "甄姬": {
+      "types": [
+        "伤害",
+        "伤害",
+        "伤害"
+      ],
+      "cats": [
+        "damage",
+        "damage",
+        "damage"
+      ],
+      "title": "洛神降临"
+    },
+    "曹操": {
+      "types": [
+        "伤害",
+        "位移",
+        "伤害"
+      ],
+      "cats": [
+        "damage",
+        "dash",
+        "damage"
+      ],
+      "title": "鲜血枭雄"
+    },
+    "典韦": {
+      "types": [
+        "位移",
+        "伤害",
+        "吸血"
+      ],
+      "cats": [
+        "dash",
+        "damage",
+        "heal"
+      ],
+      "title": "狂战士"
+    },
+    "宫本武藏": {
+      "types": [
+        "位移",
+        "伤害",
+        "控制"
+      ],
+      "cats": [
+        "dash",
+        "damage",
+        "control"
+      ],
+      "title": "剑圣"
+    },
+    "李白": {
+      "types": [
+        "位移",
+        "伤害",
+        "伤害"
+      ],
+      "cats": [
+        "dash",
+        "damage",
+        "damage"
+      ],
+      "title": "青莲剑仙"
+    },
+    "马可波罗": {
+      "types": [
+        "伤害",
+        "伤害",
+        "位移"
+      ],
+      "cats": [
+        "damage",
+        "damage",
+        "dash"
+      ],
+      "title": "远游之枪"
+    },
+    "狄仁杰": {
+      "types": [
+        "伤害",
+        "位移",
+        "伤害"
+      ],
+      "cats": [
+        "damage",
+        "dash",
+        "damage"
+      ],
+      "title": "断案大师"
+    },
+    "达摩": {
+      "types": [
+        "位移",
+        "伤害",
+        "击退"
+      ],
+      "cats": [
+        "dash",
+        "damage",
+        "control"
+      ],
+      "title": "拳僧"
+    },
+    "项羽": {
+      "types": [
+        "伤害",
+        "伤害",
+        "击退"
+      ],
+      "cats": [
+        "damage",
+        "damage",
+        "control"
+      ],
+      "title": "霸王"
+    },
+    "武则天": {
+      "types": [
+        "伤害",
+        "位移",
+        "伤害"
+      ],
+      "cats": [
+        "damage",
+        "dash",
+        "damage"
+      ],
+      "title": "女帝"
+    },
+    "老夫子": {
+      "types": [
+        "伤害",
+        "位移",
+        "控制"
+      ],
+      "cats": [
+        "damage",
+        "dash",
+        "control"
+      ],
+      "title": "万古长明"
+    },
+    "关羽": {
+      "types": [
+        "位移",
+        "伤害",
+        "召唤"
+      ],
+      "cats": [
+        "dash",
+        "damage",
+        "summon"
+      ],
+      "title": "一骑当千"
+    },
+    "貂蝉": {
+      "types": [
+        "伤害",
+        "控制",
+        "伤害"
+      ],
+      "cats": [
+        "damage",
+        "control",
+        "damage"
+      ],
+      "title": "绝世舞姬"
+    },
+    "安琪拉": {
+      "types": [
+        "伤害",
+        "眩晕",
+        "伤害"
+      ],
+      "cats": [
+        "damage",
+        "control",
+        "damage"
+      ],
+      "title": "暗夜萝莉"
+    },
+    "程咬金": {
+      "types": [
+        "伤害",
+        "治疗",
+        "伤害"
+      ],
+      "cats": [
+        "damage",
+        "heal",
+        "damage"
+      ],
+      "title": "热烈之斧"
+    },
+    "露娜": {
+      "types": [
+        "伤害",
+        "位移",
+        "控制"
+      ],
+      "cats": [
+        "damage",
+        "dash",
+        "control"
+      ],
+      "title": "月光之女"
+    },
+    "姜子牙": {
+      "types": [
+        "伤害",
+        "伤害",
+        "击退"
+      ],
+      "cats": [
+        "damage",
+        "damage",
+        "control"
+      ],
+      "title": "封神者"
+    },
+    "刘邦": {
+      "types": [
+        "护盾",
+        "加速",
+        "传送"
+      ],
+      "cats": [
+        "shield",
+        "utility",
+        "other"
+      ],
+      "title": "双面君主"
+    },
+    "韩信": {
+      "types": [
+        "位移",
+        "位移",
+        "击退"
+      ],
+      "cats": [
+        "dash",
+        "dash",
+        "control"
+      ],
+      "title": "国士无双"
+    },
+    "王昭君": {
+      "types": [
+        "伤害",
+        "位移",
+        "冰冻"
+      ],
+      "cats": [
+        "damage",
+        "dash",
+        "other"
+      ],
+      "title": "冰雪之华"
+    },
+    "兰陵王": {
+      "types": [
+        "伤害",
+        "隐身",
+        "突刺"
+      ],
+      "cats": [
+        "damage",
+        "utility",
+        "other"
+      ],
+      "title": "暗影刀锋"
+    },
+    "花木兰": {
+      "types": [
+        "突进",
+        "突进",
+        "沉默"
+      ],
+      "cats": [
+        "dash",
+        "dash",
+        "control"
+      ],
+      "title": "传说之刃"
+    },
+    "张良": {
+      "types": [
+        "伤害",
+        "击退",
+        "眩晕"
+      ],
+      "cats": [
+        "damage",
+        "control",
+        "control"
+      ],
+      "title": "言灵之书"
+    },
+    "不知火舞": {
+      "types": [
+        "位移",
+        "扇形击退",
+        "上挑"
+      ],
+      "cats": [
+        "dash",
+        "control",
+        "other"
+      ],
+      "title": "明媚烈焰"
+    },
+    "娜可露露": {
+      "types": [
+        "伤害",
+        "位移",
+        "伤害"
+      ],
+      "cats": [
+        "damage",
+        "dash",
+        "damage"
+      ],
+      "title": "鹰之守护"
+    },
+    "橘右京": {
+      "types": [
+        "伤害",
+        "突进",
+        "伤害"
+      ],
+      "cats": [
+        "damage",
+        "dash",
+        "damage"
+      ],
+      "title": "神梦一刀"
+    },
+    "亚瑟": {
+      "types": [
+        "旋转",
+        "剑舞",
+        "击退"
+      ],
+      "cats": [
+        "other",
+        "other",
+        "control"
+      ],
+      "title": "圣骑之力"
+    },
+    "牛魔": {
+      "types": [
+        "击退",
+        "击退",
+        "击飞"
+      ],
+      "cats": [
+        "control",
+        "control",
+        "control"
+      ],
+      "title": "精英酋长"
+    },
+    "后羿": {
+      "types": [
+        "多重箭",
+        "减速",
+        "灼烧"
+      ],
+      "cats": [
+        "other",
+        "control",
+        "other"
+      ],
+      "title": "半神之弓"
+    },
+    "刘备": {
+      "types": [
+        "伤害",
+        "位移",
+        "回血"
+      ],
+      "cats": [
+        "damage",
+        "dash",
+        "heal"
+      ],
+      "title": "仁德义枪"
+    },
+    "张飞": {
+      "types": [
+        "控制",
+        "伤害",
+        "护盾"
+      ],
+      "cats": [
+        "control",
+        "damage",
+        "shield"
+      ],
+      "title": "禁血狂兽"
+    },
+    "李元芳": {
+      "types": [
+        "位移",
+        "伤害",
+        "伤害"
+      ],
+      "cats": [
+        "dash",
+        "damage",
+        "damage"
+      ],
+      "title": "王都密探"
+    },
+    "虞姬": {
+      "types": [
+        "伤害",
+        "减速",
+        "位移"
+      ],
+      "cats": [
+        "damage",
+        "control",
+        "dash"
+      ],
+      "title": "森之风灵"
+    },
+    "钟馗": {
+      "types": [
+        "控制",
+        "视野",
+        "眩晕"
+      ],
+      "cats": [
+        "control",
+        "utility",
+        "control"
+      ],
+      "title": "虚灵城判"
+    },
+    "杨戬": {
+      "types": [
+        "伤害",
+        "位移",
+        "伤害"
+      ],
+      "cats": [
+        "damage",
+        "dash",
+        "damage"
+      ],
+      "title": "根源之目"
+    },
+    "雅典娜": {
+      "types": [
+        "伤害",
+        "护盾",
+        "伤害"
+      ],
+      "cats": [
+        "damage",
+        "shield",
+        "damage"
+      ],
+      "title": "圣域余晖"
+    },
+    "蔡文姬": {
+      "types": [
+        "伤害",
+        "加速",
+        "治疗"
+      ],
+      "cats": [
+        "damage",
+        "utility",
+        "heal"
+      ],
+      "title": "天籁弦音"
+    },
+    "太乙真人": {
+      "types": [
+        "伤害",
+        "控制",
+        "加速"
+      ],
+      "cats": [
+        "damage",
+        "control",
+        "utility"
+      ],
+      "title": "炼金大师"
+    },
+    "哪吒": {
+      "types": [
+        "伤害",
+        "击退",
+        "护盾"
+      ],
+      "cats": [
+        "damage",
+        "control",
+        "shield"
+      ],
+      "title": "桀骜炎枪"
+    },
+    "诸葛亮": {
+      "types": [
+        "伤害",
+        "位移",
+        "伤害"
+      ],
+      "cats": [
+        "damage",
+        "dash",
+        "damage"
+      ],
+      "title": "绝代智谋"
+    },
+    "黄忠": {
+      "types": [
+        "伤害",
+        "减速",
+        "伤害"
+      ],
+      "cats": [
+        "damage",
+        "control",
+        "damage"
+      ],
+      "title": "燃魂重炮"
+    },
+    "大乔": {
+      "types": [
+        "击退",
+        "伤害",
+        "传送"
+      ],
+      "cats": [
+        "control",
+        "damage",
+        "other"
+      ],
+      "title": "沧海之曜"
+    },
+    "东皇太一": {
+      "types": [
+        "伤害",
+        "眩晕",
+        "压制"
+      ],
+      "cats": [
+        "damage",
+        "control",
+        "control"
+      ],
+      "title": "噬灭日蚀"
+    },
+    "干将莫邪": {
+      "types": [
+        "弹道",
+        "伤害",
+        ""
+      ],
+      "cats": [
+        "other",
+        "damage",
+        "other"
+      ],
+      "title": "淬命双剑"
+    },
+    "鬼谷子": {
+      "types": [
+        "控制",
+        "隐身",
+        "伤害"
+      ],
+      "cats": [
+        "control",
+        "utility",
+        "damage"
+      ],
+      "title": "万物有灵"
+    },
+    "铠": {
+      "types": [
+        "伤害",
+        "位移",
+        "护盾"
+      ],
+      "cats": [
+        "damage",
+        "dash",
+        "shield"
+      ],
+      "title": "破灭刃锋"
+    },
+    "百里守约": {
+      "types": [
+        "隐身",
+        "伤害",
+        "视野"
+      ],
+      "cats": [
+        "utility",
+        "damage",
+        "utility"
+      ],
+      "title": "静谧之眼"
+    },
+    "百里玄策": {
+      "types": [
+        "位移",
+        "伤害",
+        "控制"
+      ],
+      "cats": [
+        "dash",
+        "damage",
+        "control"
+      ],
+      "title": "嚣狂之镰"
+    },
+    "苏烈": {
+      "types": [
+        "击退",
+        "伤害",
+        "被动"
+      ],
+      "cats": [
+        "control",
+        "damage",
+        "other"
+      ],
+      "title": "不屈铁壁"
+    },
+    "梦奇": {
+      "types": [
+        "位移",
+        "伤害",
+        "护盾"
+      ],
+      "cats": [
+        "dash",
+        "damage",
+        "shield"
+      ],
+      "title": "入梦之灵"
+    },
+    "女娲": {
+      "types": [
+        "击退",
+        "伤害",
+        "护盾"
+      ],
+      "cats": [
+        "control",
+        "damage",
+        "shield"
+      ],
+      "title": "至高创世"
+    },
+    "明世隐": {
+      "types": [
+        "链接",
+        "伤害",
+        "治疗"
+      ],
+      "cats": [
+        "other",
+        "damage",
+        "heal"
+      ],
+      "title": "灵魂劫卜"
+    },
+    "公孙离": {
+      "types": [
+        "位移",
+        "伤害",
+        "护盾"
+      ],
+      "cats": [
+        "dash",
+        "damage",
+        "shield"
+      ],
+      "title": "幻舞玲珑"
+    },
+    "杨玉环": {
+      "types": [
+        "治疗",
+        "伤害",
+        "加速"
+      ],
+      "cats": [
+        "heal",
+        "damage",
+        "utility"
+      ],
+      "title": "霓裳风华"
+    },
+    "裴擒虎": {
+      "types": [
+        "位移",
+        "伤害",
+        "眩晕"
+      ],
+      "cats": [
+        "dash",
+        "damage",
+        "control"
+      ],
+      "title": "六合虎拳"
+    },
+    "弈星": {
+      "types": [
+        "伤害",
+        "位移",
+        "召唤"
+      ],
+      "cats": [
+        "damage",
+        "dash",
+        "summon"
+      ],
+      "title": "天元之弈"
+    },
+    "狂铁": {
+      "types": [
+        "位移",
+        "伤害",
+        "控制"
+      ],
+      "cats": [
+        "dash",
+        "damage",
+        "control"
+      ],
+      "title": "战车意志"
+    },
+    "米莱狄": {
+      "types": [
+        "伤害",
+        "召唤",
+        "控制"
+      ],
+      "cats": [
+        "damage",
+        "summon",
+        "control"
+      ],
+      "title": "筑城者"
+    },
+    "元歌": {
+      "types": [
+        "隐匿",
+        "伤害",
+        "控制"
+      ],
+      "cats": [
+        "utility",
+        "damage",
+        "control"
+      ],
+      "title": "无间傀儡"
+    },
+    "孙策": {
+      "types": [
+        "位移",
+        "控制",
+        "伤害"
+      ],
+      "cats": [
+        "dash",
+        "control",
+        "damage"
+      ],
+      "title": "光明之海"
+    },
+    "司马懿": {
+      "types": [
+        "伤害",
+        "位移",
+        "控制"
+      ],
+      "cats": [
+        "damage",
+        "dash",
+        "control"
+      ],
+      "title": "寂灭之心"
+    },
+    "盾山": {
+      "types": [
+        "控制",
+        "控制",
+        "控制"
+      ],
+      "cats": [
+        "control",
+        "control",
+        "control"
+      ],
+      "title": "无尽之盾"
+    },
+    "伽罗": {
+      "types": [
+        "伤害",
+        "伤害",
+        "控制"
+      ],
+      "cats": [
+        "damage",
+        "damage",
+        "control"
+      ],
+      "title": "破魔之箭"
+    },
+    "沈梦溪": {
+      "types": [
+        "伤害",
+        "控制",
+        "击退"
+      ],
+      "cats": [
+        "damage",
+        "control",
+        "control"
+      ],
+      "title": "爆弹怪猫"
+    },
+    "李信": {
+      "types": [
+        "伤害",
+        "位移",
+        "伤害"
+      ],
+      "cats": [
+        "damage",
+        "dash",
+        "damage"
+      ],
+      "title": "谋世之战"
+    },
+    "上官婉儿": {
+      "types": [
+        "伤害",
+        "位移",
+        "击飞"
+      ],
+      "cats": [
+        "damage",
+        "dash",
+        "control"
+      ],
+      "title": "惊鸿之笔"
+    },
+    "嫦娥": {
+      "types": [
+        "减速",
+        "伤害",
+        "护盾"
+      ],
+      "cats": [
+        "control",
+        "damage",
+        "shield"
+      ],
+      "title": "寒月公主"
+    },
+    "猪八戒": {
+      "types": [
+        "控制",
+        "位移",
+        "控制"
+      ],
+      "cats": [
+        "control",
+        "dash",
+        "control"
+      ],
+      "title": "无忧猛士"
+    },
+    "盘古": {
+      "types": [
+        "伤害",
+        "控制",
+        "召唤"
+      ],
+      "cats": [
+        "damage",
+        "control",
+        "summon"
+      ],
+      "title": "破晓之神"
+    },
+    "瑶": {
+      "types": [
+        "位移",
+        "伤害",
+        "控制"
+      ],
+      "cats": [
+        "dash",
+        "damage",
+        "control"
+      ],
+      "title": "鹿灵守心"
+    },
+    "云中君": {
+      "types": [
+        "伤害",
+        "伤害",
+        "伤害"
+      ],
+      "cats": [
+        "damage",
+        "damage",
+        "damage"
+      ],
+      "title": "流云之翼"
+    },
+    "曜": {
+      "types": [
+        "位移",
+        "伤害",
+        "控制"
+      ],
+      "cats": [
+        "dash",
+        "damage",
+        "control"
+      ],
+      "title": "星辰之子"
+    },
+    "马超": {
+      "types": [
+        "伤害",
+        "伤害",
+        "伤害"
+      ],
+      "cats": [
+        "damage",
+        "damage",
+        "damage"
+      ],
+      "title": "冷晖之枪"
+    },
+    "西施": {
+      "types": [
+        "控制",
+        "伤害",
+        "控制"
+      ],
+      "cats": [
+        "control",
+        "damage",
+        "control"
+      ],
+      "title": "幻纱之灵"
+    },
+    "鲁班大师": {
+      "types": [
+        "位移",
+        "控制",
+        "位移"
+      ],
+      "cats": [
+        "dash",
+        "control",
+        "dash"
+      ],
+      "title": "神匠"
+    },
+    "蒙犽": {
+      "types": [
+        "伤害",
+        "伤害",
+        "伤害"
+      ],
+      "cats": [
+        "damage",
+        "damage",
+        "damage"
+      ],
+      "title": "烈炮小子"
+    },
+    "镜": {
+      "types": [
+        "位移",
+        "伤害",
+        "位移"
+      ],
+      "cats": [
+        "dash",
+        "damage",
+        "dash"
+      ],
+      "title": "破镜之刃"
+    },
+    "蒙恬": {
+      "types": [
+        "伤害",
+        "伤害",
+        "伤害"
+      ],
+      "cats": [
+        "damage",
+        "damage",
+        "damage"
+      ],
+      "title": "秩序统将"
+    },
+    "阿古朵": {
+      "types": [
+        "位移",
+        "伤害",
+        "位移"
+      ],
+      "cats": [
+        "dash",
+        "damage",
+        "dash"
+      ],
+      "title": "山林之子"
+    },
+    "夏洛特": {
+      "types": [
+        "伤害",
+        "伤害",
+        "控制"
+      ],
+      "cats": [
+        "damage",
+        "damage",
+        "control"
+      ],
+      "title": "玫瑰剑士"
+    },
+    "澜": {
+      "types": [
+        "位移",
+        "伤害",
+        "位移"
+      ],
+      "cats": [
+        "dash",
+        "damage",
+        "dash"
+      ],
+      "title": "鲨之猎刃"
+    },
+    "司空震": {
+      "types": [
+        "位移",
+        "伤害",
+        "控制"
+      ],
+      "cats": [
+        "dash",
+        "damage",
+        "control"
+      ],
+      "title": "雷霆之王"
+    },
+    "艾琳": {
+      "types": [
+        "伤害",
+        "位移",
+        "伤害"
+      ],
+      "cats": [
+        "damage",
+        "dash",
+        "damage"
+      ],
+      "title": "精灵之舞"
+    },
+    "云缨": {
+      "types": [
+        "伤害",
+        "伤害",
+        "击退"
+      ],
+      "cats": [
+        "damage",
+        "damage",
+        "control"
+      ],
+      "title": "燎原之心"
+    },
+    "金蝉": {
+      "types": [
+        "伤害",
+        "控制",
+        "伤害"
+      ],
+      "cats": [
+        "damage",
+        "control",
+        "damage"
+      ],
+      "title": "渡世行者"
+    },
+    "暃": {
+      "types": [
+        "伤害",
+        "隐匿",
+        "伤害"
+      ],
+      "cats": [
+        "damage",
+        "utility",
+        "damage"
+      ],
+      "title": "玉城之子"
+    },
+    "桑启": {
+      "types": [
+        "伤害",
+        "控制",
+        "伤害"
+      ],
+      "cats": [
+        "damage",
+        "control",
+        "damage"
+      ],
+      "title": "萤火之旅"
+    },
+    "戈娅": {
+      "types": [
+        "伤害",
+        "加速",
+        "伤害"
+      ],
+      "cats": [
+        "damage",
+        "utility",
+        "damage"
+      ],
+      "title": "沙海飞舟"
+    },
+    "海月": {
+      "types": [
+        "位移",
+        "伤害",
+        "控制"
+      ],
+      "cats": [
+        "dash",
+        "damage",
+        "control"
+      ],
+      "title": "永夜之心"
+    },
+    "赵怀真": {
+      "types": [
+        "位移",
+        "伤害",
+        "击退"
+      ],
+      "cats": [
+        "dash",
+        "damage",
+        "control"
+      ],
+      "title": "自在之心"
+    },
+    "莱西奥": {
+      "types": [
+        "伤害",
+        "伤害",
+        "伤害"
+      ],
+      "cats": [
+        "damage",
+        "damage",
+        "damage"
+      ],
+      "title": "火鹰船长"
+    },
+    "姬小满": {
+      "types": [
+        "伤害",
+        "控制",
+        "击飞"
+      ],
+      "cats": [
+        "damage",
+        "control",
+        "control"
+      ],
+      "title": "武道奇才"
+    },
+    "亚连": {
+      "types": [
+        "伤害",
+        "加速",
+        "伤害"
+      ],
+      "cats": [
+        "damage",
+        "utility",
+        "damage"
+      ],
+      "title": "追忆之刃"
+    },
+    "朵莉亚": {
+      "types": [
+        "伤害",
+        "伤害",
+        "加速"
+      ],
+      "cats": [
+        "damage",
+        "damage",
+        "utility"
+      ],
+      "title": "人鱼之歌"
+    },
+    "海诺": {
+      "types": [
+        "伤害",
+        "治疗",
+        "伤害"
+      ],
+      "cats": [
+        "damage",
+        "heal",
+        "damage"
+      ],
+      "title": "命运之引"
+    },
+    "敖隐": {
+      "types": [
+        "伤害",
+        "回城",
+        "控制"
+      ],
+      "cats": [
+        "damage",
+        "utility",
+        "control"
+      ],
+      "title": "凌霄真龙",
+      "manual": true,
+      "note": "2026-10-31 实测（熬隐那一局，局内按钮实读）：一技能「伤害」、二技能「回城」、三技能「控制」。旧表写「伤害/伤害/伤害」是模型凭知识生成的，与画面不符 —— 它把敖隐的类型分压到 2.0，害得真英雄被挤出候选池（真值敖隐的图标分其实是全场第一 0.4579）。注意：这一行是**一局的实测**，不是逐技能考据；类型表只是辅助信号，认英雄主要靠图标比对。"
+    },
+    "大司命": {
+      "types": [
+        "伤害",
+        "召唤",
+        "控制"
+      ],
+      "cats": [
+        "damage",
+        "summon",
+        "control"
+      ],
+      "title": "肃归之戈"
+    },
+    "元流之子(法师)": {
+      "types": [
+        "伤害",
+        "控制",
+        "伤害"
+      ],
+      "cats": [
+        "damage",
+        "control",
+        "damage"
+      ],
+      "title": "万妙之心"
+    },
+    "元流之子(坦克)": {
+      "types": [
+        "伤害",
+        "控制",
+        "伤害"
+      ],
+      "cats": [
+        "damage",
+        "control",
+        "damage"
+      ],
+      "title": "止戈之道"
+    },
+    "少司缘": {
+      "types": [
+        "控制",
+        "位移",
+        "治疗"
+      ],
+      "cats": [
+        "control",
+        "dash",
+        "heal"
+      ],
+      "title": "聆愿之祝"
+    },
+    "影": {
+      "types": [
+        "伤害",
+        "位移",
+        "伤害"
+      ],
+      "cats": [
+        "damage",
+        "dash",
+        "damage"
+      ],
+      "title": "黯羽东君"
+    },
+    "苍": {
+      "types": [
+        "伤害",
+        "减速",
+        "伤害"
+      ],
+      "cats": [
+        "damage",
+        "control",
+        "damage"
+      ],
+      "title": "苍狼末裔"
+    },
+    "空空儿": {
+      "types": [
+        "位移",
+        "召唤",
+        "位移"
+      ],
+      "cats": [
+        "dash",
+        "summon",
+        "dash"
+      ],
+      "title": "笑面诡手"
+    },
+    "元流之子(射手)": {
+      "types": [
+        "位移",
+        "伤害",
+        "伤害"
+      ],
+      "cats": [
+        "dash",
+        "damage",
+        "damage"
+      ],
+      "title": "沉舟之志"
+    },
+    "孙权": {
+      "types": [
+        "召唤",
+        "伤害",
+        "加速"
+      ],
+      "cats": [
+        "summon",
+        "damage",
+        "utility"
+      ],
+      "title": "定旌之谋"
+    },
+    "蚩奼": {
+      "types": [
+        "伤害",
+        "伤害",
+        "治疗"
+      ],
+      "cats": [
+        "damage",
+        "damage",
+        "heal"
+      ],
+      "title": "五兵之主"
+    },
+    "元流之子(辅助)": {
+      "types": [
+        "治疗",
+        "加速",
+        "护盾"
+      ],
+      "cats": [
+        "heal",
+        "utility",
+        "shield"
+      ],
+      "title": "守望之诺"
+    },
+    "大禹": {
+      "types": [
+        "控制",
+        "伤害",
+        "位移"
+      ],
+      "cats": [
+        "control",
+        "damage",
+        "dash"
+      ],
+      "title": "鼎镇山河"
+    },
+    "元流之子(刺客)": {
+      "types": [
+        "",
+        "",
+        ""
+      ],
+      "cats": [
+        "other",
+        "other",
+        "other"
+      ],
+      "title": "守望之诺"
+    },
+    "卢雅那": {
+      "types": [
+        "",
+        "",
+        ""
+      ],
+      "cats": [
+        "other",
+        "other",
+        "other"
+      ],
+      "title": "蛇焰使者"
+    },
+    "王维": {
+      "types": [
+        "",
+        "",
+        ""
+      ],
+      "cats": [
+        "other",
+        "other",
+        "other"
+      ],
+      "title": "空山遗客"
+    }
+  },
+  "canonical_payload": "{\"_来源\":\"王者荣耀技能类型（模型知识 + 人工核对）\",\"_说明\":\"每个英雄三个主动技能在局内按钮上印的类型标签。由 tools/build_hok_skill_types.py 用配置的看画面模型（纯文本调用）生成，经人工核对赵云=位移/伤害/控制。\",\"failures\":[],\"heroes\":{\"上官婉儿\":{\"cats\":[\"damage\",\"dash\",\"control\"],\"title\":\"惊鸿之笔\",\"types\":[\"伤害\",\"位移\",\"击飞\"]},\"不知火舞\":{\"cats\":[\"dash\",\"control\",\"other\"],\"title\":\"明媚烈焰\",\"types\":[\"位移\",\"扇形击退\",\"上挑\"]},\"东皇太一\":{\"cats\":[\"damage\",\"control\",\"control\"],\"title\":\"噬灭日蚀\",\"types\":[\"伤害\",\"眩晕\",\"压制\"]},\"云中君\":{\"cats\":[\"damage\",\"damage\",\"damage\"],\"title\":\"流云之翼\",\"types\":[\"伤害\",\"伤害\",\"伤害\"]},\"云缨\":{\"cats\":[\"damage\",\"damage\",\"control\"],\"title\":\"燎原之心\",\"types\":[\"伤害\",\"伤害\",\"击退\"]},\"亚瑟\":{\"cats\":[\"other\",\"other\",\"control\"],\"title\":\"圣骑之力\",\"types\":[\"旋转\",\"剑舞\",\"击退\"]},\"亚连\":{\"cats\":[\"damage\",\"utility\",\"damage\"],\"title\":\"追忆之刃\",\"types\":[\"伤害\",\"加速\",\"伤害\"]},\"伽罗\":{\"cats\":[\"damage\",\"damage\",\"control\"],\"title\":\"破魔之箭\",\"types\":[\"伤害\",\"伤害\",\"控制\"]},\"元歌\":{\"cats\":[\"utility\",\"damage\",\"control\"],\"title\":\"无间傀儡\",\"types\":[\"隐匿\",\"伤害\",\"控制\"]},\"元流之子(刺客)\":{\"cats\":[\"other\",\"other\",\"other\"],\"title\":\"守望之诺\",\"types\":[\"\",\"\",\"\"]},\"元流之子(坦克)\":{\"cats\":[\"damage\",\"control\",\"damage\"],\"title\":\"止戈之道\",\"types\":[\"伤害\",\"控制\",\"伤害\"]},\"元流之子(射手)\":{\"cats\":[\"dash\",\"damage\",\"damage\"],\"title\":\"沉舟之志\",\"types\":[\"位移\",\"伤害\",\"伤害\"]},\"元流之子(法师)\":{\"cats\":[\"damage\",\"control\",\"damage\"],\"title\":\"万妙之心\",\"types\":[\"伤害\",\"控制\",\"伤害\"]},\"元流之子(辅助)\":{\"cats\":[\"heal\",\"utility\",\"shield\"],\"title\":\"守望之诺\",\"types\":[\"治疗\",\"加速\",\"护盾\"]},\"公孙离\":{\"cats\":[\"dash\",\"damage\",\"shield\"],\"title\":\"幻舞玲珑\",\"types\":[\"位移\",\"伤害\",\"护盾\"]},\"兰陵王\":{\"cats\":[\"damage\",\"utility\",\"other\"],\"title\":\"暗影刀锋\",\"types\":[\"伤害\",\"隐身\",\"突刺\"]},\"关羽\":{\"cats\":[\"dash\",\"damage\",\"summon\"],\"title\":\"一骑当千\",\"types\":[\"位移\",\"伤害\",\"召唤\"]},\"典韦\":{\"cats\":[\"dash\",\"damage\",\"heal\"],\"title\":\"狂战士\",\"types\":[\"位移\",\"伤害\",\"吸血\"]},\"刘备\":{\"cats\":[\"damage\",\"dash\",\"heal\"],\"title\":\"仁德义枪\",\"types\":[\"伤害\",\"位移\",\"回血\"]},\"刘禅\":{\"cats\":[\"damage\",\"control\",\"control\"],\"title\":\"暴走机关\",\"types\":[\"伤害\",\"击退\",\"嘲讽\"]},\"刘邦\":{\"cats\":[\"shield\",\"utility\",\"other\"],\"title\":\"双面君主\",\"types\":[\"护盾\",\"加速\",\"传送\"]},\"卢雅那\":{\"cats\":[\"other\",\"other\",\"other\"],\"title\":\"蛇焰使者\",\"types\":[\"\",\"\",\"\"]},\"司空震\":{\"cats\":[\"dash\",\"damage\",\"control\"],\"title\":\"雷霆之王\",\"types\":[\"位移\",\"伤害\",\"控制\"]},\"司马懿\":{\"cats\":[\"damage\",\"dash\",\"control\"],\"title\":\"寂灭之心\",\"types\":[\"伤害\",\"位移\",\"控制\"]},\"后羿\":{\"cats\":[\"other\",\"control\",\"other\"],\"title\":\"半神之弓\",\"types\":[\"多重箭\",\"减速\",\"灼烧\"]},\"吕布\":{\"cats\":[\"damage\",\"dash\",\"control\"],\"title\":\"无双之魔\",\"types\":[\"伤害\",\"位移\",\"控制\"]},\"周瑜\":{\"cats\":[\"damage\",\"damage\",\"control\"],\"title\":\"铁血都督\",\"types\":[\"伤害\",\"伤害\",\"控制\"]},\"哪吒\":{\"cats\":[\"damage\",\"control\",\"shield\"],\"title\":\"桀骜炎枪\",\"types\":[\"伤害\",\"击退\",\"护盾\"]},\"墨子\":{\"cats\":[\"control\",\"damage\",\"shield\"],\"title\":\"和平守望\",\"types\":[\"控制\",\"伤害\",\"护盾\"]},\"夏侯惇\":{\"cats\":[\"damage\",\"control\",\"control\"],\"title\":\"不羁之风\",\"types\":[\"伤害\",\"控制\",\"控制\"]},\"夏洛特\":{\"cats\":[\"damage\",\"damage\",\"control\"],\"title\":\"玫瑰剑士\",\"types\":[\"伤害\",\"伤害\",\"控制\"]},\"大乔\":{\"cats\":[\"control\",\"damage\",\"other\"],\"title\":\"沧海之曜\",\"types\":[\"击退\",\"伤害\",\"传送\"]},\"大司命\":{\"cats\":[\"damage\",\"summon\",\"control\"],\"title\":\"肃归之戈\",\"types\":[\"伤害\",\"召唤\",\"控制\"]},\"大禹\":{\"cats\":[\"control\",\"damage\",\"dash\"],\"title\":\"鼎镇山河\",\"types\":[\"控制\",\"伤害\",\"位移\"]},\"太乙真人\":{\"cats\":[\"damage\",\"control\",\"utility\"],\"title\":\"炼金大师\",\"types\":[\"伤害\",\"控制\",\"加速\"]},\"女娲\":{\"cats\":[\"control\",\"damage\",\"shield\"],\"title\":\"至高创世\",\"types\":[\"击退\",\"伤害\",\"护盾\"]},\"妲己\":{\"cats\":[\"control\",\"damage\",\"heal\"],\"title\":\"魅力之狐\",\"types\":[\"眩晕\",\"伤害\",\"治疗\"]},\"姜子牙\":{\"cats\":[\"damage\",\"damage\",\"control\"],\"title\":\"封神者\",\"types\":[\"伤害\",\"伤害\",\"击退\"]},\"姬小满\":{\"cats\":[\"damage\",\"control\",\"control\"],\"title\":\"武道奇才\",\"types\":[\"伤害\",\"控制\",\"击飞\"]},\"娜可露露\":{\"cats\":[\"damage\",\"dash\",\"damage\"],\"title\":\"鹰之守护\",\"types\":[\"伤害\",\"位移\",\"伤害\"]},\"嫦娥\":{\"cats\":[\"control\",\"damage\",\"shield\"],\"title\":\"寒月公主\",\"types\":[\"减速\",\"伤害\",\"护盾\"]},\"嬴政\":{\"cats\":[\"damage\",\"control\",\"shield\"],\"title\":\"王者独尊\",\"types\":[\"伤害\",\"击退\",\"护盾\"]},\"孙尚香\":{\"cats\":[\"dash\",\"damage\",\"control\"],\"title\":\"千金重弩\",\"types\":[\"位移\",\"伤害\",\"击退\"]},\"孙悟空\":{\"cats\":[\"dash\",\"damage\",\"control\"],\"title\":\"齐天大圣\",\"types\":[\"位移\",\"伤害\",\"控制\"]},\"孙权\":{\"cats\":[\"summon\",\"damage\",\"utility\"],\"title\":\"定旌之谋\",\"types\":[\"召唤\",\"伤害\",\"加速\"]},\"孙策\":{\"cats\":[\"dash\",\"control\",\"damage\"],\"title\":\"光明之海\",\"types\":[\"位移\",\"控制\",\"伤害\"]},\"孙膑\":{\"cats\":[\"damage\",\"control\",\"utility\"],\"title\":\"逆流之时\",\"types\":[\"伤害\",\"控制\",\"加速\"]},\"安琪拉\":{\"cats\":[\"damage\",\"control\",\"damage\"],\"title\":\"暗夜萝莉\",\"types\":[\"伤害\",\"眩晕\",\"伤害\"]},\"宫本武藏\":{\"cats\":[\"dash\",\"damage\",\"control\"],\"title\":\"剑圣\",\"types\":[\"位移\",\"伤害\",\"控制\"]},\"小乔\":{\"cats\":[\"dash\",\"damage\",\"control\"],\"title\":\"恋之微风\",\"types\":[\"位移\",\"伤害\",\"击退\"]},\"少司缘\":{\"cats\":[\"control\",\"dash\",\"heal\"],\"title\":\"聆愿之祝\",\"types\":[\"控制\",\"位移\",\"治疗\"]},\"干将莫邪\":{\"cats\":[\"other\",\"damage\",\"other\"],\"title\":\"淬命双剑\",\"types\":[\"弹道\",\"伤害\",\"\"]},\"庄周\":{\"cats\":[\"damage\",\"control\",\"summon\"],\"title\":\"逍遥梦幻\",\"types\":[\"伤害\",\"减速\",\"召唤\"]},\"廉颇\":{\"cats\":[\"damage\",\"control\",\"damage\"],\"title\":\"正义爆轰\",\"types\":[\"伤害\",\"击飞\",\"伤害\"]},\"弈星\":{\"cats\":[\"damage\",\"dash\",\"summon\"],\"title\":\"天元之弈\",\"types\":[\"伤害\",\"位移\",\"召唤\"]},\"张良\":{\"cats\":[\"damage\",\"control\",\"control\"],\"title\":\"言灵之书\",\"types\":[\"伤害\",\"击退\",\"眩晕\"]},\"张飞\":{\"cats\":[\"control\",\"damage\",\"shield\"],\"title\":\"禁血狂兽\",\"types\":[\"控制\",\"伤害\",\"护盾\"]},\"影\":{\"cats\":[\"damage\",\"dash\",\"damage\"],\"title\":\"黯羽东君\",\"types\":[\"伤害\",\"位移\",\"伤害\"]},\"心魔六耳\":{\"cats\":[\"dash\",\"damage\",\"control\"],\"title\":\"孙悟空命格\",\"types\":[\"位移\",\"伤害\",\"控制\"]},\"戈娅\":{\"cats\":[\"damage\",\"utility\",\"damage\"],\"title\":\"沙海飞舟\",\"types\":[\"伤害\",\"加速\",\"伤害\"]},\"扁鹊\":{\"cats\":[\"damage\",\"damage\",\"damage\"],\"title\":\"善恶怪医\",\"types\":[\"伤害\",\"伤害\",\"伤害\"]},\"敖隐\":{\"cats\":[\"damage\",\"utility\",\"control\"],\"manual\":true,\"note\":\"2026-10-31 实测（熬隐那一局，局内按钮实读）：一技能「伤害」、二技能「回城」、三技能「控制」。旧表写「伤害/伤害/伤害」是模型凭知识生成的，与画面不符 —— 它把敖隐的类型分压到 2.0，害得真英雄被挤出候选池（真值敖隐的图标分其实是全场第一 0.4579）。注意：这一行是**一局的实测**，不是逐技能考据；类型表只是辅助信号，认英雄主要靠图标比对。\",\"title\":\"凌霄真龙\",\"types\":[\"伤害\",\"回城\",\"控制\"]},\"明世隐\":{\"cats\":[\"other\",\"damage\",\"heal\"],\"title\":\"灵魂劫卜\",\"types\":[\"链接\",\"伤害\",\"治疗\"]},\"暃\":{\"cats\":[\"damage\",\"utility\",\"damage\"],\"title\":\"玉城之子\",\"types\":[\"伤害\",\"隐匿\",\"伤害\"]},\"曜\":{\"cats\":[\"dash\",\"damage\",\"control\"],\"title\":\"星辰之子\",\"types\":[\"位移\",\"伤害\",\"控制\"]},\"曹操\":{\"cats\":[\"damage\",\"dash\",\"damage\"],\"title\":\"鲜血枭雄\",\"types\":[\"伤害\",\"位移\",\"伤害\"]},\"朵莉亚\":{\"cats\":[\"damage\",\"damage\",\"utility\"],\"title\":\"人鱼之歌\",\"types\":[\"伤害\",\"伤害\",\"加速\"]},\"李信\":{\"cats\":[\"damage\",\"dash\",\"damage\"],\"title\":\"谋世之战\",\"types\":[\"伤害\",\"位移\",\"伤害\"]},\"李元芳\":{\"cats\":[\"dash\",\"damage\",\"damage\"],\"title\":\"王都密探\",\"types\":[\"位移\",\"伤害\",\"伤害\"]},\"李白\":{\"cats\":[\"dash\",\"damage\",\"damage\"],\"title\":\"青莲剑仙\",\"types\":[\"位移\",\"伤害\",\"伤害\"]},\"杨戬\":{\"cats\":[\"damage\",\"dash\",\"damage\"],\"title\":\"根源之目\",\"types\":[\"伤害\",\"位移\",\"伤害\"]},\"杨玉环\":{\"cats\":[\"heal\",\"damage\",\"utility\"],\"title\":\"霓裳风华\",\"types\":[\"治疗\",\"伤害\",\"加速\"]},\"桑启\":{\"cats\":[\"damage\",\"control\",\"damage\"],\"title\":\"萤火之旅\",\"types\":[\"伤害\",\"控制\",\"伤害\"]},\"梦奇\":{\"cats\":[\"dash\",\"damage\",\"shield\"],\"title\":\"入梦之灵\",\"types\":[\"位移\",\"伤害\",\"护盾\"]},\"橘右京\":{\"cats\":[\"damage\",\"dash\",\"damage\"],\"title\":\"神梦一刀\",\"types\":[\"伤害\",\"突进\",\"伤害\"]},\"武则天\":{\"cats\":[\"damage\",\"dash\",\"damage\"],\"title\":\"女帝\",\"types\":[\"伤害\",\"位移\",\"伤害\"]},\"沈梦溪\":{\"cats\":[\"damage\",\"control\",\"control\"],\"title\":\"爆弹怪猫\",\"types\":[\"伤害\",\"控制\",\"击退\"]},\"海月\":{\"cats\":[\"dash\",\"damage\",\"control\"],\"title\":\"永夜之心\",\"types\":[\"位移\",\"伤害\",\"控制\"]},\"海诺\":{\"cats\":[\"damage\",\"heal\",\"damage\"],\"title\":\"命运之引\",\"types\":[\"伤害\",\"治疗\",\"伤害\"]},\"澜\":{\"cats\":[\"dash\",\"damage\",\"dash\"],\"title\":\"鲨之猎刃\",\"types\":[\"位移\",\"伤害\",\"位移\"]},\"牛魔\":{\"cats\":[\"control\",\"control\",\"control\"],\"title\":\"精英酋长\",\"types\":[\"击退\",\"击退\",\"击飞\"]},\"狂铁\":{\"cats\":[\"dash\",\"damage\",\"control\"],\"title\":\"战车意志\",\"types\":[\"位移\",\"伤害\",\"控制\"]},\"狄仁杰\":{\"cats\":[\"damage\",\"dash\",\"damage\"],\"title\":\"断案大师\",\"types\":[\"伤害\",\"位移\",\"伤害\"]},\"猪八戒\":{\"cats\":[\"control\",\"dash\",\"control\"],\"title\":\"无忧猛士\",\"types\":[\"控制\",\"位移\",\"控制\"]},\"王昭君\":{\"cats\":[\"damage\",\"dash\",\"other\"],\"title\":\"冰雪之华\",\"types\":[\"伤害\",\"位移\",\"冰冻\"]},\"王维\":{\"cats\":[\"other\",\"other\",\"other\"],\"title\":\"空山遗客\",\"types\":[\"\",\"\",\"\"]},\"瑶\":{\"cats\":[\"dash\",\"damage\",\"control\"],\"title\":\"鹿灵守心\",\"types\":[\"位移\",\"伤害\",\"控制\"]},\"甄姬\":{\"cats\":[\"damage\",\"damage\",\"damage\"],\"title\":\"洛神降临\",\"types\":[\"伤害\",\"伤害\",\"伤害\"]},\"白起\":{\"cats\":[\"damage\",\"control\",\"control\"],\"title\":\"最终兵器\",\"types\":[\"伤害\",\"控制\",\"控制\"]},\"百里守约\":{\"cats\":[\"utility\",\"damage\",\"utility\"],\"title\":\"静谧之眼\",\"types\":[\"隐身\",\"伤害\",\"视野\"]},\"百里玄策\":{\"cats\":[\"dash\",\"damage\",\"control\"],\"title\":\"嚣狂之镰\",\"types\":[\"位移\",\"伤害\",\"控制\"]},\"盘古\":{\"cats\":[\"damage\",\"control\",\"summon\"],\"title\":\"破晓之神\",\"types\":[\"伤害\",\"控制\",\"召唤\"]},\"盾山\":{\"cats\":[\"control\",\"control\",\"control\"],\"title\":\"无尽之盾\",\"types\":[\"控制\",\"控制\",\"控制\"]},\"程咬金\":{\"cats\":[\"damage\",\"heal\",\"damage\"],\"title\":\"热烈之斧\",\"types\":[\"伤害\",\"治疗\",\"伤害\"]},\"空空儿\":{\"cats\":[\"dash\",\"summon\",\"dash\"],\"title\":\"笑面诡手\",\"types\":[\"位移\",\"召唤\",\"位移\"]},\"米莱狄\":{\"cats\":[\"damage\",\"summon\",\"control\"],\"title\":\"筑城者\",\"types\":[\"伤害\",\"召唤\",\"控制\"]},\"老夫子\":{\"cats\":[\"damage\",\"dash\",\"control\"],\"title\":\"万古长明\",\"types\":[\"伤害\",\"位移\",\"控制\"]},\"艾琳\":{\"cats\":[\"damage\",\"dash\",\"damage\"],\"title\":\"精灵之舞\",\"types\":[\"伤害\",\"位移\",\"伤害\"]},\"芈月\":{\"cats\":[\"damage\",\"damage\",\"damage\"],\"title\":\"永恒之月\",\"types\":[\"伤害\",\"伤害\",\"伤害\"]},\"花木兰\":{\"cats\":[\"dash\",\"dash\",\"control\"],\"title\":\"传说之刃\",\"types\":[\"突进\",\"突进\",\"沉默\"]},\"苍\":{\"cats\":[\"damage\",\"control\",\"damage\"],\"title\":\"苍狼末裔\",\"types\":[\"伤害\",\"减速\",\"伤害\"]},\"苏烈\":{\"cats\":[\"control\",\"damage\",\"other\"],\"title\":\"不屈铁壁\",\"types\":[\"击退\",\"伤害\",\"被动\"]},\"莱西奥\":{\"cats\":[\"damage\",\"damage\",\"damage\"],\"title\":\"火鹰船长\",\"types\":[\"伤害\",\"伤害\",\"伤害\"]},\"蒙恬\":{\"cats\":[\"damage\",\"damage\",\"damage\"],\"title\":\"秩序统将\",\"types\":[\"伤害\",\"伤害\",\"伤害\"]},\"蒙犽\":{\"cats\":[\"damage\",\"damage\",\"damage\"],\"title\":\"烈炮小子\",\"types\":[\"伤害\",\"伤害\",\"伤害\"]},\"蔡文姬\":{\"cats\":[\"damage\",\"utility\",\"heal\"],\"title\":\"天籁弦音\",\"types\":[\"伤害\",\"加速\",\"治疗\"]},\"虞姬\":{\"cats\":[\"damage\",\"control\",\"dash\"],\"title\":\"森之风灵\",\"types\":[\"伤害\",\"减速\",\"位移\"]},\"蚩奼\":{\"cats\":[\"damage\",\"damage\",\"heal\"],\"title\":\"五兵之主\",\"types\":[\"伤害\",\"伤害\",\"治疗\"]},\"裴擒虎\":{\"cats\":[\"dash\",\"damage\",\"control\"],\"title\":\"六合虎拳\",\"types\":[\"位移\",\"伤害\",\"眩晕\"]},\"西施\":{\"cats\":[\"control\",\"damage\",\"control\"],\"title\":\"幻纱之灵\",\"types\":[\"控制\",\"伤害\",\"控制\"]},\"诸葛亮\":{\"cats\":[\"damage\",\"dash\",\"damage\"],\"title\":\"绝代智谋\",\"types\":[\"伤害\",\"位移\",\"伤害\"]},\"貂蝉\":{\"cats\":[\"damage\",\"control\",\"damage\"],\"title\":\"绝世舞姬\",\"types\":[\"伤害\",\"控制\",\"伤害\"]},\"赵云\":{\"cats\":[\"dash\",\"damage\",\"control\"],\"manual\":true,\"note\":\"2026-10-29 人工核对：一技能「惊雷之龙」位移、二技能「破云之龙」伤害+击退、三技能「天翔之龙」大幅位移+击飞\",\"title\":\"苍天翔龙\",\"types\":[\"位移\",\"伤害\",\"击退\"]},\"赵怀真\":{\"cats\":[\"dash\",\"damage\",\"control\"],\"title\":\"自在之心\",\"types\":[\"位移\",\"伤害\",\"击退\"]},\"达摩\":{\"cats\":[\"dash\",\"damage\",\"control\"],\"title\":\"拳僧\",\"types\":[\"位移\",\"伤害\",\"击退\"]},\"金蝉\":{\"cats\":[\"damage\",\"control\",\"damage\"],\"title\":\"渡世行者\",\"types\":[\"伤害\",\"控制\",\"伤害\"]},\"钟无艳\":{\"cats\":[\"control\",\"damage\",\"control\"],\"title\":\"野蛮之锤\",\"types\":[\"控制\",\"伤害\",\"眩晕\"]},\"钟馗\":{\"cats\":[\"control\",\"utility\",\"control\"],\"title\":\"虚灵城判\",\"types\":[\"控制\",\"视野\",\"眩晕\"]},\"铠\":{\"cats\":[\"damage\",\"dash\",\"shield\"],\"title\":\"破灭刃锋\",\"types\":[\"伤害\",\"位移\",\"护盾\"]},\"镜\":{\"cats\":[\"dash\",\"damage\",\"dash\"],\"title\":\"破镜之刃\",\"types\":[\"位移\",\"伤害\",\"位移\"]},\"阿古朵\":{\"cats\":[\"dash\",\"damage\",\"dash\"],\"title\":\"山林之子\",\"types\":[\"位移\",\"伤害\",\"位移\"]},\"阿轲\":{\"cats\":[\"dash\",\"damage\",\"utility\"],\"title\":\"信念之刃\",\"types\":[\"位移\",\"伤害\",\"隐匿\"]},\"雅典娜\":{\"cats\":[\"damage\",\"shield\",\"damage\"],\"title\":\"圣域余晖\",\"types\":[\"伤害\",\"护盾\",\"伤害\"]},\"露娜\":{\"cats\":[\"damage\",\"dash\",\"control\"],\"title\":\"月光之女\",\"types\":[\"伤害\",\"位移\",\"控制\"]},\"韩信\":{\"cats\":[\"dash\",\"dash\",\"control\"],\"title\":\"国士无双\",\"types\":[\"位移\",\"位移\",\"击退\"]},\"项羽\":{\"cats\":[\"damage\",\"damage\",\"control\"],\"title\":\"霸王\",\"types\":[\"伤害\",\"伤害\",\"击退\"]},\"马可波罗\":{\"cats\":[\"damage\",\"damage\",\"dash\"],\"title\":\"远游之枪\",\"types\":[\"伤害\",\"伤害\",\"位移\"]},\"马超\":{\"cats\":[\"damage\",\"damage\",\"damage\"],\"title\":\"冷晖之枪\",\"types\":[\"伤害\",\"伤害\",\"伤害\"]},\"高渐离\":{\"cats\":[\"damage\",\"utility\",\"damage\"],\"title\":\"叛逆吟游\",\"types\":[\"伤害\",\"加速\",\"伤害\"]},\"鬼谷子\":{\"cats\":[\"control\",\"utility\",\"damage\"],\"title\":\"万物有灵\",\"types\":[\"控制\",\"隐身\",\"伤害\"]},\"鲁班七号\":{\"cats\":[\"damage\",\"control\",\"damage\"],\"title\":\"机关造物\",\"types\":[\"伤害\",\"控制\",\"伤害\"]},\"鲁班大师\":{\"cats\":[\"dash\",\"control\",\"dash\"],\"title\":\"神匠\",\"types\":[\"位移\",\"控制\",\"位移\"]},\"黄忠\":{\"cats\":[\"damage\",\"control\",\"damage\"],\"title\":\"燃魂重炮\",\"types\":[\"伤害\",\"减速\",\"伤害\"]}},\"manual_overrides\":[\"赵云\",\"敖隐\"]}",
+  "content_hash": "37332644e7658f72a9ffcdce38986ad9580dd2ff9383a3414b0f5e2301b1922b"
+}

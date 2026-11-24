@@ -1,0 +1,41 @@
+{
+  "guide": "王者荣耀 S45「月照长安」英雄级决策树（5 份分路英雄攻略）",
+  "collected_at": "2026-10-21",
+  "files": [
+    {
+      "file": "21-56-09-804-asset_20261021-215609-804_c8ca27c1eb16_6c514692-01-clash-lane-heroes.txt",
+      "lane": "side",
+      "lane_label": "对抗路",
+      "bytes": 196130,
+      "sha256": "c8ca27c1eb16dd695ad2373f42a4ff43e3b7c8c87566adb0c45fd11ddb037529"
+    },
+    {
+      "file": "21-56-09-813-asset_20261021-215609-813_d38062c4e40a_23a8f88b-02-farm-lane-heroes.txt",
+      "lane": "carry",
+      "lane_label": "发育路",
+      "bytes": 113812,
+      "sha256": "d38062c4e40aa7271c6b42c1bd719fc7b8b8713061bbe0a9f02c5d50f087bc4c"
+    },
+    {
+      "file": "21-56-09-819-asset_20261021-215609-819_51ca73041056_6b8d748e-03-mid-lane-heroes.txt",
+      "lane": "mid",
+      "lane_label": "中路",
+      "bytes": 108159,
+      "sha256": "51ca730410565796098e2786163e4c8acebbb04b938070b6eef5db833cf725c8"
+    },
+    {
+      "file": "21-56-09-825-asset_20261021-215609-825_67eaabe36d3d_40895981-04-jungle-lane-heroes.txt",
+      "lane": "jungle",
+      "lane_label": "打野",
+      "bytes": 135827,
+      "sha256": "67eaabe36d3d0589c3677c1150407687a3714c568f8e7c3e33ef43fb53e5e143"
+    },
+    {
+      "file": "21-56-09-830-asset_20261021-215609-830_c83a651a62e8_1a9ff6b4-05-roam-lane-heroes.txt",
+      "lane": "roam",
+      "lane_label": "游走",
+      "bytes": 145020,
+      "sha256": "c83a651a62e8684821dab0bcc37258e84b6e0c16c49c5b748c9bc3f5784b6850"
+    }
+  ]
+}

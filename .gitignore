@@ -69,3 +69,16 @@ desktop.ini
 
 # ===== Trae / 其它工具 =====
 .trae/
+
+# ===== byg/ 子目录（线上 BYG 版本）=====
+# 根目录的规则只认 app/ 前缀，byg/ 下的同名文件会被一并忽略，
+# 所以这里把「必须入库」的例外再写一遍（地图标定图是 CV 运行时依赖）。
+!byg/app/collection/map_blue.png
+!byg/app/collection/map_red.png
+!byg/app/collection/map_reference.png
+!byg/app/collection/minimap_reference.png
+!byg/app/static/**/*.png
+!byg/app/static/**/*.jpg
+!byg/app/static/**/*.jpeg
+!byg/app/static/**/*.gif
+!byg/app/static/**/*.webp

@@ -1,0 +1,40 @@
+{% macro item(ico, label, href, key) -%}
+<a class="nav-item{{ ' on' if nav_active == key else '' }}" href="{{ href }}">
+  <span class="nav-ico" aria-hidden="true">{{ ico }}</span>
+  <span class="nav-txt">{{ label }}</span>
+</a>
+{%- endmacro %}
+<header class="app-header">
+  <div class="app-header-inner">
+    {# 左上角原来是一个纯 CSS 的方块（brand-mark）。它没有任何含义 ——
+       不是 logo、不是开关、不是状态指示器，而它占着整个产品第一个
+       视线落点。现在换成产品名本身。 #}
+    <a class="brand" href="/upload" aria-label="回到上传">
+      {# 四个字排成两行两列 —— 窄栏里横排四个字看着像一句说明文字，
+         排成方块才像产品名（像一枚印章）。
+         封面那个大字是另一处，不受这里影响。 #}
+      <span class="brand-word" aria-label="对局之外"><i>对</i><i>局</i><i>之</i><i>外</i></span>
+    </a>
+
+    <nav class="app-nav">
+      {{ item('⬆', '上传', '/upload', 'index') }}
+      {{ item('☰', '对局', '/matches', 'matches') }}
+      {# 模型：填一个 API Key 就够了 —— 供应方、端点、协议都由预设带出来。
+         摆在侧边栏是因为它是个**配置**，不是一个流程里的某一步：
+         上传页塞一个输入框会让人以为「不填就走不下去」，
+         而它其实是「不填就没有自动结论，报告照出」。 #}
+      {{ item('⚙', '模型', '/model', 'model') }}
+      {# 模式库不放这里了 —— 它只有一个入口：封面第三页那排「进入XX库」的卡。
+         内层再挂一个入口，等于告诉人「模式库是个随手可翻的功能」，
+         而它其实是一份要挑着看的清单。 #}
+    </nav>
+
+    <button class="theme-toggle" id="themeBtn" title="切换深色 / 浅色"
+            aria-label="切换主题">
+      <span class="ico-moon">&#9790;</span><span class="ico-sun">&#9728;</span>
+    </button>
+  </div>
+</header>
+
+{# 氛围背景：只加背景层，版式一个字不动。 #}
+{% include "_atmosphere.html" %}
