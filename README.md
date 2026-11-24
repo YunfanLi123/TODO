@@ -1,4 +1,4 @@
-<h1 style="color: red; font-size: 26px;">线上版本为YunfanLi在11月24日发布的版本，核心代码文件命名为byg,此为最终版</h1>
+![线上版本为YunfanLi在11月24日发布的版本，核心代码文件命名为byg，此为最终版](docs/final-version-banner.svg)
 
 # 基于攻略规范的个人对局执行度分析系统（Firstvirson_BYG）
 
