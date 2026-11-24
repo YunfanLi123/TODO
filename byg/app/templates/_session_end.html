@@ -1,0 +1,67 @@
+{# 即焚模式：页面关了就告诉服务器一声，让它把这次会话的数据删掉。
+
+   用 navigator.sendBeacon：页面卸载时普通请求会被浏览器直接掐掉，
+   beacon 才是专门干这件事的（不等待响应，浏览器会替它发完）。
+
+   服务器那边不是「收到就删」—— 多标签页只关了一个、
+   或者关了马上又回来，都该留着。真正的删除由清扫协程做，
+   判据是「标记之后还有没有任何请求」。
+
+   发不出去也没关系：服务端还有 TTL 兜底。 #}
+<script>
+(function () {
+  // ------------------------------------------------------------------
+  // 心跳：页面开着就定期报一声。
+  //
+  // 服务器判断「用户是不是走了」只能看「还有没有请求」。
+  // 用户开着报告页看半天不点东西 —— 那也是**在用**，不该被当成走了
+  // 然后把数据清掉。心跳让「页面开着」这件事变得可见。
+  //
+  // 30 秒一次：比清扫的宽限期短，保证开着就不会被误删。
+  // ------------------------------------------------------------------
+  var PING_MS = 30000;
+  function ping() {
+    if (document.visibilityState !== 'visible') return;
+    try {
+      fetch('/api/session/ping', { method: 'GET', cache: 'no-store' });
+    } catch (e) { /* 心跳失败不影响使用 */ }
+  }
+  setInterval(ping, PING_MS);
+  document.addEventListener('visibilitychange', function () {
+    if (document.visibilityState === 'visible') ping();
+  });
+
+  if (!navigator || !navigator.sendBeacon) return;
+
+  // ------------------------------------------------------------------
+  // **站内跳转不算「离开」**。
+  //
+  // pagehide 在站内跳转时也会触发（点侧边栏「对局」就是一次跳转）。
+  // 那里也报一声「我走了」，服务器过一会儿就把刚生成的报告删了 ——
+  // 人还在这个网站上用着，报告却没了。
+  // ------------------------------------------------------------------
+  var internalNav = false;
+  document.addEventListener('click', function (e) {
+    var el = (e.target && e.target.closest) ? e.target.closest('a[href]') : null;
+    if (!el) return;
+    if (el.target && el.target !== '_self') return;   // 新标签页 / 下载：不算
+    var href = el.getAttribute('href') || '';
+    if (!href || href.charAt(0) === '#') return;      // 页内锚点：不算
+    var url;
+    try { url = new URL(href, location.href); } catch (err) { return; }
+    if (url.origin !== location.origin) return;        // 外站：不算
+    internalNav = true;
+    // 万一这次点击被 JS 拦下、页面根本没跳走，5 秒后把标记撤掉 ——
+    // 不然真正关页面的时候就不会报了。
+    setTimeout(function () { internalNav = false; }, 5000);
+  }, true);
+
+  window.addEventListener('pagehide', function (e) {
+    if (internalNav) return;      // 站内跳转：人还在网站里
+    if (e.persisted) return;      // 进了 bfcache：页面还在，别报
+    try {
+      navigator.sendBeacon('/api/session/end', new Blob([], { type: 'text/plain' }));
+    } catch (e) { /* 关不掉就算了，服务端还有 TTL 兜底 */ }
+  });
+})();
+</script>

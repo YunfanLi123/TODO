@@ -1,0 +1,19 @@
+{# 和狄仁杰、诸葛亮聊天的面板。
+   点页面上的那两个人（_duo.html 里的两个 <g>）就能打开。
+   回答的依据是**操作模式库**与**这一局的报告** —— 见 app/report/chat.py。 #}
+<div class="chat" id="chat" hidden>
+  <div class="chat-head">
+    <span class="chat-name" id="chatName">诸葛亮</span>
+    <span class="chat-role" id="chatRole">军师</span>
+    <button class="chat-close" id="chatClose" type="button" aria-label="关闭">×</button>
+  </div>
+  {# 这两个人的位置：**局外**。他们讲的是操作模式库里那些打法本身，
+     不是把玩家这局的报告再解释一遍 —— 报告页自己已经写清楚了。 #}
+  <p class="chat-sub">局外拓展 · 讲操作模式库里的打法与思路，不复述这局的报告</p>
+  <div class="chat-log" id="chatLog" aria-live="polite"></div>
+  <form class="chat-form" id="chatForm" autocomplete="off">
+    <input class="chat-input" id="chatInput" type="text" maxlength="500"
+           placeholder="问他一句…" aria-label="说点什么">
+    <button class="chat-send" type="submit">问</button>
+  </form>
+</div>

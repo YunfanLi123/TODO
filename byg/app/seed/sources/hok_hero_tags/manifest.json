@@ -1,0 +1,14 @@
+{
+  "source": "王者荣耀官网 · 英雄资料",
+  "url": "https://pvp.qq.com/web201605/js/herolist.json",
+  "fetched_at": "2026-10-22",
+  "note": "英雄的客观属性（定位 / 推荐分路）。操作模式仍以攻略原文为唯一真源，这份数据只回答「这个英雄是什么定位、能打哪条线」。",
+  "files": [
+    {
+      "file": "herolist.json",
+      "bytes": 43153,
+      "sha256": "3554064a4bf0c8e784d96e34656b3546a9d3a3fe2685caee9b88f1fa30e5b9b1",
+      "hero_count": 133
+    }
+  ]
+}

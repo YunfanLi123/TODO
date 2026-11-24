@@ -1,0 +1,3110 @@
+{
+  "上官婉儿": {
+    "assassin": false,
+    "flexible": false,
+    "frontline": false,
+    "lane_codes": [
+      "mid"
+    ],
+    "lanes": [
+      "中路"
+    ],
+    "mage": true,
+    "marksman": false,
+    "name": "上官婉儿",
+    "note": "",
+    "output": true,
+    "role": "法师",
+    "role_code": "mage",
+    "source": "official",
+    "support": false,
+    "tank": false,
+    "title": "惊鸿之笔"
+  },
+  "不知火舞": {
+    "assassin": true,
+    "flexible": false,
+    "frontline": false,
+    "lane_codes": [
+      "mid"
+    ],
+    "lanes": [
+      "中路"
+    ],
+    "mage": false,
+    "marksman": false,
+    "name": "不知火舞",
+    "note": "",
+    "output": true,
+    "role": "刺客",
+    "role_code": "assassin",
+    "source": "official",
+    "support": false,
+    "tank": false,
+    "title": "明媚烈焰"
+  },
+  "东皇太一": {
+    "assassin": false,
+    "flexible": true,
+    "frontline": false,
+    "lane_codes": [
+      "roam",
+      "side"
+    ],
+    "lanes": [
+      "游走",
+      "对抗路"
+    ],
+    "mage": false,
+    "marksman": false,
+    "name": "东皇太一",
+    "note": "",
+    "output": false,
+    "role": "辅助",
+    "role_code": "support",
+    "source": "official",
+    "support": true,
+    "tank": false,
+    "title": "噬灭日蚀"
+  },
+  "云中君": {
+    "assassin": true,
+    "flexible": false,
+    "frontline": false,
+    "lane_codes": [
+      "jungle"
+    ],
+    "lanes": [
+      "打野"
+    ],
+    "mage": false,
+    "marksman": false,
+    "name": "云中君",
+    "note": "",
+    "output": true,
+    "role": "刺客",
+    "role_code": "assassin",
+    "source": "official",
+    "support": false,
+    "tank": false,
+    "title": "流云之翼"
+  },
+  "云缨": {
+    "assassin": false,
+    "flexible": false,
+    "frontline": true,
+    "lane_codes": [
+      "jungle"
+    ],
+    "lanes": [
+      "打野"
+    ],
+    "mage": false,
+    "marksman": false,
+    "name": "云缨",
+    "note": "",
+    "output": false,
+    "role": "战士",
+    "role_code": "warrior",
+    "source": "official",
+    "support": false,
+    "tank": false,
+    "title": "燎原之心"
+  },
+  "亚瑟": {
+    "assassin": false,
+    "flexible": true,
+    "frontline": true,
+    "lane_codes": [
+      "side",
+      "jungle"
+    ],
+    "lanes": [
+      "对抗路",
+      "打野"
+    ],
+    "mage": false,
+    "marksman": false,
+    "name": "亚瑟",
+    "note": "",
+    "output": false,
+    "role": "战士",
+    "role_code": "warrior",
+    "source": "official",
+    "support": false,
+    "tank": false,
+    "title": "圣骑之力"
+  },
+  "亚连": {
+    "assassin": false,
+    "flexible": false,
+    "frontline": true,
+    "lane_codes": [
+      "side"
+    ],
+    "lanes": [
+      "对抗路"
+    ],
+    "mage": false,
+    "marksman": false,
+    "name": "亚连",
+    "note": "",
+    "output": false,
+    "role": "战士",
+    "role_code": "warrior",
+    "source": "official",
+    "support": false,
+    "tank": false,
+    "title": "追忆之刃"
+  },
+  "伽罗": {
+    "assassin": false,
+    "flexible": false,
+    "frontline": false,
+    "lane_codes": [
+      "carry"
+    ],
+    "lanes": [
+      "发育路"
+    ],
+    "mage": false,
+    "marksman": true,
+    "name": "伽罗",
+    "note": "",
+    "output": true,
+    "role": "射手",
+    "role_code": "marksman",
+    "source": "official",
+    "support": false,
+    "tank": false,
+    "title": "破魔之箭"
+  },
+  "元射": {
+    "assassin": false,
+    "flexible": false,
+    "frontline": false,
+    "lane_codes": [
+      "carry"
+    ],
+    "lanes": [
+      "发育路"
+    ],
+    "mage": false,
+    "marksman": true,
+    "name": "元流之子(射手)",
+    "note": "攻略简称，官方名「元流之子(射手)」",
+    "output": true,
+    "role": "射手",
+    "role_code": "marksman",
+    "source": "official",
+    "support": false,
+    "tank": false,
+    "title": "沉舟之志"
+  },
+  "元歌": {
+    "assassin": true,
+    "flexible": false,
+    "frontline": false,
+    "lane_codes": [
+      "side"
+    ],
+    "lanes": [
+      "对抗路"
+    ],
+    "mage": false,
+    "marksman": false,
+    "name": "元歌",
+    "note": "",
+    "output": true,
+    "role": "刺客",
+    "role_code": "assassin",
+    "source": "official",
+    "support": false,
+    "tank": false,
+    "title": "无间傀儡"
+  },
+  "元流之子(刺客)": {
+    "assassin": false,
+    "flexible": false,
+    "frontline": false,
+    "lane_codes": [
+      "jungle"
+    ],
+    "lanes": [
+      "打野"
+    ],
+    "mage": false,
+    "marksman": false,
+    "name": "元流之子(刺客)",
+    "note": "",
+    "output": false,
+    "role": "辅助",
+    "role_code": "support",
+    "source": "official",
+    "support": true,
+    "tank": false,
+    "title": "守望之诺"
+  },
+  "元流之子(坦克)": {
+    "assassin": false,
+    "flexible": true,
+    "frontline": true,
+    "lane_codes": [
+      "side",
+      "jungle"
+    ],
+    "lanes": [
+      "对抗路",
+      "打野"
+    ],
+    "mage": false,
+    "marksman": false,
+    "name": "元流之子(坦克)",
+    "note": "",
+    "output": false,
+    "role": "坦克",
+    "role_code": "tank",
+    "source": "official",
+    "support": false,
+    "tank": true,
+    "title": "止戈之道"
+  },
+  "元流之子(射手)": {
+    "assassin": false,
+    "flexible": false,
+    "frontline": false,
+    "lane_codes": [
+      "carry"
+    ],
+    "lanes": [
+      "发育路"
+    ],
+    "mage": false,
+    "marksman": true,
+    "name": "元流之子(射手)",
+    "note": "",
+    "output": true,
+    "role": "射手",
+    "role_code": "marksman",
+    "source": "official",
+    "support": false,
+    "tank": false,
+    "title": "沉舟之志"
+  },
+  "元流之子(法师)": {
+    "assassin": false,
+    "flexible": false,
+    "frontline": false,
+    "lane_codes": [
+      "mid"
+    ],
+    "lanes": [
+      "中路"
+    ],
+    "mage": true,
+    "marksman": false,
+    "name": "元流之子(法师)",
+    "note": "",
+    "output": true,
+    "role": "法师",
+    "role_code": "mage",
+    "source": "official",
+    "support": false,
+    "tank": false,
+    "title": "万妙之心"
+  },
+  "元流之子(辅助)": {
+    "assassin": false,
+    "flexible": false,
+    "frontline": false,
+    "lane_codes": [
+      "roam"
+    ],
+    "lanes": [
+      "游走"
+    ],
+    "mage": false,
+    "marksman": false,
+    "name": "元流之子(辅助)",
+    "note": "",
+    "output": false,
+    "role": "辅助",
+    "role_code": "support",
+    "source": "official",
+    "support": true,
+    "tank": false,
+    "title": "守望之诺"
+  },
+  "元辅": {
+    "assassin": false,
+    "flexible": false,
+    "frontline": false,
+    "lane_codes": [
+      "roam"
+    ],
+    "lanes": [
+      "游走"
+    ],
+    "mage": false,
+    "marksman": false,
+    "name": "元流之子(辅助)",
+    "note": "攻略简称，官方名「元流之子(辅助)」",
+    "output": false,
+    "role": "辅助",
+    "role_code": "support",
+    "source": "official",
+    "support": true,
+    "tank": false,
+    "title": "守望之诺"
+  },
+  "光信": {
+    "assassin": false,
+    "flexible": false,
+    "frontline": true,
+    "lane_codes": [
+      "carry"
+    ],
+    "lanes": [
+      "发育路"
+    ],
+    "mage": false,
+    "marksman": false,
+    "name": "光信",
+    "note": "攻略原文的定位行；官方静态表尚未收录",
+    "output": false,
+    "role": "战士",
+    "role_code": "warrior",
+    "source": "guide",
+    "support": false,
+    "tank": false,
+    "title": ""
+  },
+  "公孙离": {
+    "assassin": false,
+    "flexible": false,
+    "frontline": false,
+    "lane_codes": [
+      "carry"
+    ],
+    "lanes": [
+      "发育路"
+    ],
+    "mage": false,
+    "marksman": true,
+    "name": "公孙离",
+    "note": "",
+    "output": true,
+    "role": "射手",
+    "role_code": "marksman",
+    "source": "official",
+    "support": false,
+    "tank": false,
+    "title": "幻舞玲珑"
+  },
+  "六耳": {
+    "assassin": true,
+    "flexible": true,
+    "frontline": false,
+    "lane_codes": [
+      "jungle",
+      "side"
+    ],
+    "lanes": [
+      "打野",
+      "对抗路"
+    ],
+    "mage": false,
+    "marksman": false,
+    "name": "心魔六耳",
+    "note": "攻略简称，官方名「心魔六耳」",
+    "output": true,
+    "role": "刺客",
+    "role_code": "assassin",
+    "source": "official",
+    "support": false,
+    "tank": false,
+    "title": "孙悟空命格"
+  },
+  "兰陵王": {
+    "assassin": true,
+    "flexible": false,
+    "frontline": false,
+    "lane_codes": [
+      "jungle"
+    ],
+    "lanes": [
+      "打野"
+    ],
+    "mage": false,
+    "marksman": false,
+    "name": "兰陵王",
+    "note": "",
+    "output": true,
+    "role": "刺客",
+    "role_code": "assassin",
+    "source": "official",
+    "support": false,
+    "tank": false,
+    "title": "暗影刀锋"
+  },
+  "关羽": {
+    "assassin": false,
+    "flexible": false,
+    "frontline": true,
+    "lane_codes": [
+      "side"
+    ],
+    "lanes": [
+      "对抗路"
+    ],
+    "mage": false,
+    "marksman": false,
+    "name": "关羽",
+    "note": "",
+    "output": false,
+    "role": "战士",
+    "role_code": "warrior",
+    "source": "official",
+    "support": false,
+    "tank": false,
+    "title": "一骑当千"
+  },
+  "典韦": {
+    "assassin": false,
+    "flexible": false,
+    "frontline": true,
+    "lane_codes": [
+      "jungle"
+    ],
+    "lanes": [
+      "打野"
+    ],
+    "mage": false,
+    "marksman": false,
+    "name": "典韦",
+    "note": "",
+    "output": false,
+    "role": "战士",
+    "role_code": "warrior",
+    "source": "official",
+    "support": false,
+    "tank": false,
+    "title": "狂战士"
+  },
+  "刘备": {
+    "assassin": false,
+    "flexible": false,
+    "frontline": true,
+    "lane_codes": [
+      "jungle"
+    ],
+    "lanes": [
+      "打野"
+    ],
+    "mage": false,
+    "marksman": false,
+    "name": "刘备",
+    "note": "",
+    "output": false,
+    "role": "战士",
+    "role_code": "warrior",
+    "source": "official",
+    "support": false,
+    "tank": false,
+    "title": "仁德义枪"
+  },
+  "刘禅": {
+    "assassin": false,
+    "flexible": false,
+    "frontline": false,
+    "lane_codes": [
+      "roam"
+    ],
+    "lanes": [
+      "游走"
+    ],
+    "mage": false,
+    "marksman": false,
+    "name": "刘禅",
+    "note": "",
+    "output": false,
+    "role": "辅助",
+    "role_code": "support",
+    "source": "official",
+    "support": true,
+    "tank": false,
+    "title": "暴走机关"
+  },
+  "刘邦": {
+    "assassin": false,
+    "flexible": true,
+    "frontline": true,
+    "lane_codes": [
+      "side",
+      "roam"
+    ],
+    "lanes": [
+      "对抗路",
+      "游走"
+    ],
+    "mage": false,
+    "marksman": false,
+    "name": "刘邦",
+    "note": "",
+    "output": false,
+    "role": "坦克",
+    "role_code": "tank",
+    "source": "official",
+    "support": false,
+    "tank": true,
+    "title": "双面君主"
+  },
+  "卢雅那": {
+    "assassin": false,
+    "flexible": false,
+    "frontline": false,
+    "lane_codes": [
+      "roam"
+    ],
+    "lanes": [
+      "游走"
+    ],
+    "mage": false,
+    "marksman": true,
+    "name": "卢雅那",
+    "note": "",
+    "output": true,
+    "role": "射手",
+    "role_code": "marksman",
+    "source": "official",
+    "support": false,
+    "tank": false,
+    "title": "蛇焰使者"
+  },
+  "司空震": {
+    "assassin": false,
+    "flexible": true,
+    "frontline": true,
+    "lane_codes": [
+      "side",
+      "jungle"
+    ],
+    "lanes": [
+      "对抗路",
+      "打野"
+    ],
+    "mage": false,
+    "marksman": false,
+    "name": "司空震",
+    "note": "",
+    "output": false,
+    "role": "战士",
+    "role_code": "warrior",
+    "source": "official",
+    "support": false,
+    "tank": false,
+    "title": "雷霆之王"
+  },
+  "司马懿": {
+    "assassin": true,
+    "flexible": true,
+    "frontline": false,
+    "lane_codes": [
+      "jungle",
+      "mid"
+    ],
+    "lanes": [
+      "打野",
+      "中路"
+    ],
+    "mage": false,
+    "marksman": false,
+    "name": "司马懿",
+    "note": "",
+    "output": true,
+    "role": "刺客",
+    "role_code": "assassin",
+    "source": "official",
+    "support": false,
+    "tank": false,
+    "title": "寂灭之心"
+  },
+  "后羿": {
+    "assassin": false,
+    "flexible": false,
+    "frontline": false,
+    "lane_codes": [
+      "carry"
+    ],
+    "lanes": [
+      "发育路"
+    ],
+    "mage": false,
+    "marksman": true,
+    "name": "后羿",
+    "note": "",
+    "output": true,
+    "role": "射手",
+    "role_code": "marksman",
+    "source": "official",
+    "support": false,
+    "tank": false,
+    "title": "半神之弓"
+  },
+  "吕布": {
+    "assassin": false,
+    "flexible": false,
+    "frontline": true,
+    "lane_codes": [
+      "side"
+    ],
+    "lanes": [
+      "对抗路"
+    ],
+    "mage": false,
+    "marksman": false,
+    "name": "吕布",
+    "note": "",
+    "output": false,
+    "role": "战士",
+    "role_code": "warrior",
+    "source": "official",
+    "support": false,
+    "tank": false,
+    "title": "无双之魔"
+  },
+  "周瑜": {
+    "assassin": false,
+    "flexible": false,
+    "frontline": false,
+    "lane_codes": [
+      "mid"
+    ],
+    "lanes": [
+      "中路"
+    ],
+    "mage": true,
+    "marksman": false,
+    "name": "周瑜",
+    "note": "",
+    "output": true,
+    "role": "法师",
+    "role_code": "mage",
+    "source": "official",
+    "support": false,
+    "tank": false,
+    "title": "铁血都督"
+  },
+  "哪吒": {
+    "assassin": false,
+    "flexible": true,
+    "frontline": true,
+    "lane_codes": [
+      "side",
+      "jungle"
+    ],
+    "lanes": [
+      "对抗路",
+      "打野"
+    ],
+    "mage": false,
+    "marksman": false,
+    "name": "哪吒",
+    "note": "",
+    "output": false,
+    "role": "战士",
+    "role_code": "warrior",
+    "source": "official",
+    "support": false,
+    "tank": false,
+    "title": "桀骜炎枪"
+  },
+  "墨子": {
+    "assassin": false,
+    "flexible": true,
+    "frontline": false,
+    "lane_codes": [
+      "mid",
+      "roam"
+    ],
+    "lanes": [
+      "中路",
+      "游走"
+    ],
+    "mage": true,
+    "marksman": false,
+    "name": "墨子",
+    "note": "",
+    "output": true,
+    "role": "法师",
+    "role_code": "mage",
+    "source": "official",
+    "support": false,
+    "tank": false,
+    "title": "和平守望"
+  },
+  "夏侯惇": {
+    "assassin": false,
+    "flexible": true,
+    "frontline": true,
+    "lane_codes": [
+      "side",
+      "roam",
+      "jungle"
+    ],
+    "lanes": [
+      "对抗路",
+      "游走",
+      "打野"
+    ],
+    "mage": false,
+    "marksman": false,
+    "name": "夏侯惇",
+    "note": "",
+    "output": false,
+    "role": "坦克",
+    "role_code": "tank",
+    "source": "official",
+    "support": false,
+    "tank": true,
+    "title": "不羁之风"
+  },
+  "夏洛特": {
+    "assassin": false,
+    "flexible": false,
+    "frontline": true,
+    "lane_codes": [
+      "side"
+    ],
+    "lanes": [
+      "对抗路"
+    ],
+    "mage": false,
+    "marksman": false,
+    "name": "夏洛特",
+    "note": "",
+    "output": false,
+    "role": "战士",
+    "role_code": "warrior",
+    "source": "official",
+    "support": false,
+    "tank": false,
+    "title": "玫瑰剑士"
+  },
+  "大乔": {
+    "assassin": false,
+    "flexible": true,
+    "frontline": false,
+    "lane_codes": [
+      "roam",
+      "mid"
+    ],
+    "lanes": [
+      "游走",
+      "中路"
+    ],
+    "mage": false,
+    "marksman": false,
+    "name": "大乔",
+    "note": "",
+    "output": false,
+    "role": "辅助",
+    "role_code": "support",
+    "source": "official",
+    "support": true,
+    "tank": false,
+    "title": "沧海之曜"
+  },
+  "大司命": {
+    "assassin": false,
+    "flexible": true,
+    "frontline": true,
+    "lane_codes": [
+      "jungle",
+      "side"
+    ],
+    "lanes": [
+      "打野",
+      "对抗路"
+    ],
+    "mage": false,
+    "marksman": false,
+    "name": "大司命",
+    "note": "",
+    "output": false,
+    "role": "战士",
+    "role_code": "warrior",
+    "source": "official",
+    "support": false,
+    "tank": false,
+    "title": "肃归之戈"
+  },
+  "大禹": {
+    "assassin": false,
+    "flexible": false,
+    "frontline": false,
+    "lane_codes": [
+      "roam"
+    ],
+    "lanes": [
+      "游走"
+    ],
+    "mage": false,
+    "marksman": false,
+    "name": "大禹",
+    "note": "",
+    "output": false,
+    "role": "辅助",
+    "role_code": "support",
+    "source": "official",
+    "support": true,
+    "tank": false,
+    "title": "鼎镇山河"
+  },
+  "太乙真人": {
+    "assassin": false,
+    "flexible": false,
+    "frontline": false,
+    "lane_codes": [
+      "roam"
+    ],
+    "lanes": [
+      "游走"
+    ],
+    "mage": false,
+    "marksman": false,
+    "name": "太乙真人",
+    "note": "",
+    "output": false,
+    "role": "辅助",
+    "role_code": "support",
+    "source": "official",
+    "support": true,
+    "tank": false,
+    "title": "炼金大师"
+  },
+  "女娲": {
+    "assassin": false,
+    "flexible": false,
+    "frontline": false,
+    "lane_codes": [
+      "mid"
+    ],
+    "lanes": [
+      "中路"
+    ],
+    "mage": true,
+    "marksman": false,
+    "name": "女娲",
+    "note": "",
+    "output": true,
+    "role": "法师",
+    "role_code": "mage",
+    "source": "official",
+    "support": false,
+    "tank": false,
+    "title": "至高创世"
+  },
+  "妲己": {
+    "assassin": false,
+    "flexible": false,
+    "frontline": false,
+    "lane_codes": [
+      "mid"
+    ],
+    "lanes": [
+      "中路"
+    ],
+    "mage": true,
+    "marksman": false,
+    "name": "妲己",
+    "note": "",
+    "output": true,
+    "role": "法师",
+    "role_code": "mage",
+    "source": "official",
+    "support": false,
+    "tank": false,
+    "title": "魅力之狐"
+  },
+  "姜子牙": {
+    "assassin": false,
+    "flexible": true,
+    "frontline": false,
+    "lane_codes": [
+      "mid",
+      "roam"
+    ],
+    "lanes": [
+      "中路",
+      "游走"
+    ],
+    "mage": true,
+    "marksman": false,
+    "name": "姜子牙",
+    "note": "",
+    "output": true,
+    "role": "法师",
+    "role_code": "mage",
+    "source": "official",
+    "support": false,
+    "tank": false,
+    "title": "封神者"
+  },
+  "姬小满": {
+    "assassin": false,
+    "flexible": false,
+    "frontline": true,
+    "lane_codes": [
+      "side"
+    ],
+    "lanes": [
+      "对抗路"
+    ],
+    "mage": false,
+    "marksman": false,
+    "name": "姬小满",
+    "note": "",
+    "output": false,
+    "role": "战士",
+    "role_code": "warrior",
+    "source": "official",
+    "support": false,
+    "tank": false,
+    "title": "武道奇才"
+  },
+  "娜可露露": {
+    "assassin": true,
+    "flexible": false,
+    "frontline": false,
+    "lane_codes": [
+      "jungle"
+    ],
+    "lanes": [
+      "打野"
+    ],
+    "mage": false,
+    "marksman": false,
+    "name": "娜可露露",
+    "note": "",
+    "output": true,
+    "role": "刺客",
+    "role_code": "assassin",
+    "source": "official",
+    "support": false,
+    "tank": false,
+    "title": "鹰之守护"
+  },
+  "嫦娥": {
+    "assassin": false,
+    "flexible": true,
+    "frontline": false,
+    "lane_codes": [
+      "mid",
+      "side",
+      "jungle"
+    ],
+    "lanes": [
+      "中路",
+      "对抗路",
+      "打野"
+    ],
+    "mage": true,
+    "marksman": false,
+    "name": "嫦娥",
+    "note": "",
+    "output": true,
+    "role": "法师",
+    "role_code": "mage",
+    "source": "official",
+    "support": false,
+    "tank": false,
+    "title": "寒月公主"
+  },
+  "嬴政": {
+    "assassin": false,
+    "flexible": false,
+    "frontline": false,
+    "lane_codes": [
+      "mid"
+    ],
+    "lanes": [
+      "中路"
+    ],
+    "mage": true,
+    "marksman": false,
+    "name": "嬴政",
+    "note": "",
+    "output": true,
+    "role": "法师",
+    "role_code": "mage",
+    "source": "official",
+    "support": false,
+    "tank": false,
+    "title": "王者独尊"
+  },
+  "孙尚香": {
+    "assassin": false,
+    "flexible": false,
+    "frontline": false,
+    "lane_codes": [
+      "carry"
+    ],
+    "lanes": [
+      "发育路"
+    ],
+    "mage": false,
+    "marksman": true,
+    "name": "孙尚香",
+    "note": "",
+    "output": true,
+    "role": "射手",
+    "role_code": "marksman",
+    "source": "official",
+    "support": false,
+    "tank": false,
+    "title": "千金重弩"
+  },
+  "孙悟空": {
+    "assassin": true,
+    "flexible": false,
+    "frontline": false,
+    "lane_codes": [
+      "jungle"
+    ],
+    "lanes": [
+      "打野"
+    ],
+    "mage": false,
+    "marksman": false,
+    "name": "孙悟空",
+    "note": "",
+    "output": true,
+    "role": "刺客",
+    "role_code": "assassin",
+    "source": "official",
+    "support": false,
+    "tank": false,
+    "title": "齐天大圣"
+  },
+  "孙权": {
+    "assassin": false,
+    "flexible": false,
+    "frontline": false,
+    "lane_codes": [
+      "carry"
+    ],
+    "lanes": [
+      "发育路"
+    ],
+    "mage": false,
+    "marksman": true,
+    "name": "孙权",
+    "note": "",
+    "output": true,
+    "role": "射手",
+    "role_code": "marksman",
+    "source": "official",
+    "support": false,
+    "tank": false,
+    "title": "定旌之谋"
+  },
+  "孙策": {
+    "assassin": false,
+    "flexible": true,
+    "frontline": true,
+    "lane_codes": [
+      "side",
+      "jungle"
+    ],
+    "lanes": [
+      "对抗路",
+      "打野"
+    ],
+    "mage": false,
+    "marksman": false,
+    "name": "孙策",
+    "note": "",
+    "output": false,
+    "role": "坦克",
+    "role_code": "tank",
+    "source": "official",
+    "support": false,
+    "tank": true,
+    "title": "光明之海"
+  },
+  "孙膑": {
+    "assassin": false,
+    "flexible": false,
+    "frontline": false,
+    "lane_codes": [
+      "roam"
+    ],
+    "lanes": [
+      "游走"
+    ],
+    "mage": false,
+    "marksman": false,
+    "name": "孙膑",
+    "note": "",
+    "output": false,
+    "role": "辅助",
+    "role_code": "support",
+    "source": "official",
+    "support": true,
+    "tank": false,
+    "title": "逆流之时"
+  },
+  "安琪拉": {
+    "assassin": false,
+    "flexible": false,
+    "frontline": false,
+    "lane_codes": [
+      "mid"
+    ],
+    "lanes": [
+      "中路"
+    ],
+    "mage": true,
+    "marksman": false,
+    "name": "安琪拉",
+    "note": "",
+    "output": true,
+    "role": "法师",
+    "role_code": "mage",
+    "source": "official",
+    "support": false,
+    "tank": false,
+    "title": "暗夜萝莉"
+  },
+  "宫本武藏": {
+    "assassin": false,
+    "flexible": false,
+    "frontline": true,
+    "lane_codes": [
+      "jungle"
+    ],
+    "lanes": [
+      "打野"
+    ],
+    "mage": false,
+    "marksman": false,
+    "name": "宫本武藏",
+    "note": "",
+    "output": false,
+    "role": "战士",
+    "role_code": "warrior",
+    "source": "official",
+    "support": false,
+    "tank": false,
+    "title": "剑圣"
+  },
+  "小乔": {
+    "assassin": false,
+    "flexible": false,
+    "frontline": false,
+    "lane_codes": [
+      "mid"
+    ],
+    "lanes": [
+      "中路"
+    ],
+    "mage": true,
+    "marksman": false,
+    "name": "小乔",
+    "note": "",
+    "output": true,
+    "role": "法师",
+    "role_code": "mage",
+    "source": "official",
+    "support": false,
+    "tank": false,
+    "title": "恋之微风"
+  },
+  "少司缘": {
+    "assassin": false,
+    "flexible": false,
+    "frontline": false,
+    "lane_codes": [
+      "roam"
+    ],
+    "lanes": [
+      "游走"
+    ],
+    "mage": false,
+    "marksman": false,
+    "name": "少司缘",
+    "note": "",
+    "output": false,
+    "role": "辅助",
+    "role_code": "support",
+    "source": "official",
+    "support": true,
+    "tank": false,
+    "title": "聆愿之祝"
+  },
+  "干将莫邪": {
+    "assassin": false,
+    "flexible": false,
+    "frontline": false,
+    "lane_codes": [
+      "mid"
+    ],
+    "lanes": [
+      "中路"
+    ],
+    "mage": true,
+    "marksman": false,
+    "name": "干将莫邪",
+    "note": "",
+    "output": true,
+    "role": "法师",
+    "role_code": "mage",
+    "source": "official",
+    "support": false,
+    "tank": false,
+    "title": "淬命双剑"
+  },
+  "庄周": {
+    "assassin": false,
+    "flexible": false,
+    "frontline": false,
+    "lane_codes": [
+      "roam"
+    ],
+    "lanes": [
+      "游走"
+    ],
+    "mage": false,
+    "marksman": false,
+    "name": "庄周",
+    "note": "",
+    "output": false,
+    "role": "辅助",
+    "role_code": "support",
+    "source": "official",
+    "support": true,
+    "tank": false,
+    "title": "逍遥梦幻"
+  },
+  "廉颇": {
+    "assassin": false,
+    "flexible": true,
+    "frontline": true,
+    "lane_codes": [
+      "side",
+      "roam"
+    ],
+    "lanes": [
+      "对抗路",
+      "游走"
+    ],
+    "mage": false,
+    "marksman": false,
+    "name": "廉颇",
+    "note": "",
+    "output": false,
+    "role": "坦克",
+    "role_code": "tank",
+    "source": "official",
+    "support": false,
+    "tank": true,
+    "title": "正义爆轰"
+  },
+  "弈星": {
+    "assassin": false,
+    "flexible": false,
+    "frontline": false,
+    "lane_codes": [
+      "mid"
+    ],
+    "lanes": [
+      "中路"
+    ],
+    "mage": true,
+    "marksman": false,
+    "name": "弈星",
+    "note": "",
+    "output": true,
+    "role": "法师",
+    "role_code": "mage",
+    "source": "official",
+    "support": false,
+    "tank": false,
+    "title": "天元之弈"
+  },
+  "张良": {
+    "assassin": false,
+    "flexible": true,
+    "frontline": false,
+    "lane_codes": [
+      "mid",
+      "roam"
+    ],
+    "lanes": [
+      "中路",
+      "游走"
+    ],
+    "mage": true,
+    "marksman": false,
+    "name": "张良",
+    "note": "",
+    "output": true,
+    "role": "法师",
+    "role_code": "mage",
+    "source": "official",
+    "support": false,
+    "tank": false,
+    "title": "言灵之书"
+  },
+  "张飞": {
+    "assassin": false,
+    "flexible": false,
+    "frontline": true,
+    "lane_codes": [
+      "roam"
+    ],
+    "lanes": [
+      "游走"
+    ],
+    "mage": false,
+    "marksman": false,
+    "name": "张飞",
+    "note": "",
+    "output": false,
+    "role": "坦克",
+    "role_code": "tank",
+    "source": "official",
+    "support": false,
+    "tank": true,
+    "title": "禁血狂兽"
+  },
+  "影": {
+    "assassin": false,
+    "flexible": true,
+    "frontline": true,
+    "lane_codes": [
+      "side",
+      "jungle"
+    ],
+    "lanes": [
+      "对抗路",
+      "打野"
+    ],
+    "mage": false,
+    "marksman": false,
+    "name": "影",
+    "note": "",
+    "output": false,
+    "role": "战士",
+    "role_code": "warrior",
+    "source": "official",
+    "support": false,
+    "tank": false,
+    "title": "黯羽东君"
+  },
+  "心魔六耳": {
+    "assassin": true,
+    "flexible": true,
+    "frontline": false,
+    "lane_codes": [
+      "jungle",
+      "side"
+    ],
+    "lanes": [
+      "打野",
+      "对抗路"
+    ],
+    "mage": false,
+    "marksman": false,
+    "name": "心魔六耳",
+    "note": "",
+    "output": true,
+    "role": "刺客",
+    "role_code": "assassin",
+    "source": "official",
+    "support": false,
+    "tank": false,
+    "title": "孙悟空命格"
+  },
+  "戈娅": {
+    "assassin": false,
+    "flexible": false,
+    "frontline": false,
+    "lane_codes": [
+      "carry"
+    ],
+    "lanes": [
+      "发育路"
+    ],
+    "mage": false,
+    "marksman": true,
+    "name": "戈娅",
+    "note": "",
+    "output": true,
+    "role": "射手",
+    "role_code": "marksman",
+    "source": "official",
+    "support": false,
+    "tank": false,
+    "title": "沙海飞舟"
+  },
+  "扁鹊": {
+    "assassin": false,
+    "flexible": false,
+    "frontline": false,
+    "lane_codes": [
+      "mid"
+    ],
+    "lanes": [
+      "中路"
+    ],
+    "mage": true,
+    "marksman": false,
+    "name": "扁鹊",
+    "note": "",
+    "output": true,
+    "role": "法师",
+    "role_code": "mage",
+    "source": "official",
+    "support": false,
+    "tank": false,
+    "title": "善恶怪医"
+  },
+  "敖隐": {
+    "assassin": false,
+    "flexible": false,
+    "frontline": false,
+    "lane_codes": [
+      "carry"
+    ],
+    "lanes": [
+      "发育路"
+    ],
+    "mage": false,
+    "marksman": true,
+    "name": "敖隐",
+    "note": "",
+    "output": true,
+    "role": "射手",
+    "role_code": "marksman",
+    "source": "official",
+    "support": false,
+    "tank": false,
+    "title": "凌霄真龙"
+  },
+  "明世隐": {
+    "assassin": false,
+    "flexible": false,
+    "frontline": false,
+    "lane_codes": [
+      "roam"
+    ],
+    "lanes": [
+      "游走"
+    ],
+    "mage": false,
+    "marksman": false,
+    "name": "明世隐",
+    "note": "",
+    "output": false,
+    "role": "辅助",
+    "role_code": "support",
+    "source": "official",
+    "support": true,
+    "tank": false,
+    "title": "灵魂劫卜"
+  },
+  "暃": {
+    "assassin": true,
+    "flexible": false,
+    "frontline": false,
+    "lane_codes": [
+      "jungle"
+    ],
+    "lanes": [
+      "打野"
+    ],
+    "mage": false,
+    "marksman": false,
+    "name": "暃",
+    "note": "",
+    "output": true,
+    "role": "刺客",
+    "role_code": "assassin",
+    "source": "official",
+    "support": false,
+    "tank": false,
+    "title": "玉城之子"
+  },
+  "曜": {
+    "assassin": false,
+    "flexible": true,
+    "frontline": true,
+    "lane_codes": [
+      "jungle",
+      "side"
+    ],
+    "lanes": [
+      "打野",
+      "对抗路"
+    ],
+    "mage": false,
+    "marksman": false,
+    "name": "曜",
+    "note": "",
+    "output": false,
+    "role": "战士",
+    "role_code": "warrior",
+    "source": "official",
+    "support": false,
+    "tank": false,
+    "title": "星辰之子"
+  },
+  "曹操": {
+    "assassin": false,
+    "flexible": true,
+    "frontline": true,
+    "lane_codes": [
+      "side",
+      "jungle"
+    ],
+    "lanes": [
+      "对抗路",
+      "打野"
+    ],
+    "mage": false,
+    "marksman": false,
+    "name": "曹操",
+    "note": "",
+    "output": false,
+    "role": "战士",
+    "role_code": "warrior",
+    "source": "official",
+    "support": false,
+    "tank": false,
+    "title": "鲜血枭雄"
+  },
+  "朵莉亚": {
+    "assassin": false,
+    "flexible": false,
+    "frontline": false,
+    "lane_codes": [
+      "roam"
+    ],
+    "lanes": [
+      "游走"
+    ],
+    "mage": false,
+    "marksman": false,
+    "name": "朵莉亚",
+    "note": "",
+    "output": false,
+    "role": "辅助",
+    "role_code": "support",
+    "source": "official",
+    "support": true,
+    "tank": false,
+    "title": "人鱼之歌"
+  },
+  "李信": {
+    "assassin": false,
+    "flexible": false,
+    "frontline": true,
+    "lane_codes": [
+      "side"
+    ],
+    "lanes": [
+      "对抗路"
+    ],
+    "mage": false,
+    "marksman": false,
+    "name": "李信",
+    "note": "",
+    "output": false,
+    "role": "战士",
+    "role_code": "warrior",
+    "source": "official",
+    "support": false,
+    "tank": false,
+    "title": "谋世之战"
+  },
+  "李元芳": {
+    "assassin": false,
+    "flexible": true,
+    "frontline": false,
+    "lane_codes": [
+      "carry",
+      "jungle"
+    ],
+    "lanes": [
+      "发育路",
+      "打野"
+    ],
+    "mage": false,
+    "marksman": true,
+    "name": "李元芳",
+    "note": "",
+    "output": true,
+    "role": "射手",
+    "role_code": "marksman",
+    "source": "official",
+    "support": false,
+    "tank": false,
+    "title": "王都密探"
+  },
+  "李白": {
+    "assassin": true,
+    "flexible": false,
+    "frontline": false,
+    "lane_codes": [
+      "jungle"
+    ],
+    "lanes": [
+      "打野"
+    ],
+    "mage": false,
+    "marksman": false,
+    "name": "李白",
+    "note": "",
+    "output": true,
+    "role": "刺客",
+    "role_code": "assassin",
+    "source": "official",
+    "support": false,
+    "tank": false,
+    "title": "青莲剑仙"
+  },
+  "杨戬": {
+    "assassin": false,
+    "flexible": true,
+    "frontline": true,
+    "lane_codes": [
+      "side",
+      "jungle"
+    ],
+    "lanes": [
+      "对抗路",
+      "打野"
+    ],
+    "mage": false,
+    "marksman": false,
+    "name": "杨戬",
+    "note": "",
+    "output": false,
+    "role": "战士",
+    "role_code": "warrior",
+    "source": "official",
+    "support": false,
+    "tank": false,
+    "title": "根源之目"
+  },
+  "杨玉环": {
+    "assassin": false,
+    "flexible": true,
+    "frontline": false,
+    "lane_codes": [
+      "mid",
+      "roam",
+      "jungle"
+    ],
+    "lanes": [
+      "中路",
+      "游走",
+      "打野"
+    ],
+    "mage": true,
+    "marksman": false,
+    "name": "杨玉环",
+    "note": "",
+    "output": true,
+    "role": "法师",
+    "role_code": "mage",
+    "source": "official",
+    "support": false,
+    "tank": false,
+    "title": "霓裳风华"
+  },
+  "桑启": {
+    "assassin": false,
+    "flexible": false,
+    "frontline": false,
+    "lane_codes": [
+      "roam"
+    ],
+    "lanes": [
+      "游走"
+    ],
+    "mage": false,
+    "marksman": false,
+    "name": "桑启",
+    "note": "",
+    "output": false,
+    "role": "辅助",
+    "role_code": "support",
+    "source": "official",
+    "support": true,
+    "tank": false,
+    "title": "萤火之旅"
+  },
+  "梦奇": {
+    "assassin": false,
+    "flexible": true,
+    "frontline": true,
+    "lane_codes": [
+      "side",
+      "jungle"
+    ],
+    "lanes": [
+      "对抗路",
+      "打野"
+    ],
+    "mage": false,
+    "marksman": false,
+    "name": "梦奇",
+    "note": "",
+    "output": false,
+    "role": "坦克",
+    "role_code": "tank",
+    "source": "official",
+    "support": false,
+    "tank": true,
+    "title": "入梦之灵"
+  },
+  "橘右京": {
+    "assassin": true,
+    "flexible": true,
+    "frontline": false,
+    "lane_codes": [
+      "jungle",
+      "side"
+    ],
+    "lanes": [
+      "打野",
+      "对抗路"
+    ],
+    "mage": false,
+    "marksman": false,
+    "name": "橘右京",
+    "note": "",
+    "output": true,
+    "role": "刺客",
+    "role_code": "assassin",
+    "source": "official",
+    "support": false,
+    "tank": false,
+    "title": "神梦一刀"
+  },
+  "武则天": {
+    "assassin": false,
+    "flexible": false,
+    "frontline": false,
+    "lane_codes": [
+      "mid"
+    ],
+    "lanes": [
+      "中路"
+    ],
+    "mage": true,
+    "marksman": false,
+    "name": "武则天",
+    "note": "",
+    "output": true,
+    "role": "法师",
+    "role_code": "mage",
+    "source": "official",
+    "support": false,
+    "tank": false,
+    "title": "女帝"
+  },
+  "沈梦溪": {
+    "assassin": false,
+    "flexible": false,
+    "frontline": false,
+    "lane_codes": [
+      "mid"
+    ],
+    "lanes": [
+      "中路"
+    ],
+    "mage": true,
+    "marksman": false,
+    "name": "沈梦溪",
+    "note": "",
+    "output": true,
+    "role": "法师",
+    "role_code": "mage",
+    "source": "official",
+    "support": false,
+    "tank": false,
+    "title": "爆弹怪猫"
+  },
+  "海月": {
+    "assassin": false,
+    "flexible": false,
+    "frontline": false,
+    "lane_codes": [
+      "mid"
+    ],
+    "lanes": [
+      "中路"
+    ],
+    "mage": true,
+    "marksman": false,
+    "name": "海月",
+    "note": "",
+    "output": true,
+    "role": "法师",
+    "role_code": "mage",
+    "source": "official",
+    "support": false,
+    "tank": false,
+    "title": "永夜之心"
+  },
+  "海诺": {
+    "assassin": false,
+    "flexible": true,
+    "frontline": true,
+    "lane_codes": [
+      "mid",
+      "side"
+    ],
+    "lanes": [
+      "中路",
+      "对抗路"
+    ],
+    "mage": false,
+    "marksman": false,
+    "name": "海诺",
+    "note": "",
+    "output": false,
+    "role": "战士",
+    "role_code": "warrior",
+    "source": "official",
+    "support": false,
+    "tank": false,
+    "title": "命运之引"
+  },
+  "澜": {
+    "assassin": true,
+    "flexible": false,
+    "frontline": false,
+    "lane_codes": [
+      "jungle"
+    ],
+    "lanes": [
+      "打野"
+    ],
+    "mage": false,
+    "marksman": false,
+    "name": "澜",
+    "note": "",
+    "output": true,
+    "role": "刺客",
+    "role_code": "assassin",
+    "source": "official",
+    "support": false,
+    "tank": false,
+    "title": "鲨之猎刃"
+  },
+  "牛魔": {
+    "assassin": false,
+    "flexible": false,
+    "frontline": false,
+    "lane_codes": [
+      "roam"
+    ],
+    "lanes": [
+      "游走"
+    ],
+    "mage": false,
+    "marksman": false,
+    "name": "牛魔",
+    "note": "",
+    "output": false,
+    "role": "辅助",
+    "role_code": "support",
+    "source": "official",
+    "support": true,
+    "tank": false,
+    "title": "精英酋长"
+  },
+  "狂铁": {
+    "assassin": false,
+    "flexible": false,
+    "frontline": true,
+    "lane_codes": [
+      "side"
+    ],
+    "lanes": [
+      "对抗路"
+    ],
+    "mage": false,
+    "marksman": false,
+    "name": "狂铁",
+    "note": "",
+    "output": false,
+    "role": "战士",
+    "role_code": "warrior",
+    "source": "official",
+    "support": false,
+    "tank": false,
+    "title": "战车意志"
+  },
+  "狄仁杰": {
+    "assassin": false,
+    "flexible": false,
+    "frontline": false,
+    "lane_codes": [
+      "carry"
+    ],
+    "lanes": [
+      "发育路"
+    ],
+    "mage": false,
+    "marksman": true,
+    "name": "狄仁杰",
+    "note": "",
+    "output": true,
+    "role": "射手",
+    "role_code": "marksman",
+    "source": "official",
+    "support": false,
+    "tank": false,
+    "title": "断案大师"
+  },
+  "猪八戒": {
+    "assassin": false,
+    "flexible": true,
+    "frontline": true,
+    "lane_codes": [
+      "side",
+      "jungle"
+    ],
+    "lanes": [
+      "对抗路",
+      "打野"
+    ],
+    "mage": false,
+    "marksman": false,
+    "name": "猪八戒",
+    "note": "",
+    "output": false,
+    "role": "坦克",
+    "role_code": "tank",
+    "source": "official",
+    "support": false,
+    "tank": true,
+    "title": "无忧猛士"
+  },
+  "王昭君": {
+    "assassin": false,
+    "flexible": true,
+    "frontline": false,
+    "lane_codes": [
+      "mid",
+      "roam"
+    ],
+    "lanes": [
+      "中路",
+      "游走"
+    ],
+    "mage": true,
+    "marksman": false,
+    "name": "王昭君",
+    "note": "",
+    "output": true,
+    "role": "法师",
+    "role_code": "mage",
+    "source": "official",
+    "support": false,
+    "tank": false,
+    "title": "冰雪之华"
+  },
+  "王维": {
+    "assassin": false,
+    "flexible": false,
+    "frontline": false,
+    "lane_codes": [
+      "jungle"
+    ],
+    "lanes": [
+      "打野"
+    ],
+    "mage": true,
+    "marksman": false,
+    "name": "王维",
+    "note": "",
+    "output": true,
+    "role": "法师",
+    "role_code": "mage",
+    "source": "official",
+    "support": false,
+    "tank": false,
+    "title": "空山遗客"
+  },
+  "瑶": {
+    "assassin": false,
+    "flexible": false,
+    "frontline": false,
+    "lane_codes": [
+      "roam"
+    ],
+    "lanes": [
+      "游走"
+    ],
+    "mage": false,
+    "marksman": false,
+    "name": "瑶",
+    "note": "",
+    "output": false,
+    "role": "辅助",
+    "role_code": "support",
+    "source": "official",
+    "support": true,
+    "tank": false,
+    "title": "鹿灵守心"
+  },
+  "甄姬": {
+    "assassin": false,
+    "flexible": false,
+    "frontline": false,
+    "lane_codes": [
+      "mid"
+    ],
+    "lanes": [
+      "中路"
+    ],
+    "mage": true,
+    "marksman": false,
+    "name": "甄姬",
+    "note": "",
+    "output": true,
+    "role": "法师",
+    "role_code": "mage",
+    "source": "official",
+    "support": false,
+    "tank": false,
+    "title": "洛神降临"
+  },
+  "白起": {
+    "assassin": false,
+    "flexible": false,
+    "frontline": true,
+    "lane_codes": [
+      "side"
+    ],
+    "lanes": [
+      "对抗路"
+    ],
+    "mage": false,
+    "marksman": false,
+    "name": "白起",
+    "note": "",
+    "output": false,
+    "role": "坦克",
+    "role_code": "tank",
+    "source": "official",
+    "support": false,
+    "tank": true,
+    "title": "最终兵器"
+  },
+  "百里守约": {
+    "assassin": false,
+    "flexible": false,
+    "frontline": false,
+    "lane_codes": [
+      "carry"
+    ],
+    "lanes": [
+      "发育路"
+    ],
+    "mage": false,
+    "marksman": true,
+    "name": "百里守约",
+    "note": "",
+    "output": true,
+    "role": "射手",
+    "role_code": "marksman",
+    "source": "official",
+    "support": false,
+    "tank": false,
+    "title": "静谧之眼"
+  },
+  "百里玄策": {
+    "assassin": true,
+    "flexible": false,
+    "frontline": false,
+    "lane_codes": [
+      "jungle"
+    ],
+    "lanes": [
+      "打野"
+    ],
+    "mage": false,
+    "marksman": false,
+    "name": "百里玄策",
+    "note": "",
+    "output": true,
+    "role": "刺客",
+    "role_code": "assassin",
+    "source": "official",
+    "support": false,
+    "tank": false,
+    "title": "嚣狂之镰"
+  },
+  "盘古": {
+    "assassin": false,
+    "flexible": true,
+    "frontline": true,
+    "lane_codes": [
+      "jungle",
+      "side"
+    ],
+    "lanes": [
+      "打野",
+      "对抗路"
+    ],
+    "mage": false,
+    "marksman": false,
+    "name": "盘古",
+    "note": "",
+    "output": false,
+    "role": "战士",
+    "role_code": "warrior",
+    "source": "official",
+    "support": false,
+    "tank": false,
+    "title": "破晓之神"
+  },
+  "盾山": {
+    "assassin": false,
+    "flexible": false,
+    "frontline": false,
+    "lane_codes": [
+      "roam"
+    ],
+    "lanes": [
+      "游走"
+    ],
+    "mage": false,
+    "marksman": false,
+    "name": "盾山",
+    "note": "",
+    "output": false,
+    "role": "辅助",
+    "role_code": "support",
+    "source": "official",
+    "support": true,
+    "tank": false,
+    "title": "无尽之盾"
+  },
+  "程咬金": {
+    "assassin": false,
+    "flexible": false,
+    "frontline": true,
+    "lane_codes": [
+      "side"
+    ],
+    "lanes": [
+      "对抗路"
+    ],
+    "mage": false,
+    "marksman": false,
+    "name": "程咬金",
+    "note": "",
+    "output": false,
+    "role": "坦克",
+    "role_code": "tank",
+    "source": "official",
+    "support": false,
+    "tank": true,
+    "title": "热烈之斧"
+  },
+  "空空儿": {
+    "assassin": false,
+    "flexible": false,
+    "frontline": false,
+    "lane_codes": [
+      "roam"
+    ],
+    "lanes": [
+      "游走"
+    ],
+    "mage": false,
+    "marksman": false,
+    "name": "空空儿",
+    "note": "",
+    "output": false,
+    "role": "辅助",
+    "role_code": "support",
+    "source": "official",
+    "support": true,
+    "tank": false,
+    "title": "笑面诡手"
+  },
+  "米莱狄": {
+    "assassin": false,
+    "flexible": false,
+    "frontline": false,
+    "lane_codes": [
+      "mid"
+    ],
+    "lanes": [
+      "中路"
+    ],
+    "mage": true,
+    "marksman": false,
+    "name": "米莱狄",
+    "note": "",
+    "output": true,
+    "role": "法师",
+    "role_code": "mage",
+    "source": "official",
+    "support": false,
+    "tank": false,
+    "title": "筑城者"
+  },
+  "老夫子": {
+    "assassin": false,
+    "flexible": false,
+    "frontline": true,
+    "lane_codes": [
+      "side"
+    ],
+    "lanes": [
+      "对抗路"
+    ],
+    "mage": false,
+    "marksman": false,
+    "name": "老夫子",
+    "note": "",
+    "output": false,
+    "role": "战士",
+    "role_code": "warrior",
+    "source": "official",
+    "support": false,
+    "tank": false,
+    "title": "万古长明"
+  },
+  "艾琳": {
+    "assassin": false,
+    "flexible": false,
+    "frontline": false,
+    "lane_codes": [
+      "carry"
+    ],
+    "lanes": [
+      "发育路"
+    ],
+    "mage": false,
+    "marksman": true,
+    "name": "艾琳",
+    "note": "",
+    "output": true,
+    "role": "射手",
+    "role_code": "marksman",
+    "source": "official",
+    "support": false,
+    "tank": false,
+    "title": "精灵之舞"
+  },
+  "芈月": {
+    "assassin": false,
+    "flexible": true,
+    "frontline": false,
+    "lane_codes": [
+      "side",
+      "jungle"
+    ],
+    "lanes": [
+      "对抗路",
+      "打野"
+    ],
+    "mage": true,
+    "marksman": false,
+    "name": "芈月",
+    "note": "",
+    "output": true,
+    "role": "法师",
+    "role_code": "mage",
+    "source": "official",
+    "support": false,
+    "tank": false,
+    "title": "永恒之月"
+  },
+  "花木兰": {
+    "assassin": false,
+    "flexible": false,
+    "frontline": true,
+    "lane_codes": [
+      "side"
+    ],
+    "lanes": [
+      "对抗路"
+    ],
+    "mage": false,
+    "marksman": false,
+    "name": "花木兰",
+    "note": "",
+    "output": false,
+    "role": "战士",
+    "role_code": "warrior",
+    "source": "official",
+    "support": false,
+    "tank": false,
+    "title": "传说之刃"
+  },
+  "苍": {
+    "assassin": false,
+    "flexible": true,
+    "frontline": false,
+    "lane_codes": [
+      "carry",
+      "jungle"
+    ],
+    "lanes": [
+      "发育路",
+      "打野"
+    ],
+    "mage": false,
+    "marksman": true,
+    "name": "苍",
+    "note": "",
+    "output": true,
+    "role": "射手",
+    "role_code": "marksman",
+    "source": "official",
+    "support": false,
+    "tank": false,
+    "title": "苍狼末裔"
+  },
+  "苏烈": {
+    "assassin": false,
+    "flexible": true,
+    "frontline": false,
+    "lane_codes": [
+      "roam",
+      "side"
+    ],
+    "lanes": [
+      "游走",
+      "对抗路"
+    ],
+    "mage": false,
+    "marksman": false,
+    "name": "苏烈",
+    "note": "",
+    "output": false,
+    "role": "辅助",
+    "role_code": "support",
+    "source": "official",
+    "support": true,
+    "tank": false,
+    "title": "不屈铁壁"
+  },
+  "莱西奥": {
+    "assassin": false,
+    "flexible": false,
+    "frontline": false,
+    "lane_codes": [
+      "carry"
+    ],
+    "lanes": [
+      "发育路"
+    ],
+    "mage": false,
+    "marksman": true,
+    "name": "莱西奥",
+    "note": "",
+    "output": true,
+    "role": "射手",
+    "role_code": "marksman",
+    "source": "official",
+    "support": false,
+    "tank": false,
+    "title": "火鹰船长"
+  },
+  "蒙恬": {
+    "assassin": false,
+    "flexible": false,
+    "frontline": true,
+    "lane_codes": [
+      "side"
+    ],
+    "lanes": [
+      "对抗路"
+    ],
+    "mage": false,
+    "marksman": false,
+    "name": "蒙恬",
+    "note": "",
+    "output": false,
+    "role": "坦克",
+    "role_code": "tank",
+    "source": "official",
+    "support": false,
+    "tank": true,
+    "title": "秩序统将"
+  },
+  "蒙犽": {
+    "assassin": false,
+    "flexible": false,
+    "frontline": false,
+    "lane_codes": [
+      "carry"
+    ],
+    "lanes": [
+      "发育路"
+    ],
+    "mage": false,
+    "marksman": true,
+    "name": "蒙犽",
+    "note": "",
+    "output": true,
+    "role": "射手",
+    "role_code": "marksman",
+    "source": "official",
+    "support": false,
+    "tank": false,
+    "title": "烈炮小子"
+  },
+  "蔡文姬": {
+    "assassin": false,
+    "flexible": false,
+    "frontline": false,
+    "lane_codes": [
+      "roam"
+    ],
+    "lanes": [
+      "游走"
+    ],
+    "mage": false,
+    "marksman": false,
+    "name": "蔡文姬",
+    "note": "",
+    "output": false,
+    "role": "辅助",
+    "role_code": "support",
+    "source": "official",
+    "support": true,
+    "tank": false,
+    "title": "天籁弦音"
+  },
+  "虞姬": {
+    "assassin": false,
+    "flexible": false,
+    "frontline": false,
+    "lane_codes": [
+      "carry"
+    ],
+    "lanes": [
+      "发育路"
+    ],
+    "mage": false,
+    "marksman": true,
+    "name": "虞姬",
+    "note": "",
+    "output": true,
+    "role": "射手",
+    "role_code": "marksman",
+    "source": "official",
+    "support": false,
+    "tank": false,
+    "title": "森之风灵"
+  },
+  "蚩奼": {
+    "assassin": false,
+    "flexible": true,
+    "frontline": true,
+    "lane_codes": [
+      "side",
+      "jungle"
+    ],
+    "lanes": [
+      "对抗路",
+      "打野"
+    ],
+    "mage": false,
+    "marksman": false,
+    "name": "蚩奼",
+    "note": "",
+    "output": false,
+    "role": "战士",
+    "role_code": "warrior",
+    "source": "official",
+    "support": false,
+    "tank": false,
+    "title": "五兵之主"
+  },
+  "裴擒虎": {
+    "assassin": true,
+    "flexible": false,
+    "frontline": false,
+    "lane_codes": [
+      "jungle"
+    ],
+    "lanes": [
+      "打野"
+    ],
+    "mage": false,
+    "marksman": false,
+    "name": "裴擒虎",
+    "note": "",
+    "output": true,
+    "role": "刺客",
+    "role_code": "assassin",
+    "source": "official",
+    "support": false,
+    "tank": false,
+    "title": "六合虎拳"
+  },
+  "西施": {
+    "assassin": false,
+    "flexible": false,
+    "frontline": false,
+    "lane_codes": [
+      "mid"
+    ],
+    "lanes": [
+      "中路"
+    ],
+    "mage": true,
+    "marksman": false,
+    "name": "西施",
+    "note": "",
+    "output": true,
+    "role": "法师",
+    "role_code": "mage",
+    "source": "official",
+    "support": false,
+    "tank": false,
+    "title": "幻纱之灵"
+  },
+  "诸葛亮": {
+    "assassin": false,
+    "flexible": true,
+    "frontline": false,
+    "lane_codes": [
+      "mid",
+      "jungle"
+    ],
+    "lanes": [
+      "中路",
+      "打野"
+    ],
+    "mage": true,
+    "marksman": false,
+    "name": "诸葛亮",
+    "note": "",
+    "output": true,
+    "role": "法师",
+    "role_code": "mage",
+    "source": "official",
+    "support": false,
+    "tank": false,
+    "title": "绝代智谋"
+  },
+  "貂蝉": {
+    "assassin": false,
+    "flexible": true,
+    "frontline": false,
+    "lane_codes": [
+      "mid",
+      "side"
+    ],
+    "lanes": [
+      "中路",
+      "对抗路"
+    ],
+    "mage": true,
+    "marksman": false,
+    "name": "貂蝉",
+    "note": "",
+    "output": true,
+    "role": "法师",
+    "role_code": "mage",
+    "source": "official",
+    "support": false,
+    "tank": false,
+    "title": "绝世舞姬"
+  },
+  "赵云": {
+    "assassin": false,
+    "flexible": false,
+    "frontline": true,
+    "lane_codes": [
+      "jungle"
+    ],
+    "lanes": [
+      "打野"
+    ],
+    "mage": false,
+    "marksman": false,
+    "name": "赵云",
+    "note": "",
+    "output": false,
+    "role": "战士",
+    "role_code": "warrior",
+    "source": "official",
+    "support": false,
+    "tank": false,
+    "title": "苍天翔龙"
+  },
+  "赵怀真": {
+    "assassin": false,
+    "flexible": true,
+    "frontline": true,
+    "lane_codes": [
+      "jungle",
+      "side",
+      "roam"
+    ],
+    "lanes": [
+      "打野",
+      "对抗路",
+      "游走"
+    ],
+    "mage": false,
+    "marksman": false,
+    "name": "赵怀真",
+    "note": "",
+    "output": false,
+    "role": "战士",
+    "role_code": "warrior",
+    "source": "official",
+    "support": false,
+    "tank": false,
+    "title": "自在之心"
+  },
+  "达摩": {
+    "assassin": false,
+    "flexible": false,
+    "frontline": true,
+    "lane_codes": [
+      "side"
+    ],
+    "lanes": [
+      "对抗路"
+    ],
+    "mage": false,
+    "marksman": false,
+    "name": "达摩",
+    "note": "",
+    "output": false,
+    "role": "战士",
+    "role_code": "warrior",
+    "source": "official",
+    "support": false,
+    "tank": false,
+    "title": "拳僧"
+  },
+  "金蝉": {
+    "assassin": false,
+    "flexible": true,
+    "frontline": false,
+    "lane_codes": [
+      "mid",
+      "roam"
+    ],
+    "lanes": [
+      "中路",
+      "游走"
+    ],
+    "mage": true,
+    "marksman": false,
+    "name": "金蝉",
+    "note": "",
+    "output": true,
+    "role": "法师",
+    "role_code": "mage",
+    "source": "official",
+    "support": false,
+    "tank": false,
+    "title": "渡世行者"
+  },
+  "钟无艳": {
+    "assassin": false,
+    "flexible": true,
+    "frontline": true,
+    "lane_codes": [
+      "side",
+      "jungle"
+    ],
+    "lanes": [
+      "对抗路",
+      "打野"
+    ],
+    "mage": false,
+    "marksman": false,
+    "name": "钟无艳",
+    "note": "",
+    "output": false,
+    "role": "战士",
+    "role_code": "warrior",
+    "source": "official",
+    "support": false,
+    "tank": false,
+    "title": "野蛮之锤"
+  },
+  "钟馗": {
+    "assassin": false,
+    "flexible": false,
+    "frontline": false,
+    "lane_codes": [
+      "roam"
+    ],
+    "lanes": [
+      "游走"
+    ],
+    "mage": false,
+    "marksman": false,
+    "name": "钟馗",
+    "note": "",
+    "output": false,
+    "role": "辅助",
+    "role_code": "support",
+    "source": "official",
+    "support": true,
+    "tank": false,
+    "title": "虚灵城判"
+  },
+  "铠": {
+    "assassin": false,
+    "flexible": true,
+    "frontline": true,
+    "lane_codes": [
+      "jungle",
+      "side"
+    ],
+    "lanes": [
+      "打野",
+      "对抗路"
+    ],
+    "mage": false,
+    "marksman": false,
+    "name": "铠",
+    "note": "",
+    "output": false,
+    "role": "战士",
+    "role_code": "warrior",
+    "source": "official",
+    "support": false,
+    "tank": false,
+    "title": "破灭刃锋"
+  },
+  "镜": {
+    "assassin": true,
+    "flexible": false,
+    "frontline": false,
+    "lane_codes": [
+      "jungle"
+    ],
+    "lanes": [
+      "打野"
+    ],
+    "mage": false,
+    "marksman": false,
+    "name": "镜",
+    "note": "",
+    "output": true,
+    "role": "刺客",
+    "role_code": "assassin",
+    "source": "official",
+    "support": false,
+    "tank": false,
+    "title": "破镜之刃"
+  },
+  "阿古朵": {
+    "assassin": false,
+    "flexible": true,
+    "frontline": false,
+    "lane_codes": [
+      "jungle",
+      "carry"
+    ],
+    "lanes": [
+      "打野",
+      "发育路"
+    ],
+    "mage": false,
+    "marksman": true,
+    "name": "阿古朵",
+    "note": "",
+    "output": true,
+    "role": "射手",
+    "role_code": "marksman",
+    "source": "official",
+    "support": false,
+    "tank": false,
+    "title": "山林之子"
+  },
+  "阿轲": {
+    "assassin": true,
+    "flexible": false,
+    "frontline": false,
+    "lane_codes": [
+      "jungle"
+    ],
+    "lanes": [
+      "打野"
+    ],
+    "mage": false,
+    "marksman": false,
+    "name": "阿轲",
+    "note": "",
+    "output": true,
+    "role": "刺客",
+    "role_code": "assassin",
+    "source": "official",
+    "support": false,
+    "tank": false,
+    "title": "信念之刃"
+  },
+  "雅典娜": {
+    "assassin": false,
+    "flexible": false,
+    "frontline": true,
+    "lane_codes": [
+      "jungle"
+    ],
+    "lanes": [
+      "打野"
+    ],
+    "mage": false,
+    "marksman": false,
+    "name": "雅典娜",
+    "note": "",
+    "output": false,
+    "role": "战士",
+    "role_code": "warrior",
+    "source": "official",
+    "support": false,
+    "tank": false,
+    "title": "圣域余晖"
+  },
+  "露娜": {
+    "assassin": true,
+    "flexible": false,
+    "frontline": false,
+    "lane_codes": [
+      "jungle"
+    ],
+    "lanes": [
+      "打野"
+    ],
+    "mage": false,
+    "marksman": false,
+    "name": "露娜",
+    "note": "",
+    "output": true,
+    "role": "刺客",
+    "role_code": "assassin",
+    "source": "official",
+    "support": false,
+    "tank": false,
+    "title": "月光之女"
+  },
+  "韩信": {
+    "assassin": true,
+    "flexible": false,
+    "frontline": false,
+    "lane_codes": [
+      "jungle"
+    ],
+    "lanes": [
+      "打野"
+    ],
+    "mage": false,
+    "marksman": false,
+    "name": "韩信",
+    "note": "",
+    "output": true,
+    "role": "刺客",
+    "role_code": "assassin",
+    "source": "official",
+    "support": false,
+    "tank": false,
+    "title": "国士无双"
+  },
+  "项羽": {
+    "assassin": false,
+    "flexible": true,
+    "frontline": true,
+    "lane_codes": [
+      "side",
+      "roam"
+    ],
+    "lanes": [
+      "对抗路",
+      "游走"
+    ],
+    "mage": false,
+    "marksman": false,
+    "name": "项羽",
+    "note": "",
+    "output": false,
+    "role": "坦克",
+    "role_code": "tank",
+    "source": "official",
+    "support": false,
+    "tank": true,
+    "title": "霸王"
+  },
+  "马可波罗": {
+    "assassin": false,
+    "flexible": false,
+    "frontline": false,
+    "lane_codes": [
+      "carry"
+    ],
+    "lanes": [
+      "发育路"
+    ],
+    "mage": false,
+    "marksman": true,
+    "name": "马可波罗",
+    "note": "",
+    "output": true,
+    "role": "射手",
+    "role_code": "marksman",
+    "source": "official",
+    "support": false,
+    "tank": false,
+    "title": "远游之枪"
+  },
+  "马超": {
+    "assassin": false,
+    "flexible": true,
+    "frontline": true,
+    "lane_codes": [
+      "side",
+      "jungle"
+    ],
+    "lanes": [
+      "对抗路",
+      "打野"
+    ],
+    "mage": false,
+    "marksman": false,
+    "name": "马超",
+    "note": "",
+    "output": false,
+    "role": "战士",
+    "role_code": "warrior",
+    "source": "official",
+    "support": false,
+    "tank": false,
+    "title": "冷晖之枪"
+  },
+  "高渐离": {
+    "assassin": false,
+    "flexible": false,
+    "frontline": false,
+    "lane_codes": [
+      "mid"
+    ],
+    "lanes": [
+      "中路"
+    ],
+    "mage": true,
+    "marksman": false,
+    "name": "高渐离",
+    "note": "",
+    "output": true,
+    "role": "法师",
+    "role_code": "mage",
+    "source": "official",
+    "support": false,
+    "tank": false,
+    "title": "叛逆吟游"
+  },
+  "鬼谷子": {
+    "assassin": false,
+    "flexible": false,
+    "frontline": false,
+    "lane_codes": [
+      "roam"
+    ],
+    "lanes": [
+      "游走"
+    ],
+    "mage": false,
+    "marksman": false,
+    "name": "鬼谷子",
+    "note": "",
+    "output": false,
+    "role": "辅助",
+    "role_code": "support",
+    "source": "official",
+    "support": true,
+    "tank": false,
+    "title": "万物有灵"
+  },
+  "鲁班七号": {
+    "assassin": false,
+    "flexible": false,
+    "frontline": false,
+    "lane_codes": [
+      "carry"
+    ],
+    "lanes": [
+      "发育路"
+    ],
+    "mage": false,
+    "marksman": true,
+    "name": "鲁班七号",
+    "note": "",
+    "output": true,
+    "role": "射手",
+    "role_code": "marksman",
+    "source": "official",
+    "support": false,
+    "tank": false,
+    "title": "机关造物"
+  },
+  "鲁班大师": {
+    "assassin": false,
+    "flexible": false,
+    "frontline": false,
+    "lane_codes": [
+      "roam"
+    ],
+    "lanes": [
+      "游走"
+    ],
+    "mage": false,
+    "marksman": false,
+    "name": "鲁班大师",
+    "note": "",
+    "output": false,
+    "role": "辅助",
+    "role_code": "support",
+    "source": "official",
+    "support": true,
+    "tank": false,
+    "title": "神匠"
+  },
+  "黄忠": {
+    "assassin": false,
+    "flexible": false,
+    "frontline": false,
+    "lane_codes": [
+      "carry"
+    ],
+    "lanes": [
+      "发育路"
+    ],
+    "mage": false,
+    "marksman": true,
+    "name": "黄忠",
+    "note": "",
+    "output": true,
+    "role": "射手",
+    "role_code": "marksman",
+    "source": "official",
+    "support": false,
+    "tank": false,
+    "title": "燃魂重炮"
+  }
+}

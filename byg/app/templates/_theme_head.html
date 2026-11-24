@@ -1,0 +1,12 @@
+<script>
+/* 主题：默认浅色。用户的选择存 localStorage。
+   必须同步执行（不能 defer）—— 放到 head 里，否则刷新时会先闪一下
+   浅色再切到深色，夜里看非常刺眼。 */
+(function () {
+  try {
+    if (localStorage.getItem('ma-theme') === 'dark') {
+      document.documentElement.setAttribute('data-theme', 'dark');
+    }
+  } catch (e) { /* 隐私模式下 localStorage 可能不可用，忽略即可 */ }
+})();
+</script>

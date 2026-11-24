@@ -1,0 +1,310 @@
+/* ==========================================================================
+   导航 —— 所有页面共用。图标导航的本体在 app.css 的「应用外壳」一节里，
+   这里只管它在别的上下文（报告页、审核页）里也保持同一副样子。
+   ========================================================================== */
+
+.app-nav { display: flex; gap: 6px; align-items: center; flex-wrap: wrap; }
+
+/* 主题切换：一个小圆点按钮，不抢视觉 */
+.theme-toggle {
+  width: 36px; height: 36px;
+  border-radius: 11px;
+  border: 1px solid transparent;
+  background: transparent;
+  cursor: pointer;
+  display: grid; place-items: center;
+  font-size: 15px;
+  padding: 0;
+  color: var(--muted);
+}
+.theme-toggle:hover { border-color: var(--line); background: var(--panel); color: var(--accent); }
+.theme-toggle .ico-sun { display: none; }
+html[data-theme="dark"] .theme-toggle .ico-sun { display: inline; }
+html[data-theme="dark"] .theme-toggle .ico-moon { display: none; }
+
+/* ==========================================================================
+   列表页通用（对局 / 版本 / 攻略共用）
+   ========================================================================== */
+
+.page-head {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 20px;
+  flex-wrap: wrap;
+  padding: 32px 0 20px;
+}
+.page-head h2 { font-size: 24px; margin: 0 0 6px; font-weight: 700; }
+.page-head .sub { font-size: 13px; color: var(--muted); margin: 0; }
+
+.filters {
+  display: flex; gap: 12px; flex-wrap: wrap; align-items: center;
+  margin-bottom: 18px;
+}
+
+/* 药丸分段控件。激活项是**白底 + 阴影 + 主色字** ——
+   纯色底在浅紫页面上和卡片分不开，描边又太轻，用户会以为没点中。 */
+.pills {
+  display: inline-flex; gap: 3px; flex-wrap: wrap;
+  padding: 3px; border-radius: 999px;
+  background: var(--panel-2);
+  border: 1px solid var(--line);
+}
+.pill {
+  padding: 6px 15px; border-radius: 999px;
+  font-size: 13px; color: var(--muted);
+  text-decoration: none; white-space: nowrap;
+  /* 分路筛选用的是 <button>，不是 <a>。按钮的 UA 默认样式会带一圈
+     系统灰边和灰底，不显式清掉就会在药丸组里露出一排黑框。 */
+  border: none; background: none;
+  font-family: inherit; cursor: pointer;
+  transition: background .15s, color .15s, box-shadow .15s;
+}
+.pill:hover { color: var(--text); }
+.pill.on {
+  color: var(--accent);
+  background: var(--panel);
+  box-shadow: var(--shadow);
+  font-weight: 600;
+}
+
+.select, .input {
+  padding: 8px 12px;
+  border-radius: var(--radius-s);
+  border: 1px solid var(--line);
+  background: var(--panel);
+  color: var(--text);
+  font-size: 13.5px;
+  font-family: Arial, "Microsoft YaHei", sans-serif;
+}
+.select:focus, .input:focus {
+  outline: none; border-color: var(--accent);
+  box-shadow: 0 0 0 3px var(--accent-soft);
+}
+.input { min-width: 200px; }
+
+/* 条目卡片 */
+.item {
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  padding: 16px 20px;
+  margin-bottom: 10px;
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  flex-wrap: wrap;
+  box-shadow: var(--shadow);
+  transition: border-color .15s, box-shadow .15s;
+}
+.item:hover { border-color: color-mix(in srgb, var(--accent) 45%, var(--line)); }
+
+.item-main { flex: 1; min-inline-size: 220px; }
+.item-title { font-size: 15px; font-weight: 700; margin-bottom: 6px;
+              display: flex; align-items: center; gap: 9px; flex-wrap: wrap; }
+.item-meta {
+  font-size: 12.5px; color: var(--muted);
+  display: flex; gap: 16px; flex-wrap: wrap;
+}
+.item-acts { display: flex; gap: 8px; flex-wrap: wrap; }
+
+.tag {
+  display: inline-block;
+  padding: 2px 10px;
+  border-radius: 999px;
+  font-size: 11.5px;
+  background: var(--panel-2);
+  color: var(--muted);
+  font-weight: 600;
+}
+.tag.video { background: color-mix(in srgb, var(--sev-low) 12%, transparent);
+             color: var(--sev-low); }
+.tag.manual { background: color-mix(in srgb, var(--muted) 12%, transparent); }
+.tag.api   { background: color-mix(in srgb, var(--purple) 12%, transparent);
+             color: var(--purple); }
+
+.empty {
+  padding: 56px 24px;
+  text-align: center;
+  color: var(--muted);
+  background: var(--panel);
+  border: 1px dashed var(--line);
+  border-radius: var(--radius);
+  font-size: 13.5px;
+  line-height: 1.9;
+}
+.empty b { color: var(--text); display: block; margin-bottom: 6px; font-size: 15px; }
+
+/* 表格（版本 / 规则列表用） */
+.tbl { width: 100%; border-collapse: collapse; font-size: 13px; }
+.tbl th {
+  text-align: left; padding: 9px 12px;
+  color: var(--muted); font-weight: 700; font-size: 11.5px;
+  letter-spacing: .06em;
+  border-bottom: 1px solid var(--line);
+}
+.tbl td { padding: 10px 12px; border-bottom: 1px solid var(--line); }
+.tbl tr:last-child td { border-bottom: none; }
+.tbl .mono { font-family: Arial, sans-serif; }
+
+/* 攻略工坊 */
+.guide-form { display: grid; grid-template-columns: 1fr 1fr; gap: 22px; align-items: start; }
+.guide-input {
+  width: 100%;
+  min-height: 320px;
+  padding: 13px;
+  border-radius: 9px;
+  border: 1px solid var(--line);
+  background: var(--panel);
+  color: var(--text);
+  font-size: 13.5px;
+  line-height: 1.85;
+  font-family: "Microsoft YaHei", monospace;
+  resize: vertical;
+}
+.guide-input:focus { outline: none; border-color: var(--accent); }
+
+.cand {
+  border: 1px solid var(--line);
+  border-radius: 9px;
+  padding: 11px 13px;
+  margin-bottom: 8px;
+  background: var(--panel);
+  cursor: pointer;
+  transition: border-color .12s;
+}
+.cand:hover { border-color: var(--accent); }
+.cand.on { border-color: var(--accent); background: var(--accent-soft); }
+.cand-top {
+  display: flex; align-items: flex-start; gap: 10px;
+  margin-bottom: 6px;
+}
+.cand-check {
+  width: 16px; height: 16px; flex: 0 0 auto; margin-top: 2px;
+  accent-color: var(--accent);
+}
+.cand-title { font-size: 13.5px; font-weight: 700; line-height: 1.55; }
+.cand-meta {
+  font-size: 11.5px; color: var(--muted);
+  font-family: Arial, "Microsoft YaHei", sans-serif;
+  margin-top: 5px;
+}
+.cand-bad {
+  color: var(--sev-high); font-size: 11.5px; margin-top: 5px;
+}
+.cand-note {
+  color: var(--sev-medium); font-size: 11.5px; margin-top: 5px;
+  padding: 5px 9px;
+  border-radius: 5px;
+  background: var(--accent-soft);
+}
+
+@media (max-width: 900px) {
+  .guide-form { grid-template-columns: 1fr; }
+}
+
+/* ---------- 攻略工作台：三种输入方式 + 可编辑候选 ---------- */
+
+.wf { display: grid; grid-template-columns: minmax(0,1fr) minmax(0,1.15fr); gap: 20px; align-items: start; }
+.wf-in, .wf-out {
+  background: var(--panel); border: 1px solid var(--line);
+  border-radius: 12px; padding: 16px;
+}
+
+.tabs { display: flex; gap: 4px; margin-bottom: 12px; border-bottom: 1px solid var(--line); }
+.tab {
+  padding: 7px 14px; border: none; background: transparent;
+  color: var(--muted); font-size: 13.5px; cursor: pointer;
+  border-bottom: 2px solid transparent; font-family: inherit;
+}
+.tab:hover { color: var(--text); }
+.tab.on { color: var(--accent); border-bottom-color: var(--accent); font-weight: 700; }
+
+.pane { display: none; }
+.pane.on { display: block; }
+
+.drop.sm { padding: 22px 14px; }
+
+.guide-input {
+  width: 100%; min-height: 340px; padding: 12px;
+  border-radius: 8px; border: 1px solid var(--line);
+  background: var(--bg); color: var(--text);
+  font-size: 13.5px; line-height: 1.8;
+  font-family: "Microsoft YaHei", monospace; resize: vertical;
+}
+.guide-input:focus { outline: none; border-color: var(--accent); }
+
+.wf-btns { display: flex; gap: 10px; margin-top: 14px; }
+.wf-btns .btn-primary { flex: 1; margin-top: 0; }
+
+.ok-box {
+  margin-top: 12px; padding: 9px 13px; border-radius: 6px; font-size: 13px;
+  background: color-mix(in srgb, var(--ok) 12%, transparent);
+  color: var(--ok);
+  border: 1px solid color-mix(in srgb, var(--ok) 32%, transparent);
+}
+
+.wf-out-head { display: flex; gap: 10px; margin-bottom: 12px; }
+.rej-box {
+  margin-top: 10px; padding: 9px 12px; border-radius: 6px; font-size: 12.5px;
+  background: color-mix(in srgb, var(--sev-high) 8%, transparent);
+  color: var(--sev-high); line-height: 1.8;
+}
+
+/* 候选卡：默认收起，点「编辑」展开改阈值 */
+.cand {
+  border: 1px solid var(--line); border-radius: 8px;
+  margin-bottom: 7px; background: var(--bg); overflow: hidden;
+}
+.cand-h {
+  display: flex; align-items: center; gap: 9px;
+  padding: 9px 12px; cursor: pointer;
+}
+.cand-h:hover { background: var(--accent-soft); }
+.cand-check { width: 15px; height: 15px; accent-color: var(--accent); flex: 0 0 auto; }
+.cand-title { flex: 1; font-size: 13px; font-weight: 700; line-height: 1.5; }
+.cand-cf {
+  font-size: 11px; color: var(--muted);
+  font-family: Arial, sans-serif; flex: 0 0 auto;
+}
+.cand-more { font-size: 11px; color: var(--accent); flex: 0 0 auto; }
+
+.cand-edit { padding: 4px 12px 12px; border-top: 1px solid var(--line); }
+.ec-h {
+  font-size: 11px; color: var(--muted); margin: 10px 0 5px;
+  letter-spacing: .1em; font-weight: 700;
+}
+.ec-row { display: flex; align-items: center; gap: 6px; margin-bottom: 5px; }
+.ec-lb { font-size: 12px; color: var(--muted); min-width: 62px; }
+.ec-empty { font-size: 12px; color: var(--muted); }
+
+.mini {
+  padding: 4px 7px; border-radius: 5px; border: 1px solid var(--line);
+  background: var(--panel); color: var(--text);
+  font-size: 12px; font-family: Arial, "Microsoft YaHei", sans-serif;
+}
+.mini:focus { outline: none; border-color: var(--accent); }
+.mini.grow { flex: 1; }
+.mini.w80 { width: 82px; }
+
+.wf-commit {
+  position: sticky; bottom: 0;
+  display: flex; align-items: center; gap: 12px;
+  margin-top: 14px; padding-top: 14px;
+  border-top: 1px solid var(--line);
+  background: var(--panel);
+}
+.wf-commit-n { font-size: 13px; color: var(--muted); flex: 1;
+               font-family: Arial, "Microsoft YaHei", sans-serif; }
+.wf-commit .btn-primary { margin-top: 0; width: auto; padding: 9px 22px; }
+
+.src-form {
+  background: var(--panel); border: 1px solid var(--line);
+  border-radius: 10px; padding: 16px; margin-bottom: 14px;
+}
+
+.btn-ghost.danger:hover { border-color: var(--sev-high); color: var(--sev-high); }
+
+@media (max-width: 1000px) {
+  .wf { grid-template-columns: 1fr; }
+}

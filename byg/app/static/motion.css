@@ -1,0 +1,176 @@
+/* ==========================================================================
+   动效层 —— 入场、滚动进场、悬停
+   --------------------------------------------------------------------------
+   这套动效是照着项目的样子做的：**墨**。
+   墨落在纸上不是一下子出现，是从淡到浓地渗开；一笔写下去，
+   笔锋自左向右走出来。所以这里只有两种动作：
+   「渗开」（元素出场）与「走线」（标题下那道横线）。
+
+   两条规矩：
+   1. **JS 不跑，页面照常显示。**
+      所有「藏起来」的样式都挂在 ``html.mo-ready`` 下面 —— 那行 class
+      是 motion.js 启动时加的。没有 JS 就没有 mo-ready，元素一直可见。
+      （否则 JS 一挂掉，整页就是白的。）
+   2. **动效只服务于「这里正在出现」。**
+      不做循环抖动、不做大位移。页面是给人看结论的，动得太闹会把
+      注意力从结论上带走。
+
+   动效强度跟主题走：浅色主题是宣纸（墨要淡），深色主题是夜（墨要亮）。
+   ========================================================================== */
+
+:root {
+  --mo-dur: .52s;
+  --mo-ease: cubic-bezier(.22, .68, .28, 1);
+  /* 渗开的距离。太大像「飞进来」，太小看不出来 —— 14px 刚好。 */
+  --mo-rise: 14px;
+  /* 同组里每条错开多久。 */
+  --mo-step: 45ms;
+}
+
+@keyframes moIn {
+  from { opacity: 0; transform: translateY(var(--mo-rise)); }
+  to   { opacity: 1; transform: none; }
+}
+
+@keyframes moLine {
+  from { transform: scaleX(0); }
+  to   { transform: scaleX(1); }
+}
+
+/* ---------- 进场：渗开 ---------- */
+/* ``mo-wait`` = 还没出场；``mo-in`` = 出场。
+   两档都用 transform + opacity —— 两者都不影响布局，揭开时页面不跳。 */
+.mo-ready .mo-wait {
+  opacity: 0;
+  transform: translateY(var(--mo-rise));
+}
+.mo-ready .mo-in {
+  animation: moIn var(--mo-dur) var(--mo-ease) both;
+  /* 同组的第几条：依次往后挪一点，像一笔一笔写下去。 */
+  animation-delay: calc(var(--mo-i, 0) * var(--mo-step));
+}
+
+/* ---------- 标题下那道线：自左向右走 ---------- */
+/* 原来的 border-bottom 换成一条单独的元素 —— border 画不出「走线」。 */
+.section-head {
+  position: relative;
+  border-bottom: none;
+}
+.section-head::after {
+  content: "";
+  position: absolute;
+  inset-inline: 0;
+  inset-block-end: -1px;
+  height: 1px;
+  background: var(--line);
+}
+.mo-ready .section-head::after {
+  transform: scaleX(0);
+  transform-origin: left center;
+}
+.mo-ready .section-head.mo-in::after {
+  animation: moLine .62s cubic-bezier(.3, .72, .3, 1) both;
+  animation-delay: calc(var(--mo-i, 0) * var(--mo-step));
+}
+
+/* ---------- 悬停：把纸轻轻托起来 ---------- */
+.item, .mode {
+  transition: transform .18s ease, box-shadow .18s ease, border-color .18s ease;
+}
+.item:hover, .mode:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-lg);
+}
+
+/* ---------- 页与页之间的穿梭：那块画布 ---------- */
+/* 全屏一块 canvas，由 warp.js 画。盖在页面上，不吃点击。 */
+.mo-warp {
+  position: fixed;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 9999;
+  pointer-events: none;
+}
+
+/* ==========================================================================
+   页与页之间的「因地制宜」：被点的那个元素，自己飞到下一页里去
+   --------------------------------------------------------------------------
+   浏览器的跨文档视图过渡（View Transitions）：旧页上给某个元素挂一个
+   ``view-transition-name``，新页上给**另一个**元素挂同一个名字，
+   中间浏览器就自动把前者变形过去 —— 位置、大小、内容的交叉淡化全包。
+
+   这里配的是：旧页 = 被点的那张卡/那个按钮；新页 = 新页的标题。
+   所以点「探索玩法」进去，是**那颗按钮自己长大成新页的标题**，
+   不是一个整屏的切换。
+
+   **规矩**（照 GitHub 上那套 View Transitions 参考来的）：
+   - 整页换页 250–400ms，缓动用 ease-out-quart；
+   - 共享元素变形稍长一点，用 ease-out-expo；
+   - 过渡期间不吃点击；
+   - 少动模式把**所有**过渡组一起关掉（``(*)`` 才是完整写法）。
+
+   这一段只在浏览器支持跨文档过渡时生效（Chrome / Edge 126+）。
+   不支持的浏览器走 warp.js 的星空过场 —— 两套都留着，各管各的。
+   ========================================================================== */
+@view-transition {
+  navigation: auto;
+}
+
+/* 整页：短交叉淡化 —— 别抢了那个元素的风头。 */
+::view-transition-old(root) {
+  animation: moFadeOut .18s cubic-bezier(.4, 0, 1, 1) both;
+}
+::view-transition-new(root) {
+  animation: moFadeIn .28s cubic-bezier(.25, 1, .5, 1) both;
+}
+
+/* 那个元素：从旧位置飞到新位置。ease-out-expo —— 快出慢收，尾巴干净。 */
+::view-transition-group(mo-fly) {
+  animation-duration: .4s;
+  animation-timing-function: cubic-bezier(.16, 1, .3, 1);
+}
+::view-transition-old(mo-fly),
+::view-transition-new(mo-fly) {
+  animation-duration: .3s;
+}
+
+/* 过渡期间不让用户乱点（页面正在换手）。 */
+html:active-view-transition {
+  pointer-events: none;
+}
+
+@keyframes moFadeOut {
+  from { opacity: 1; }
+  to   { opacity: 0; }
+}
+@keyframes moFadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to   { opacity: 1; transform: none; }
+}
+
+/* ---------- 系统说「少动」，就少动 ---------- */
+@media (prefers-reduced-motion: reduce) {
+  /* 过渡组要**全**关掉 —— 只写 ``::view-transition-group(mo-fly)`` 的话，
+     整页的交叉淡化还在演，等于「少动」没少一半。 */
+  ::view-transition-group(*),
+  ::view-transition-old(*),
+  ::view-transition-new(*) {
+    animation: none !important;
+  }
+  .mo-wait {
+    opacity: 1 !important;
+    transform: none !important;
+  }
+  .mo-in, .section-head::after {
+    animation: none !important;
+    transform: none !important;
+  }
+  .item:hover, .mode:hover {
+    transform: none !important;
+  }
+  /* 穿梭也一并关掉：少动就是不动。 */
+  .mo-warp {
+    display: none !important;
+  }
+}

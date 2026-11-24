@@ -1,0 +1,10 @@
+{# 氛围背景层：内层页面（上传 / 对局 / 模式库 / 标注 / BP 录入）共用。
+   只加背景，不改版式 —— 版式归 _header.html 与 app.css 管。 #}
+<canvas id="atmo-canvas" class="atmo-canvas" aria-hidden="true"></canvas>
+<style>
+/* 底色从 body 挪到 html：画布是 body 的负层级子元素，
+   body 自己有底色的话会把画布盖住（负层级先于常规内容绘制）。 */
+html { background: var(--bg); }
+</style>
+<link rel="stylesheet" href="{{ asset('atmosphere.css') }}">
+<script src="{{ asset('atmosphere.js') }}" defer></script>
